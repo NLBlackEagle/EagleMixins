@@ -20,9 +20,15 @@ public class ForgeConfigHandler {
 
 	public static class ServerConfig {
 
-		@Config.Comment("Example server side config option")
-		@Config.Name("Example Server Option")
-		public boolean exampleServerOption = true;
+		@Config.Comment("Chance of an underground un-looted chest becoming a mimic")
+		@Config.Name("Underground Mimic Chance")
+		@Config.RangeDouble(min = 0F, max = 1F)
+		public float undergroundMimicChance = 0.05F;
+
+		@Config.Comment("List of dimension IDs in which underground chests will have a chance to become mimics")
+		@Config.Name("Underground Mimic Dimensions")
+		@Config.RequiresMcRestart
+		public Integer[] undergroundMimicDimensions = { 0 };
 	}
 
 	public static class ClientConfig {

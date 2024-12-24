@@ -2,6 +2,7 @@ package eaglemixins;
 
 
 import eaglemixins.handlers.HealthValidationHandler;
+import eaglemixins.handlers.MimicHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -23,5 +24,6 @@ public class EagleMixins {
         ModRegistry.init();
         MinecraftForge.EVENT_BUS.register(BerianHandler.class);
         MinecraftForge.EVENT_BUS.register(HealthValidationHandler.class);
+        MinecraftForge.EVENT_BUS.register(MimicHandler.class);
     }
 }
