@@ -14,6 +14,7 @@ public class BerianHandler {
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onEntityJoinWorld(EntityJoinWorldEvent event) {
 
+
         if (event.isCanceled() || !event.getEntity().getName().equals("Villager")) return;
         if (event.getEntity().getEntityData().getTag("SussyBerianNaming") == null) {
 
