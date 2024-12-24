@@ -1,51 +1,49 @@
 package eaglemixins.handlers;
 
-
-import eaglemixins.EagleMixins;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.apache.logging.log4j.Level;
+import net.minecraftforge.fml.common.registry.VillagerRegistry;
 
+import java.util.Random;
 
 public class BerianHandler {
 
+    private static final ResourceLocation LIBRARIAN = new ResourceLocation("minecraft:librarian");
+
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onEntityJoinWorld(EntityJoinWorldEvent event) {
-
-
-        if (event.isCanceled() || !event.getEntity().getName().equals("Villager")) return;
-        if (event.getEntity().getEntityData().getTag("SussyBerianNaming") == null) {
-
-            int Random = (int)(Math.random()*100);
-            //give entity a tag to make sure this script only iterates once per entity.
-            event.getEntity().getEntityData().setString("SussyBerianNaming", String.valueOf(1));
-
-           // NBTTagCompound ProfessionName = (NBTTagCompound)event.getEntity().getEntityData().getTag("ProfessionName");
-           // NBTTagCompound Profession = (NBTTagCompound)event.getEntity().getEntityData().getTag("Profession");
-
-           // EagleMixins.LOGGER.log(Level.INFO, "EagleMixins ProfessionName " + ProfessionName);
-           // EagleMixins.LOGGER.log(Level.INFO, "EagleMixins Profession " + Profession);
-
-            NBTTagCompound c = event.getEntity().getEntityData();
-
-            if((c.hasKey("ProfessionName")) || (c.hasKey("Profession"))){
-
-                EagleMixins.LOGGER.log(Level.INFO, "EagleMixins HasTag ");
-
-            }
-
-            if (Random < 5) {
-
-                event.getEntity().setCustomNameTag("Sussyberian");
-
-            } else if (Random < 10) {
-
-                event.getEntity().setCustomNameTag("Mentalberian");
-
-            }
+        if (!event.isCanceled() && event.getEntity() instanceof EntityVillager) {
+            updateBerian((EntityVillager) event.getEntity());
         }
     }
 
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public static void onLivingSpawn(LivingSpawnEvent event) {
+        if (!event.isCanceled() && event.getEntity() instanceof EntityVillager) {
+            updateBerian((EntityVillager) event.getEntity());
+        }
+    }
+
+    private static void updateBerian(EntityVillager villager) {
+        VillagerRegistry.VillagerProfession profession = villager.getProfessionForge();
+        if (LIBRARIAN.equals(profession.getRegistryName())) {
+            if (villager.getEntityData().getTag("SussyBerianNaming") == null) {
+                //give entity a tag to make sure this script only iterates once per entity.
+                villager.getEntityData().setString("SussyBerianNaming", String.valueOf(1));
+
+                int rand = new Random().nextInt(100);
+                if (rand < 5) {
+                    villager.setCustomNameTag("Sussyberian");
+                } else if (rand < 10) {
+                    villager.setCustomNameTag("Mentalberian");
+                }
+            }
+        }
+    }
 }
