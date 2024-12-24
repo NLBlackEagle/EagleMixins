@@ -20,6 +20,16 @@ public class ForgeConfigHandler {
 
 	public static class ServerConfig {
 
+		@Config.Comment("Chance of a librarian being converted to a Sussyberian on generation")
+		@Config.Name("Sussyberian Chance")
+		@Config.RangeDouble(min = 0F, max = 1F)
+		public float sussyberianChance = 0.05F;
+
+		@Config.Comment("Chance of a librarian being converted to a Mentalberian on generation")
+		@Config.Name("Mentalberian Chance")
+		@Config.RangeDouble(min = 0F, max = 1F)
+		public float mentalberianChance = 0.05F;
+
 		@Config.Comment("Chance of an underground un-looted chest becoming a mimic")
 		@Config.Name("Underground Mimic Chance")
 		@Config.RangeDouble(min = 0F, max = 1F)
