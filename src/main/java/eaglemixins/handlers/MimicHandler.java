@@ -6,14 +6,12 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.inventory.Container;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.loot.ILootContainer;
-import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -22,11 +20,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 
 import java.util.Arrays;
-import java.util.Random;
 
 public class MimicHandler {
 
-    @SubscribeEvent(priority = EventPriority.LOW)
+    @SubscribeEvent(priority = EventPriority.NORMAL)
     public static void onRightClick(PlayerInteractEvent.RightClickBlock event) {
         if(event.getUseBlock() == Event.Result.DENY ||
                 event.getWorld().isRemote ||
@@ -58,7 +55,7 @@ public class MimicHandler {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.LOW)
+    @SubscribeEvent(priority = EventPriority.NORMAL)
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
         if(event.getWorld().isRemote || event.getPlayer() == null || ForgeConfigHandler.server.undergroundMimicChance <= 0F) return;
         BlockPos pos = event.getPos();
@@ -85,5 +82,4 @@ public class MimicHandler {
             }
         }
     }
-
 }
