@@ -22,18 +22,18 @@ public class ForgeConfigHandler {
 
 		@Config.Comment("Chance of a librarian being converted to a Sussyberian on generation")
 		@Config.Name("Sussyberian Chance")
-		@Config.RangeDouble(min = 0F, max = 1F)
-		public float sussyberianChance = 0.05F;
+		@Config.RangeDouble(min = 0D, max = 1D)
+		public double sussyberianChance = 0.05D;
 
 		@Config.Comment("Chance of a librarian being converted to a Mentalberian on generation")
 		@Config.Name("Mentalberian Chance")
-		@Config.RangeDouble(min = 0F, max = 1F)
-		public float mentalberianChance = 0.05F;
+		@Config.RangeDouble(min = 0D, max = 1D)
+		public double mentalberianChance = 0.05D;
 
 		@Config.Comment("Chance of an underground un-looted chest becoming a mimic")
 		@Config.Name("Underground Mimic Chance")
-		@Config.RangeDouble(min = 0F, max = 1F)
-		public float undergroundMimicChance = 0.05F;
+		@Config.RangeDouble(min = 0D, max = 1D)
+		public double undergroundMimicChance = 0.05D;
 
 		@Config.Comment("List of dimension IDs in which underground chests will have a chance to become mimics")
 		@Config.Name("Underground Mimic Dimensions")

@@ -1,6 +1,7 @@
 package eaglemixins;
 
 import java.util.Map;
+
 import fermiumbooter.FermiumRegistryAPI;
 import net.minecraftforge.fml.common.Loader;
 import org.spongepowered.asm.launch.MixinBootstrap;
@@ -14,6 +15,7 @@ public class EagleMixinsPlugin implements IFMLLoadingPlugin {
 		//False for Vanilla/Coremod mixins, true for regular mod mixins
 		FermiumRegistryAPI.enqueueMixin(false, "mixins.eaglemixins.vanilla.json");
 		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.jei.json", () -> Loader.isModLoaded("jei"));
+		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.rlartifacts.json", () -> Loader.isModLoaded("artifacts"));
 	}
 
 	@Override

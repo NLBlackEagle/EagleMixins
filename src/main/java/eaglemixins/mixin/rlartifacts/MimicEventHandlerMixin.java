@@ -1,7 +1,7 @@
-package eaglemixins.handlers;
-
+package eaglemixins.mixin.rlartifacts;
 
 import artifacts.common.entity.EntityMimic;
+import eaglemixins.handlers.ForgeConfigHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,16 +15,23 @@ import net.minecraft.world.storage.loot.ILootContainer;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Arrays;
 
-public class MimicHandler {
+@Mixin(targets = "artifacts.common.entity.EntityMimic$MimicEventHandler")
+public class MimicEventHandlerMixin {
 
-    @SubscribeEvent(priority = EventPriority.NORMAL)
-    public static void onRightClick(PlayerInteractEvent.RightClickBlock event) {
+    @Inject(
+            method = "onRightClick",
+            at = @At("HEAD"),
+            remap = false,
+            cancellable = true
+    )
+    private static void onRightClick(PlayerInteractEvent.RightClickBlock event, CallbackInfo ci) {
         if(event.getUseBlock() == Event.Result.DENY ||
                 event.getWorld().isRemote ||
                 event.getEntityPlayer() == null ||
@@ -42,7 +49,7 @@ public class MimicHandler {
             if(world.getBlockState(pos.up()).doesSideBlockChestOpening(world, pos.up(), EnumFacing.DOWN)) return;
             if(((ILootContainer)tile).getLootTable() != null) {
                 ((TileEntityChest) tile).fillWithLoot(player);
-                if(world.rand.nextFloat() <= ForgeConfigHandler.server.undergroundMimicChance) {
+                if(world.rand.nextDouble() <= ForgeConfigHandler.server.undergroundMimicChance) {
                     event.setCanceled(true);
                     world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
                     EntityMimic mimic = new EntityMimic(world);
@@ -53,10 +60,16 @@ public class MimicHandler {
                 }
             }
         }
+        ci.cancel();
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL)
-    public static void onBlockBreak(BlockEvent.BreakEvent event) {
+    @Inject(
+            method = "onBlockBreak",
+            at = @At("HEAD"),
+            remap = false,
+            cancellable = true
+    )
+    private static void onBlockBreak(BlockEvent.BreakEvent event, CallbackInfo ci) {
         if(event.getWorld().isRemote || event.getPlayer() == null || ForgeConfigHandler.server.undergroundMimicChance <= 0F) return;
         BlockPos pos = event.getPos();
         if (pos.getY() > 25) {
@@ -70,7 +83,7 @@ public class MimicHandler {
             if(!Arrays.asList(ForgeConfigHandler.server.undergroundMimicDimensions).contains(event.getWorld().provider.getDimension())) return;
             if(((ILootContainer)tile).getLootTable() != null) {
                 ((TileEntityChest) tile).fillWithLoot(player);
-                if(world.rand.nextFloat() <= ForgeConfigHandler.server.undergroundMimicChance) {
+                if(world.rand.nextDouble() <= ForgeConfigHandler.server.undergroundMimicChance) {
                     event.setCanceled(true);
                     world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
                     EntityMimic mimic = new EntityMimic(world);
@@ -81,5 +94,6 @@ public class MimicHandler {
                 }
             }
         }
+        ci.cancel();
     }
 }

@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "eaglemixins.mixin",
+  "refmap": "mixins.eaglemixins.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "mixins": [
+    "rlartifacts.MimicEventHandlerMixin"
+  ],
+  "injectors": {
+    "maxShiftBy": 10
+  }
+}
