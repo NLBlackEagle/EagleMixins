@@ -11,7 +11,7 @@ public class HealthValidationHandler {
     @SubscribeEvent
     public void onLivingHurt(LivingHurtEvent event) {
         validateHealth(event);
-        if (Float.isNaN(event.getAmount())) {
+        if (Float.isNaN(event.getAmount()) || event.getAmount() == Float.NEGATIVE_INFINITY) {
             event.setCanceled(true);
         }
     }
@@ -27,7 +27,7 @@ public class HealthValidationHandler {
             return;
         }
         float health = entity.getHealth();
-        if (Float.isNaN(health) || health < 0F) {
+        if (Float.isNaN(health) || Float.isInfinite(health) || health < 0F) {
             entity.setHealth(0F);
         }
     }
