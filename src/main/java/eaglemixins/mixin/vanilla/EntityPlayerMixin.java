@@ -17,6 +17,5 @@ public abstract class EntityPlayerMixin {
             at = @At("HEAD")
     )
     public void eaglemixins_vanillaEntityPlayer_attackEntityFrom(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        EagleMixins.LOGGER.log(Level.INFO, "Player attacked");
     }
 }

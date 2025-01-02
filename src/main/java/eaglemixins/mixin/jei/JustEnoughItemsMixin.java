@@ -18,6 +18,5 @@ public abstract class JustEnoughItemsMixin {
             remap = false
     )
     public void eaglemixins_jeiJustEnoughItems_init(FMLInitializationEvent event, CallbackInfo ci) {
-        EagleMixins.LOGGER.log(Level.INFO, "JEI Init");
     }
 }
