@@ -1,6 +1,5 @@
 package eaglemixins.handlers;
 
-import eaglemixins.EagleMixins;
 import ichttt.mods.firstaid.FirstAid;
 import ichttt.mods.firstaid.api.damagesystem.AbstractDamageablePart;
 import ichttt.mods.firstaid.api.event.FirstAidLivingDamageEvent;
@@ -38,7 +37,6 @@ public class HealthValidationHandler {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onLivingDamage(LivingDamageEvent event) {
-        EagleMixins.LOGGER.info("Health: " + event.getEntityLiving().getHealth());
         validateHealth(event);
         if (!Float.isFinite(event.getAmount())) {
             event.setCanceled(true);
@@ -47,7 +45,6 @@ public class HealthValidationHandler {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onLivingHeal(LivingHealEvent event) {
-        EagleMixins.LOGGER.info("Health: " + event.getEntityLiving().getHealth());
         validateHealth(event);
         if (!Float.isFinite(event.getAmount())) {
             event.setCanceled(true);
