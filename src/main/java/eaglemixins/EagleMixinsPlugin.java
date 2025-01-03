@@ -14,7 +14,6 @@ public class EagleMixinsPlugin implements IFMLLoadingPlugin {
 		MixinBootstrap.init();
 		//False for Vanilla/Coremod mixins, true for regular mod mixins
 		FermiumRegistryAPI.enqueueMixin(false, "mixins.eaglemixins.vanilla.json");
-		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.jei.json", () -> Loader.isModLoaded("jei"));
 		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.rlartifacts.json", () -> Loader.isModLoaded("artifacts"));
 	}
 
