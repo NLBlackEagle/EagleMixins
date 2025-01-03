@@ -6,7 +6,8 @@
   "target": "@env(DEFAULT)",
   "minVersion": "0.8",
   "mixins": [
-    "vanilla.BlockObserverMixin"
+    "vanilla.BlockObserverMixin",
+    "vanilla.ItemStackMixin"
   ],
   "injectors": {
     "maxShiftBy": 10
