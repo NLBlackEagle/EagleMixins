@@ -14,8 +14,6 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 minecraft {
     mappings channel: mappings_channel, version: mappings_version
 
-    accessTransformer = file('src/main/resources/eaglemixins_at.cfg')
-
     runs {
         client {
             args "--username=InDev"
@@ -82,8 +80,6 @@ processResources {
     filesMatching('mcmod.info') {
         expand replaceProperties
     }
-
-    rename '(.+_at.cfg)', 'META-INF/$1'
 }
 
 jar {
