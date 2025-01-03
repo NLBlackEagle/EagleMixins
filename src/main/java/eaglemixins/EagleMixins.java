@@ -1,5 +1,6 @@
 package eaglemixins;
 
+import eaglemixins.handlers.BarrierBlockHandler;
 import eaglemixins.handlers.HealthValidationHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -20,5 +21,6 @@ public class EagleMixins {
     public void preInit(FMLPreInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(BerianHandler.class);
         MinecraftForge.EVENT_BUS.register(HealthValidationHandler.class);
+        MinecraftForge.EVENT_BUS.register(BarrierBlockHandler.class);
     }
 }
