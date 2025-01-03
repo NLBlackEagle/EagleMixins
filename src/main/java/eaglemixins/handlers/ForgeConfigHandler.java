@@ -90,6 +90,10 @@ public class ForgeConfigHandler {
 		@Config.Comment("Effect that clicking on berians will always give")
 		@Config.Name("Berian Constant Effect")
 		public String berianConstantEffect = "mod_lavacow:soiled";
+		
+		@Config.Comment("Prevents Observers from ticking a redstone pulse on world gen")
+		@Config.Name("Patch Observer Ticking")
+		public boolean patchObserversTickingOnWorldGen = false;
 	}
 
 	public static class ClientConfig {
