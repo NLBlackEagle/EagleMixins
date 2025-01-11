@@ -7,7 +7,8 @@
   "minVersion": "0.8",
   "mixins": [
     "vanilla.BlockObserverMixin",
-    "vanilla.ItemStackMixin"
+    "vanilla.ItemStackMixin",
+    "vanilla.RandomValueRangeMixin"
   ],
   "injectors": {
     "maxShiftBy": 10
