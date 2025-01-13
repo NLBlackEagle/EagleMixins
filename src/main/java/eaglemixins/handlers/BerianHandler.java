@@ -47,22 +47,22 @@ public class BerianHandler {
             List<Potion> potions = ForgeConfigHandler.getSussyberianEffects();
             if(!potions.isEmpty()) {
                 Potion potion = potions.get(event.getWorld().rand.nextInt(potions.size()));
-                if(potion.isInstant()) potion.affectEntity(event.getEntityPlayer(), villager, null, 2, 1.0D);
+                if(potion.isInstant()) potion.affectEntity(villager, villager, event.getEntityPlayer(), 2, 1.0D);
                 else event.getEntityPlayer().addPotionEffect(new PotionEffect(potion, 200, 2));
             }
             Potion potion = ForgeConfigHandler.getBerianConstantEffect();
-            if(potion.isInstant()) potion.affectEntity(event.getEntityPlayer(), villager, null, 1, 1.0D);
+            if(potion.isInstant()) potion.affectEntity(villager, villager, event.getEntityPlayer(), 1, 1.0D);
             else event.getEntityPlayer().addPotionEffect(new PotionEffect(potion, 200, 1));
         }
         else if(villager.getEntityData().getBoolean("Mentalberian")) {
             List<Potion> potions = ForgeConfigHandler.getMentalberianEffects();
             if(!potions.isEmpty()) {
                 Potion potion = potions.get(event.getWorld().rand.nextInt(potions.size()));
-                if(potion.isInstant()) potion.affectEntity(event.getEntityPlayer(), villager, null, 1, 1.0D);
+                if(potion.isInstant()) potion.affectEntity(villager, villager, event.getEntityPlayer(), 1, 1.0D);
                 else event.getEntityPlayer().addPotionEffect(new PotionEffect(potion, 200, 1));
             }
             Potion potion = ForgeConfigHandler.getBerianConstantEffect();
-            if(potion.isInstant()) potion.affectEntity(event.getEntityPlayer(), villager, null, 1, 1.0D);
+            if(potion.isInstant()) potion.affectEntity(villager, villager, event.getEntityPlayer(), 1, 1.0D);
             else event.getEntityPlayer().addPotionEffect(new PotionEffect(potion, 200, 1));
         }
     }
