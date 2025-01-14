@@ -5,12 +5,13 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class BlockDropsHandler {
@@ -23,7 +24,6 @@ public class BlockDropsHandler {
         Block harvestedBlock = state.getBlock();
         if (harvestedBlock.getRegistryName() == null) return;
         String blockId = harvestedBlock.getRegistryName().toString();
-        event.getHarvester().sendMessage(new TextComponentString(blockId));
 
         // Aquaculture seaweed dropped from kelp, can be baked to become kelp and kelp can be used as a fuel source to smelt 2 items. (Same-ish as 1.16.5)
         if (blockId.equals("biomesoplenty:seaweed")) {
@@ -49,7 +49,6 @@ public class BlockDropsHandler {
         if(blockId.equals("dimstack:bedrock")) {
             event.getDrops().clear();
             int blockState = harvestedBlock.getMetaFromState(state);
-            event.getHarvester().sendMessage(new TextComponentString(""+blockState));
             // On Theta Barrier Destroyed
             if(blockState == 7) {
                 addDrop(event.getDrops(),harvesterRNG,"notreepunching:rock/stone", 1F);
@@ -88,9 +87,13 @@ public class BlockDropsHandler {
         }
     }
 
+    private static final Map<String,Item> itemMap = new HashMap<>();
+
     private static void addDrop(List<ItemStack> drops, Random rng, String location, float chance){
+        if(!itemMap.containsKey(location))
+            itemMap.put(location,Item.getByNameOrId(location));
         if(chance>=1.0F || rng.nextFloat()<chance) {
-            Item item = Item.getByNameOrId(location);
+            Item item = itemMap.get(location);
             if (item != null)
                 drops.add(new ItemStack(item));
         }

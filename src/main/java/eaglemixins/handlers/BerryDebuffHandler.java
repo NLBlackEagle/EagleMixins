@@ -5,11 +5,35 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class BerryDebuffHandler {
+    private static ArrayList<Potion> berryPotions = null;
+    private static final ArrayList<String> berryPotionStrings = new ArrayList<>(Arrays.asList("minecraft:nausea", "lycanitesmobs:aphagia", "simpledifficulty:parasites","mod_lavacow:soiled","potioncore:vulnerable"));
+
+    @Nullable
+    private static Potion getBerryPotion(int index) {
+        if (berryPotions == null) {
+            berryPotions = new ArrayList<>();
+            for (String potionString : berryPotionStrings) {
+                ResourceLocation location = new ResourceLocation(potionString);
+                if (ForgeRegistries.POTIONS.containsKey(location))
+                    berryPotions.add(ForgeRegistries.POTIONS.getValue(location));
+                else
+                    berryPotions.add(null);
+            }
+        }
+        return berryPotions.get(index);
+    }
+
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onItemuseFinish(LivingEntityUseItemEvent.Finish event) {
         if (event.getEntity().world.isRemote) return;
@@ -27,27 +51,27 @@ public class BerryDebuffHandler {
 
         Potion potion;
         if (potionRoll < 10) {
-            potion = Potion.getPotionFromResourceLocation("minecraft:nausea");
+            potion = getBerryPotion(0);
             if (potion != null)
                 player.addPotionEffect(new PotionEffect(potion, duration, amplifier));
         }
         if (potionRoll < 7) {
-            potion = Potion.getPotionFromResourceLocation("lycanitesmobs:aphagia");
+            potion = getBerryPotion(1);
             if (potion != null)
                 player.addPotionEffect(new PotionEffect(potion, duration, amplifier));
         }
         if (potionRoll < 5) {
-            potion = Potion.getPotionFromResourceLocation("simpledifficulty:parasites");
+            potion = getBerryPotion(2);
             if (potion != null)
                 player.addPotionEffect(new PotionEffect(potion, duration, amplifier));
         }
         if (potionRoll < 3) {
-            potion = Potion.getPotionFromResourceLocation("mod_lavacow:soiled");
+            potion = getBerryPotion(3);
             if (potion != null)
                 player.addPotionEffect(new PotionEffect(potion, duration, amplifier));
         }
         if (potionRoll < 1) {
-            potion = Potion.getPotionFromResourceLocation("potioncore:vulnerable");
+            potion = getBerryPotion(4);
             if (potion != null)
                 player.addPotionEffect(new PotionEffect(potion, duration, amplifier));
         }

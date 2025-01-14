@@ -12,12 +12,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Entity.class)
 public abstract class EntityDropItemMixin {
+
     @Inject(
             method = "entityDropItem",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/item/EntityItem;<init>(Lnet/minecraft/world/World;DDDLnet/minecraft/item/ItemStack;)V"),
             cancellable = true
     )
-    void stopDisarmingSentientDragonbone(ItemStack stack, float offsetY, CallbackInfoReturnable<EntityItem> cir) {
+    public void stopDisarmingSentientDragonbone(ItemStack stack, float offsetY, CallbackInfoReturnable<EntityItem> cir) {
         //Players are allowed to drop their weapons or get their weapons disarmed
         if ((Entity) (Object) this instanceof EntityPlayer) return;
 
@@ -25,6 +26,7 @@ public abstract class EntityDropItemMixin {
         if (resourceLocation == null) return;
         String itemId = resourceLocation.toString();
 
+        //This is a bit laggy but idk how to do this in a more performant way
         if (itemId.contains("living") || itemId.contains("sentient") || itemId.contains("dragonbone"))
             //Dont drop anything
             cir.setReturnValue(null);

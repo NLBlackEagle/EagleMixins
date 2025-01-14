@@ -2,7 +2,6 @@ package eaglemixins.handlers;
 
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -10,7 +9,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -29,7 +27,9 @@ public class SentientWeaponEvolutionHandler {
     public static void onLivingDeath(LivingDeathEvent event){
         EntityLivingBase victim = event.getEntityLiving();
         if(victim == null || victim.world.isRemote) return;
-        if(!EntityList.getKey(victim).getNamespace().equals("srparasites")) return;
+        ResourceLocation location = EntityList.getKey(victim);
+        if(location == null) return;
+        if(!location.getNamespace().equals("srparasites")) return;
 
         if(!(event.getSource().getTrueSource() instanceof EntityPlayer)) return;
         EntityPlayer player = (EntityPlayer) event.getSource().getTrueSource();
