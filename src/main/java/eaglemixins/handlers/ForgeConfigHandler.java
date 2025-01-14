@@ -94,6 +94,10 @@ public class ForgeConfigHandler {
 		@Config.Comment("Prevents Observers from ticking a redstone pulse on world gen")
 		@Config.Name("Patch Observer Ticking")
 		public boolean patchObserversTickingOnWorldGen = false;
+
+		@Config.Comment("Removes old item attributes (atk dmg and atk speed) from 1.0.4")
+		@Config.Name("Remove old Attribute Modifiers")
+		public boolean removeOldAttributes = true;
 	}
 
 	public static class ClientConfig {
