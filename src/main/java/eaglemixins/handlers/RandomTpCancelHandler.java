@@ -28,16 +28,16 @@ public class RandomTpCancelHandler {
         if (!(entityApplied instanceof EntityPlayer)) return;
         EntityPlayer player = (EntityPlayer) event.getEntityLiving();
         if (player == null) return;
+        if (!(event.getItem().getItem() instanceof ItemChorusFruit)) return;
         String biomeName = player.world.getBiome(player.getPosition()).getBiomeName();
         if (!biomeNames.contains(biomeName)) return;
 
-        if (event.getItem().getItem() instanceof ItemChorusFruit)
-            applyTpCooldownDebuffs(player);
+        applyTpCooldownDebuffs(player);
     }
 
     //When applying a potion effect
     @SubscribeEvent
-    public static void onPotionApplicable(PotionEvent.PotionApplicableEvent event) {
+    public static void onPotionApplicable(PotionEvent.PotionAddedEvent event) {
         EntityLivingBase entityApplied = event.getEntityLiving();
         if(entityApplied.world.isRemote) return;
         if (!(entityApplied instanceof EntityPlayer)) return;
@@ -81,15 +81,18 @@ public class RandomTpCancelHandler {
                     ResourceLocation location = new ResourceLocation(potionString);
                     if (ForgeRegistries.POTIONS.containsKey(location))
                         tpCooldownPotions.add(ForgeRegistries.POTIONS.getValue(location));
+                    else
+                        tpCooldownPotions.add(null);
                 }
             }
-            //Sanity check for all cooldown potion strings found as registered potions
-            if (tpCooldownPotions.size() == tpCooldownPotionStrings.size()) {
-                //Potion Sickness
+
+            //Potion Sickness
+            if (tpCooldownPotions.get(0) != null)
                 player.addPotionEffect(new PotionEffect(tpCooldownPotions.get(0), 200, 1));
-                //Surface Teleport
+
+            //Surface Teleport
+            if (tpCooldownPotions.get(1) != null)
                 player.addPotionEffect(new PotionEffect(tpCooldownPotions.get(1), 5, 0));
-            }
         }
     }
 }

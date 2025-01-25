@@ -3,7 +3,7 @@ package eaglemixins.mixin.vanilla;
 import com.google.common.collect.Multimap;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
-import eaglemixins.handlers.ForgeConfigHandler;
+import eaglemixins.config.ForgeConfigHandler;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.inventory.EntityEquipmentSlot;

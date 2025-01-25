@@ -17,8 +17,6 @@ import svenhjol.charm.world.entity.EntityChargedEmerald;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static net.minecraft.util.text.translation.I18n.translateToLocal;
-
 public class SentientWeaponEvolutionHandler {
     private static final ArrayList<String> livingWeaponsNoTag = new ArrayList<>(Arrays.asList("weapon_bow","armor_boots","armor_pants","armor_chest","armor_helm"));
     private static final ArrayList<String> livingWeaponsWithTag = new ArrayList<>(Arrays.asList("weapon_scythe","weapon_axe","weapon_sword","weapon_cleaver","weapon_maul","weapon_lance"));
