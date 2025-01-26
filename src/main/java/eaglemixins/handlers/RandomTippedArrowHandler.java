@@ -81,7 +81,6 @@ public class RandomTippedArrowHandler {
 
         //Jester has higher chance to get long arrow (20%) and swaps every time (100%)
         //Other mobs have low chance for long arrow (1%) and only swap sometimes (20%)
-        //TODO: do jesters even get created somewhere? they don't turn up in the above livingUpdate subscriber
         boolean isJester = attacker.hasCustomName() && attacker.getName().contains("Jester");
         if((isJester && doSwap) || (doSwap && newArrowIsLong))
             attacker.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, ForgeConfigHandler.getRandomArrowStack(attacker.getRNG(),true));

@@ -3,10 +3,8 @@ package eaglemixins.handlers;
 import eaglemixins.util.Ref;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
-import net.minecraft.init.PotionTypes;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.potion.PotionType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -50,12 +48,15 @@ public class PotionEffectsByFluidsHandler {
     }
 
     private static final List<String> effectStrings = Arrays.asList(
+            //Dead Blood
             "potioncore:dispel",
             "potioncore:weight",
             "minecraft:slowness",
             "srparasites:corrosive",
+            //BOP Blood
             "elenaidodge:sluggish",
             "lycanitesmobs:aphagia",
+            //Hot Spring Water
             "potioncore:potion_sickness",
             "potioncore:explode",
             "potioncore:launch",

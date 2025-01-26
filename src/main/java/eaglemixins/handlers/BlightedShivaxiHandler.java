@@ -40,9 +40,7 @@ public class BlightedShivaxiHandler {
         ResourceLocation entityId = EntityList.getKey(entity);
         if (!Ref.playerBossReg.equals(entityId)) return;
         if (!entity.getName().equals("Shivaxi")) return;
-
-        Biome biome = entity.world.getBiome(entity.getPosition());
-        if (!Ref.abyssalRiftReg.equals(biome.getRegistryName())) return;
+        if (!Ref.entityIsInAbyssalRift(entity)) return;
 
         entity.world.createExplosion(entity, entity.posX, entity.posY, entity.posZ, 4, false);
 
@@ -103,15 +101,13 @@ public class BlightedShivaxiHandler {
     private static final String spawnCountKey = "MinionsSpawned";
 
     //summon playerbosses:player_boss ~ ~1 ~ {CustomName:"§4☢ §5§lBlighted Shivaxi§r §4☢"}
-    //Function giving Shivaxi a phase 2 below 10 health if in Abyssal Rift
+    //Function giving Abyssal Rift Shivaxi two phases at lower health where it spawns parasites
     @SubscribeEvent
     public static void onLivingDamage(LivingDamageEvent event) {
         EntityLivingBase entity = event.getEntityLiving();
-        ResourceLocation biomeReg = entity.world.getBiome(entity.getPosition()).getRegistryName();
-        if(biomeReg == null || !biomeReg.equals(Ref.abyssalRiftReg)) return;
+        if(!Ref.entityIsInAbyssalRift(entity)) return;
 
         //Damage cap set at 100 per hit on abyssal rift bosses
-        //TODO: this used lycanite boss property before, why
         if(event.getAmount() > 100 && !entity.isNonBoss())
             event.setAmount(100);
 

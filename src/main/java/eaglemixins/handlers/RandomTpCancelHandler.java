@@ -1,6 +1,5 @@
 package eaglemixins.handlers;
 
-import eaglemixins.EagleMixins;
 import eaglemixins.util.Ref;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -30,7 +29,7 @@ public class RandomTpCancelHandler {
         applyTpCooldownDebuffs((EntityPlayer) entity);
     }
 
-    //When applying a potion effect
+    //When applying a non-instant potion effect
     @SubscribeEvent
     public static void onPotionAdded(PotionEvent.PotionAddedEvent event) {
         EntityLivingBase entity = event.getEntityLiving();
@@ -43,7 +42,11 @@ public class RandomTpCancelHandler {
     }
 
     private static ArrayList<Potion> tpPotions = null;
-    private static final ArrayList<String> tpPotionStrings = new ArrayList<>(Arrays.asList("potioncore:teleport", "potioncore:strong_teleport", "mujmajnkraftsbettersurvival:warp"));
+    private static final ArrayList<String> tpPotionStrings = new ArrayList<>(Arrays.asList(
+            "potioncore:teleport",
+            "potioncore:strong_teleport",
+            "mujmajnkraftsbettersurvival:warp"
+    ));
 
     public static boolean isTpPotion(Potion potion) {
         if (tpPotions == null) {
@@ -58,15 +61,19 @@ public class RandomTpCancelHandler {
     }
 
     private static ArrayList<Potion> tpCooldownPotions = null;
-    private static final ArrayList<String> tpCooldownPotionStrings = new ArrayList<>(Arrays.asList("potioncore:potion_sickness", "potioncore:teleport_surface"));
+    private static final ArrayList<String> tpCooldownPotionStrings = new ArrayList<>(Arrays.asList(
+            "potioncore:potion_sickness",
+            "potioncore:teleport_surface"
+    ));
+    private static final String tpCooldownKey = "TeleportCooldown";
 
     public static void applyTpCooldownDebuffs(EntityPlayer player) {
-        if (!player.getEntityData().hasKey("TeleportCooldown")) {
-            player.getEntityData().setLong("TeleportCooldown", player.world.getTotalWorldTime());
+        if (!player.getEntityData().hasKey(tpCooldownKey)) {
+            player.getEntityData().setLong(tpCooldownKey, player.world.getTotalWorldTime());
         } else {
-            long oldCooldown = player.getEntityData().getLong("TeleportCooldown");
+            long oldCooldown = player.getEntityData().getLong(tpCooldownKey);
             long currentTime = player.world.getWorldTime();
-            player.getEntityData().setLong("TeleportCooldown", currentTime);
+            player.getEntityData().setLong(tpCooldownKey, currentTime);
             if (currentTime > oldCooldown + 100) return;
 
             if (tpCooldownPotions == null) {

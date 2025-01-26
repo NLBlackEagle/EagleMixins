@@ -1,6 +1,7 @@
 package eaglemixins.handlers;
 
 import eaglemixins.util.Ref;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,8 +20,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class SentientWeaponEvolutionHandler {
-    private static final ArrayList<String> livingWeaponsNoTag = new ArrayList<>(Arrays.asList("weapon_bow","armor_boots","armor_pants","armor_chest","armor_helm"));
-    private static final ArrayList<String> livingWeaponsWithTag = new ArrayList<>(Arrays.asList("weapon_scythe","weapon_axe","weapon_sword","weapon_cleaver","weapon_maul","weapon_lance"));
+    private static final ArrayList<String> livingWeaponsNoTag = new ArrayList<>(Arrays.asList(
+            "weapon_bow",
+            "armor_boots",
+            "armor_pants",
+            "armor_chest",
+            "armor_helm"
+    ));
+    private static final ArrayList<String> livingWeaponsWithTag = new ArrayList<>(Arrays.asList(
+            "weapon_scythe",
+            "weapon_axe",
+            "weapon_sword",
+            "weapon_cleaver",
+            "weapon_maul",
+            "weapon_lance"
+    ));
+    private static final String srpkillsKey = "srpkills";
 
     @SubscribeEvent
     public static void onLivingDeath(LivingDeathEvent event){
@@ -53,21 +68,21 @@ public class SentientWeaponEvolutionHandler {
                 //Setup NBT tags if living item is fresh
                 if (!stack.hasTagCompound())
                     stack.setTagCompound(new NBTTagCompound());
-                if(!stack.getTagCompound().hasKey("srpkills"))
-                    stack.getTagCompound().setInteger("srpkills", 0);
+                if(!stack.getTagCompound().hasKey(srpkillsKey))
+                    stack.getTagCompound().setInteger(srpkillsKey, 0);
 
                 //Set srpkills tag
-                int currentKills = stack.getTagCompound().getInteger("srpkills") + dividedHealth;
-                stack.getTagCompound().setInteger("srpkills", currentKills);
+                int currentKills = stack.getTagCompound().getInteger(srpkillsKey) + dividedHealth;
+                stack.getTagCompound().setInteger(srpkillsKey, currentKills);
 
                 //Set Lore tags
                 if (hasNoTag) {
                     String srpkillsToolTip = "" + TextFormatting.RESET + TextFormatting.BLUE + "---> " + currentKills;
-                    String itemToWrite = itemId.equals("weapon_bow") ? "bow" : "armor";
-                    String loreTag = "" + TextFormatting.RESET + TextFormatting.DARK_PURPLE + TextFormatting.ITALIC + " Your " + itemToWrite + " tasted blood, now it longs for Parasites...";
+                    String itemToWrite = itemId.equals("weapon_bow") ? I18n.format(I18n.format("eaglemixins.srptooltip.bow")) : I18n.format("eaglemixins.srptooltip.armor");
+                    String loreTag = "" + TextFormatting.RESET + TextFormatting.DARK_PURPLE + TextFormatting.ITALIC + " " + itemToWrite;
                     setLore(stack, srpkillsToolTip + loreTag);
                 } else {
-                    String loreTag = "" + TextFormatting.RESET + TextFormatting.DARK_PURPLE + TextFormatting.ITALIC + " Your weapon tasted blood, now it longs for Parasites...";
+                    String loreTag = "" + TextFormatting.RESET + TextFormatting.DARK_PURPLE + TextFormatting.ITALIC + " "+ I18n.format("eaglemixins.srptooltip.weapon");
                     setLore(stack, loreTag);
                 }
 

@@ -69,7 +69,7 @@ public class DismountHandler {
 
         EntityPlayer player = (EntityPlayer) event.getEntityMounting();
         if (biomeNames.contains(player.world.getBiome(player.getPosition()).getRegistryName())){
-            player.sendStatusMessage(new TextComponentTranslation("eaglemixins.messages.mountspooked", new Object[0]), true);
+            player.sendStatusMessage(new TextComponentTranslation("eaglemixins.messages.mountspooked"), true);
             event.setCanceled(true);
         }
     }

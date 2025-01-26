@@ -1,6 +1,5 @@
 package eaglemixins.handlers;
 
-import eaglemixins.EagleMixins;
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.util.Ref;
 import net.minecraft.entity.Entity;

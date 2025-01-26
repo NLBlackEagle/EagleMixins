@@ -18,7 +18,13 @@ import java.util.Arrays;
 
 public class BerryDebuffHandler {
     private static ArrayList<Potion> berryPotions = null;
-    private static final ArrayList<String> berryPotionStrings = new ArrayList<>(Arrays.asList("minecraft:nausea", "lycanitesmobs:aphagia", "simpledifficulty:parasites","mod_lavacow:soiled","potioncore:vulnerable"));
+    private static final ArrayList<String> berryPotionStrings = new ArrayList<>(Arrays.asList(
+            "minecraft:nausea",
+            "lycanitesmobs:aphagia",
+            "simpledifficulty:parasites",
+            "mod_lavacow:soiled",
+            "potioncore:vulnerable"
+    ));
 
     @Nullable
     private static Potion getBerryPotion(int index) {
@@ -36,7 +42,7 @@ public class BerryDebuffHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onItemuseFinish(LivingEntityUseItemEvent.Finish event) {
+    public static void onItemUseFinish(LivingEntityUseItemEvent.Finish event) {
         if (event.getEntity().world.isRemote) return;
         EntityLivingBase entity = event.getEntityLiving();
         if (!(entity instanceof EntityPlayer)) return;

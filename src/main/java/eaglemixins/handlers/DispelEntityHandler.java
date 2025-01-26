@@ -1,6 +1,5 @@
 package eaglemixins.handlers;
 
-import eaglemixins.EagleMixins;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
@@ -12,7 +11,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DispelEntityHandler {
-    private static final List<String> effectStrings = Arrays.asList("potioncore:dispel","biomesoplenty:curse");
+    private static final List<String> effectStrings = Arrays.asList(
+            "potioncore:dispel",
+            "biomesoplenty:curse"
+    );
     private static List<PotionEffect> effects = null;
     private static PotionEffect getEffect(int id) {
         if (effects == null) {

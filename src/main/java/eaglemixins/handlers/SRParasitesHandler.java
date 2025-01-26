@@ -65,6 +65,7 @@ public class SRParasitesHandler {
         if (world.provider.getDimension() == 3) return;
 
         //Slowly kill Parasites outside Abyssal Rift and the other named biomes
+        //TODO: otg get biome instead of using this clientside function
         String biomeName = entity.world.getBiome(entity.getPosition()).getBiomeName();
         if (biomesParasitesStayAlive.contains(biomeName)) return;
 
@@ -102,6 +103,7 @@ public class SRParasitesHandler {
         if(entityId == null) return;
         if(!entityId.getNamespace().equals(Ref.SRPMODID)) return;
         String biomeName = event.getWorld().getBiome(entity.getPosition()).getBiomeName();
+        //TODO: otg get biome instead of using this clientside function
         if(!biomesParasiteSpawnersAllowed.contains(biomeName))
             event.setResult(Event.Result.DENY);
     }
@@ -139,19 +141,13 @@ public class SRParasitesHandler {
     // OW SRParasites cancel loot if not in whitelisted biome
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onLivingDrops(LivingDropsEvent event){
-        EagleMixins.LOGGER.info("corrupted ashes are air111 "+getCorruptedAshes().isEmpty());
-
-        EagleMixins.LOGGER.info("1");
         if(event.getDrops().isEmpty()) return;
         EntityLivingBase entity = event.getEntityLiving();
-        EagleMixins.LOGGER.info("2");
         if(entity.dimension != 0) return;
         ResourceLocation entityId = EntityList.getKey(entity);
-        EagleMixins.LOGGER.info("3");
         if(entityId == null) return;
+        //TODO: otg get biome instead of using this clientside function
         String biomeName = entity.world.getBiome(entity.getPosition()).getBiomeName();
-
-        EagleMixins.LOGGER.info("corrupted ashes are air "+getCorruptedAshes().isEmpty());
 
         //Reduce enchanted book drops in Abyssal Rift (except from infernal mobs)
         // Translators note: don't ask me why
@@ -172,10 +168,8 @@ public class SRParasitesHandler {
                 return;
             }
         }
-        EagleMixins.LOGGER.info("4");
         //Rest of this method only applies to parasites
         if(!entityId.getNamespace().equals(Ref.SRPMODID)) return;
-        EagleMixins.LOGGER.info("5");
 
         //But not to ones that have special names
         if(entity.hasCustomName()) {
@@ -184,7 +178,6 @@ public class SRParasitesHandler {
                 if (customName.contains(specialName))
                     return;
         }
-        EagleMixins.LOGGER.info("6");
 
         if(biomesParasiteDropsReduced.contains(biomeName)){
             List<EntityItem> itemsToRemove = new ArrayList<>();

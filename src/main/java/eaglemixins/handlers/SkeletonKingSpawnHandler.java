@@ -22,6 +22,7 @@ public class SkeletonKingSpawnHandler {
         Item usedItem = usedStack.getItem();
         if (usedItem != FishItems.KINGS_CROWN || usedStack.getMetadata() != 1) return;
 
+        //TODO: otg get biome instead of using this clientside function
         String biomeName = event.getWorld().getBiome(player.getPosition()).getBiomeName();
         if (!biomeName.contains("Desert") && !biomeName.contains("Dune") && !biomeName.contains("Wasteland")) return;
 
