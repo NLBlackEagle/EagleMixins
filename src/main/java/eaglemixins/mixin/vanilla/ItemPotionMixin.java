@@ -1,6 +1,5 @@
 package eaglemixins.mixin.vanilla;
 
-import eaglemixins.EagleMixins;
 import eaglemixins.handlers.RandomTpCancelHandler;
 import eaglemixins.util.Ref;
 import net.minecraft.entity.Entity;
@@ -8,9 +7,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.potion.Potion;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.world.biome.Biome;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
