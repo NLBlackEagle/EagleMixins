@@ -36,13 +36,12 @@ public class DispelEntityHandler {
         if (event.getSource().getTrueSource() == null) return;
         if (!(event.getSource().getTrueSource() instanceof EntityLivingBase)) return;
         EntityLivingBase attacker = (EntityLivingBase) event.getSource().getTrueSource();
-        EagleMixins.LOGGER.info("Dispelling entity has name "+attacker.getName());
         if (!attacker.hasCustomName()) return;
         EntityLivingBase victim = event.getEntityLiving();
 
-        if (attacker.getCustomNameTag().contains("Dispel") || attacker.getCustomNameTag().contains("Sarevok"))
+        if (attacker.getName().contains("Dispel") || attacker.getName().contains("Sarevok"))
             victim.addPotionEffect(getEffect(0));   //Dispel
-        if (attacker.getCustomNameTag().contains("Sarevok"))
+        if (attacker.getName().contains("Sarevok"))
             victim.addPotionEffect(getEffect(1));   //Curse
     }
 }

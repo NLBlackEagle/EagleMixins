@@ -1,11 +1,14 @@
 package eaglemixins.handlers;
 
 import eaglemixins.config.ForgeConfigHandler;
+import eaglemixins.util.Ref;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -25,12 +28,12 @@ public class DismountHandler {
         if(event.getSource() == null) return;
 
         String damageType = event.getSource().getDamageType();
-        boolean doDismount = damageType.equals("lightningBolt") || event.getAmount() > 6;
+        boolean doDismount = damageType.equals(DamageSource.LIGHTNING_BOLT.damageType) || event.getAmount() > 6;
 
         if(event.getSource().getTrueSource() instanceof EntityLivingBase) {
             EntityLivingBase attacker = (EntityLivingBase) event.getSource().getTrueSource();
             if(attacker.hasCustomName())
-                if(attacker.getCustomNameTag().contains("Dismounter") || attacker.getCustomNameTag().contains("Dismounting"))
+                if(attacker.getName().contains("Dismounter") || attacker.getName().contains("Dismounting"))
                     doDismount = true;
         }
         if(damageType.equals("dragon_ice") || damageType.equals("dragon_fire") || damageType.equals("dragon_lightning")){
@@ -49,7 +52,7 @@ public class DismountHandler {
         }
     }
 
-    private static final List<String> biomeNames = Arrays.asList("Parasite Biome", "Abyssal Rift");
+    private static final List<ResourceLocation> biomeNames = Arrays.asList(Ref.abyssalRiftReg, Ref.parasiteBiomeReg);
 
     @SubscribeEvent
     public static void onEntityMount(EntityMountEvent event){
@@ -64,10 +67,8 @@ public class DismountHandler {
                 if(allowedMount.equals(mountId.toString()))
                     return;
 
-
         EntityPlayer player = (EntityPlayer) event.getEntityMounting();
-        //TODO: all those biome name checks use a client side only method serverside. idk if thats a problem
-        if (biomeNames.contains(player.world.getBiome(player.getPosition()).getBiomeName())){
+        if (biomeNames.contains(player.world.getBiome(player.getPosition()).getRegistryName())){
             player.sendStatusMessage(new TextComponentTranslation("eaglemixins.messages.mountspooked", new Object[0]), true);
             event.setCanceled(true);
         }
@@ -77,6 +78,7 @@ public class DismountHandler {
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if(event.phase != TickEvent.Phase.START) return;
         EntityPlayer player = event.player;
         World world = player.world;
         if (world.isRemote) return;
@@ -87,14 +89,14 @@ public class DismountHandler {
         if (!(player.getRidingEntity() instanceof EntityLivingBase)) return;
 
         //Deadblood always dismounts
-        if(world.getBlockState(player.getPosition()).getBlock().getRegistryName().toString().equals("srparasites:deadblood")) {
+        if(Ref.deadBloodReg.equals(world.getBlockState(player.getPosition()).getBlock().getRegistryName())) {
             event.player.removePassengers();
             event.player.dismountRidingEntity();
             return;
         }
 
         //Otherwise handle Parasite Biome / Abyssal Rift dismount
-        if (!biomeNames.contains(world.getBiome(player.getPosition()).getBiomeName())){
+        if (!biomeNames.contains(player.world.getBiome(player.getPosition()).getRegistryName())){
             player.getEntityData().setLong(dismountKey, 0);
             return;
         }
@@ -115,7 +117,7 @@ public class DismountHandler {
 
             event.player.removePassengers();
             event.player.dismountRidingEntity();
-            event.player.addPotionEffect(new PotionEffect(ConductivityHandler.getLightning()));
+            event.player.addPotionEffect(new PotionEffect(Ref.getLightning()));
         }
     }
 }

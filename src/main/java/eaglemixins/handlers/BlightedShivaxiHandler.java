@@ -7,8 +7,8 @@ import c4.champions.common.capability.IChampionship;
 import c4.champions.common.rank.Rank;
 import c4.champions.common.rank.RankManager;
 import c4.champions.common.util.ChampionHelper;
-import eaglemixins.EagleMixins;
 import eaglemixins.config.ForgeConfigHandler;
+import eaglemixins.util.Ref;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.nbt.NBTTagCompound;
@@ -30,9 +30,6 @@ import java.util.Set;
 
 //By fonny, copied from RLMixins.DregoraScriptHandler
 public class BlightedShivaxiHandler {
-    private static final ResourceLocation playerBossReg = new ResourceLocation("playerbosses:player_boss");
-    private static final ResourceLocation playerBossBiome = new ResourceLocation("openterraingenerator:overworld_abyssal_rift");
-    private static final ResourceLocation dragonBossReg = new ResourceLocation("srparasites:sim_dragone");
     private static final String blightedShivaxiName = TextFormatting.DARK_RED + "☢ " + TextFormatting.DARK_GREEN + TextFormatting.BOLD + "Blighted Shivaxi" + TextFormatting.RESET + TextFormatting.DARK_RED + " ☢";
 
     @SubscribeEvent
@@ -41,15 +38,15 @@ public class BlightedShivaxiHandler {
         if (entity == null || entity.world.isRemote || entity.dimension != 0) return;
 
         ResourceLocation entityId = EntityList.getKey(entity);
-        if (!playerBossReg.equals(entityId)) return;
+        if (!Ref.playerBossReg.equals(entityId)) return;
         if (!entity.getName().equals("Shivaxi")) return;
 
         Biome biome = entity.world.getBiome(entity.getPosition());
-        if (!playerBossBiome.equals(biome.getRegistryName())) return;
+        if (!Ref.abyssalRiftReg.equals(biome.getRegistryName())) return;
 
         entity.world.createExplosion(entity, entity.posX, entity.posY, entity.posZ, 4, false);
 
-        Entity regEnt = EntityList.createEntityByIDFromName(dragonBossReg, entity.world);
+        Entity regEnt = EntityList.createEntityByIDFromName(Ref.dragonBossReg, entity.world);
         if (!(regEnt instanceof EntityLiving)) return;
         EntityLiving toSpawn = (EntityLiving) regEnt;
 
@@ -103,13 +100,15 @@ public class BlightedShivaxiHandler {
     private static final int[] phase3Weights = {5, 4, 3, 2, 1};
     private static final int phase3TotalWeights = 15;
 
+    private static final String spawnCountKey = "MinionsSpawned";
+
     //summon playerbosses:player_boss ~ ~1 ~ {CustomName:"§4☢ §5§lBlighted Shivaxi§r §4☢"}
     //Function giving Shivaxi a phase 2 below 10 health if in Abyssal Rift
     @SubscribeEvent
     public static void onLivingDamage(LivingDamageEvent event) {
         EntityLivingBase entity = event.getEntityLiving();
-        String biomeName = entity.world.getBiome(entity.getPosition()).getBiomeName();
-        if(!biomeName.equals("Abyssal Rift")) return;
+        ResourceLocation biomeReg = entity.world.getBiome(entity.getPosition()).getRegistryName();
+        if(biomeReg == null || !biomeReg.equals(Ref.abyssalRiftReg)) return;
 
         //Damage cap set at 100 per hit on abyssal rift bosses
         //TODO: this used lycanite boss property before, why
@@ -118,24 +117,22 @@ public class BlightedShivaxiHandler {
 
         ResourceLocation entityId = EntityList.getKey(entity);
         if (entityId == null) return;
-        if(entityId.toString().equals("playerbosses:player_boss")){
+        if(entityId.equals(Ref.playerBossReg)){
             float maxHealth = entity.getMaxHealth();
             float phase2 = maxHealth/2;
             float phase3 = maxHealth/4;
             float currHealth = entity.getHealth();
 
-            if(!entity.getEntityData().hasKey("EntityCount"))
-                entity.getEntityData().setInteger("EntityCount",0);
-            int spawnedCounter = entity.getEntityData().getInteger("EntityCount");
+            if(!entity.getEntityData().hasKey(spawnCountKey))
+                entity.getEntityData().setInteger(spawnCountKey,0);
+            int spawnedCounter = entity.getEntityData().getInteger(spawnCountKey);
 
             boolean isPhase2 = currHealth < phase2;
             boolean isPhase3 = currHealth < phase3;
 
             if(isPhase2 || isPhase3) {
-                if(isPhase3)
-                    event.setAmount(event.getAmount() * 0.25F);
-                else
-                    event.setAmount(event.getAmount() * 0.75F);
+                if(isPhase3) event.setAmount(event.getAmount() * 0.25F);
+                else event.setAmount(event.getAmount() * 0.75F);
 
                 if(spawnedCounter < 50) {
                     int spawnCount = entity.getRNG().nextInt(6);
@@ -164,7 +161,7 @@ public class BlightedShivaxiHandler {
                             }
                         }
                     }
-                    entity.getEntityData().setInteger("EntityCount",spawnedCounter);
+                    entity.getEntityData().setInteger(spawnCountKey,spawnedCounter);
                 }
             }
         }

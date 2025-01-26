@@ -1,6 +1,8 @@
 package eaglemixins.handlers;
 
+import biomesoplenty.api.item.BOPItems;
 import eaglemixins.EagleMixins;
+import eaglemixins.util.Ref;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
@@ -16,6 +18,7 @@ import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.ArrayList;
@@ -44,9 +47,9 @@ public class SRParasitesHandler {
         if (world.getTotalWorldTime() % 50 != 0) return;
         if (world.provider.getDimension() != 0 && world.provider.getDimension() != 3) return;
 
-        ResourceLocation entityId = EntityList.getKey(event.getEntityLiving());
+        ResourceLocation entityId = EntityList.getKey(entity);
         if (entityId == null) return;
-        if (!entityId.getNamespace().equals("srparasites")) return;
+        if (!entityId.getNamespace().equals(Ref.SRPMODID)) return;
 
         //Kill all other beckons around one beckon
         if (entityId.getPath().contains("beckon")) {
@@ -67,7 +70,7 @@ public class SRParasitesHandler {
 
         float health = entity.getHealth();
 
-        if (biomeName.equals("Abyssal Rift")) {
+        if (Ref.entityIsInAbyssalRift(entity)) {
             if (entityId.getPath().contains("beckon") || entityId.getPath().contains("dispatcher"))
                 entity.setDead();
         } else if (health > 1000)
@@ -97,22 +100,23 @@ public class SRParasitesHandler {
         EntityLivingBase entity = event.getEntityLiving();
         ResourceLocation entityId = EntityList.getKey(entity);
         if(entityId == null) return;
-        if(!entityId.getNamespace().equals("srparasites")) return;
+        if(!entityId.getNamespace().equals(Ref.SRPMODID)) return;
         String biomeName = event.getWorld().getBiome(entity.getPosition()).getBiomeName();
         if(!biomesParasiteSpawnersAllowed.contains(biomeName))
             event.setResult(Event.Result.DENY);
     }
 
-    private static final List<String> biomesParasiteDropsReduced = Arrays.asList(
-            "Heath",
+    private static final List<String> biomesParasiteDropsReduced = biomesParasiteSpawnersAllowed;
+        /*Arrays.asList(
+            "biomesoplenty:wasteland",
             "Steppe",
-            "Wasteland",
-            "Abyssal Rift",
-            "Parasite Biome",
-            "Ruins of Blight",
-            "Nuclear Ruins",
-            "Lair of the Thing"
-    );
+            "biomesoplenty:wasteland",
+            "openterraingenerator:overworld_abyssal_rift",
+            "srparasites:biome_parasite",
+            "openterraingenerator:overworld_ruins_of_blight",
+            "openterraingenerator:overworld_nuclear_ruins",
+            "openterraingenerator:overworld_lair_of_the_thing"
+    );*/
 
     private static final List<String> parasiteNamesKeepDrops = Arrays.asList(
             "Sentient Horror",
@@ -126,69 +130,78 @@ public class SRParasitesHandler {
     private static ItemStack corruptedAshes = null;
     private static ItemStack getCorruptedAshes(){
         if(corruptedAshes == null){
-            Item item = Item.getByNameOrId("biomesoplenty:ash");
-            if(item!=null) {
-                corruptedAshes = new ItemStack(item,1);
-                corruptedAshes.setTagInfo("Display",new NBTTagString("Corrupted Ashes"));
-            } else
-                corruptedAshes = ItemStack.EMPTY;
+            corruptedAshes = new ItemStack(BOPItems.ash,1);
+            corruptedAshes.setStackDisplayName("Corrupted Ashes");
         }
         return corruptedAshes.copy();
     }
 
-    // SRParasites in overworld Cancel loot if not in Whitelisted Biome
-    @SubscribeEvent
+    // OW SRParasites cancel loot if not in whitelisted biome
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onLivingDrops(LivingDropsEvent event){
+        EagleMixins.LOGGER.info("corrupted ashes are air111 "+getCorruptedAshes().isEmpty());
+
+        EagleMixins.LOGGER.info("1");
         if(event.getDrops().isEmpty()) return;
         EntityLivingBase entity = event.getEntityLiving();
-        if(entity.world.provider.getDimension() != 0) return;
+        EagleMixins.LOGGER.info("2");
+        if(entity.dimension != 0) return;
         ResourceLocation entityId = EntityList.getKey(entity);
+        EagleMixins.LOGGER.info("3");
         if(entityId == null) return;
         String biomeName = entity.world.getBiome(entity.getPosition()).getBiomeName();
 
-        //Keep drops inside Abyssal Rift except for book drops which are reduced (except for infernal mobs)
-        if(biomeName.equals("Abyssal Rift")) {
+        EagleMixins.LOGGER.info("corrupted ashes are air "+getCorruptedAshes().isEmpty());
+
+        //Reduce enchanted book drops in Abyssal Rift (except from infernal mobs)
+        // Translators note: don't ask me why
+        if(Ref.entityIsInAbyssalRift(entity)) {
+            List<EntityItem> itemsToRemove = new ArrayList<>();
             if (!entity.getEntityData().hasKey("InfernalMobsMod")) {
-                List<EntityItem> drops = new ArrayList<>(event.getDrops());
-                event.getDrops().clear();
-                for (EntityItem drop : drops) {
-                    if (drop.getItem().getItem().equals(Items.ENCHANTED_BOOK)) {
+                for (EntityItem drop : event.getDrops()) {
+                    if (drop.getItem().getItem().equals(Items.ENCHANTED_BOOK))
                         if (entity.getRNG().nextFloat() < 0.3)
-                            event.getDrops().add(drop);
-                    } else
-                        event.getDrops().add(drop);
+                            itemsToRemove.add(drop);
                 }
             }
-            if(entityId.toString().equals("playerbosses:player_boss"))
-                event.setCanceled(true);
-        }
+            event.getDrops().removeAll(itemsToRemove);
 
-        if(!entityId.getNamespace().equals("srparasites")) return;
+            //Remove normal Shivaxi Boss drops in Abyssal Rift
+            if(entityId.equals(Ref.playerBossReg)) {
+                event.setCanceled(true);
+                return;
+            }
+        }
+        EagleMixins.LOGGER.info("4");
+        //Rest of this method only applies to parasites
+        if(!entityId.getNamespace().equals(Ref.SRPMODID)) return;
+        EagleMixins.LOGGER.info("5");
+
+        //But not to ones that have special names
         if(entity.hasCustomName()) {
-            String customName = entity.getCustomNameTag();
+            String customName = entity.getName();
             for (String specialName : parasiteNamesKeepDrops)
                 if (customName.contains(specialName))
                     return;
         }
+        EagleMixins.LOGGER.info("6");
 
         if(biomesParasiteDropsReduced.contains(biomeName)){
-            List<EntityItem> drops = new ArrayList<>(event.getDrops());
-            event.getDrops().clear();
-            for (EntityItem drop : drops) {
+            List<EntityItem> itemsToRemove = new ArrayList<>();
+            List<EntityItem> itemsToAdd = new ArrayList<>();
+            for (EntityItem drop : event.getDrops()) {
                 ResourceLocation itemId = drop.getItem().getItem().getRegistryName();
                 if(itemId == null) continue;
-                if(itemId.getNamespace().equals("srparasites")) {
-                    //Based of healthmultiplier 0.5 & damagemultiplier 0.25 averaged out on 0.625 the overall strength of parasites in the overworld compared to lost cities parasites.
-                    if (entity.getRNG().nextFloat() < 0.625)
-                        event.getDrops().add(drop);
-                    else {
-                        EagleMixins.LOGGER.info("corrupted ashes are air "+getCorruptedAshes().isEmpty());
-                        event.getDrops().add(new EntityItem(entity.getEntityWorld(), entity.posX, entity.posY, entity.posZ, getCorruptedAshes()));
+                if(itemId.getNamespace().equals(Ref.SRPMODID)) {
+                    //Based of healthmultiplier 0.5 & damagemultiplier 0.25 averaged out on 0.625 the overall strength of ow parasites compared to LC parasites.
+                    if (entity.getRNG().nextFloat() < 0.375) {
+                        itemsToRemove.add(drop);
+                        itemsToAdd.add(new EntityItem(entity.getEntityWorld(), entity.posX, entity.posY, entity.posZ, getCorruptedAshes()));
                     }
-
-                } else
-                    event.getDrops().add(drop);
+                }
             }
+            event.getDrops().removeAll(itemsToRemove);
+            event.getDrops().addAll(itemsToAdd);
         } else {
             event.getDrops().clear();
             event.setCanceled(true);

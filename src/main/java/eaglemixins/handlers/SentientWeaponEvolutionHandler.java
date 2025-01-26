@@ -1,5 +1,6 @@
 package eaglemixins.handlers;
 
+import eaglemixins.util.Ref;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +28,7 @@ public class SentientWeaponEvolutionHandler {
         if(victim == null || victim.world.isRemote) return;
         ResourceLocation location = EntityList.getKey(victim);
         if(location == null) return;
-        if(!location.getNamespace().equals("srparasites")) return;
+        if(!location.getNamespace().equals(Ref.SRPMODID)) return;
 
         if(!(event.getSource().getTrueSource() instanceof EntityPlayer)) return;
         EntityPlayer player = (EntityPlayer) event.getSource().getTrueSource();
@@ -36,14 +37,14 @@ public class SentientWeaponEvolutionHandler {
         int srpItemsEquipped = 0;
         for(ItemStack stack : player.getEquipmentAndArmor()){
             ResourceLocation resourceLocation = stack.getItem().getRegistryName();
-            if(resourceLocation != null && resourceLocation.getNamespace().equals("srparasites"))
+            if(resourceLocation != null && resourceLocation.getNamespace().equals(Ref.SRPMODID))
                 srpItemsEquipped++;
         }
         int dividedHealth = (int) (Math.floor(victim.getMaxHealth()) / srpItemsEquipped);
 
         for(ItemStack stack : player.getEquipmentAndArmor()) {
             ResourceLocation resourceLocation = stack.getItem().getRegistryName();
-            if (resourceLocation != null && resourceLocation.getNamespace().equals("srparasites")) {
+            if (resourceLocation != null && resourceLocation.getNamespace().equals(Ref.SRPMODID)) {
                 String itemId = resourceLocation.getPath();
                 boolean hasNoTag = livingWeaponsNoTag.contains(itemId);
                 boolean hasTag = livingWeaponsWithTag.contains(itemId);

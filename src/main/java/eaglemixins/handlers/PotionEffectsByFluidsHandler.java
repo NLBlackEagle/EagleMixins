@@ -1,8 +1,12 @@
 package eaglemixins.handlers;
 
+import eaglemixins.util.Ref;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.MobEffects;
+import net.minecraft.init.PotionTypes;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.potion.PotionType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -13,13 +17,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public class PotionEffectsByFluidsHandler {
-    //Listener for player in SRP deadblood / BOP Hot Spring Water / BOP blood
+    //Listener for player in SRP deadblood / BOP blood / BOP Hot Spring Water
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if(event.phase != TickEvent.Phase.START) return;
         EntityPlayer player = event.player;
         World world = player.world;
         if (world.isRemote) return;
-        if(event.phase != TickEvent.Phase.START) return;
         if (world.getTotalWorldTime() % 20 != 0) return;
 
         List<ResourceLocation> blockColumn = new ArrayList<>();
@@ -29,14 +33,17 @@ public class PotionEffectsByFluidsHandler {
 
         for(ResourceLocation location : blockColumn){
             if(location == null) continue;
-            if(location.toString().equals("srparasites:deadblood")) {
-                addPotionEffectDeadBlood(player);
-                return;
-            } else if(location.toString().equals("biomesoplenty:hot_spring_water")) {
-                addPotionEffectHotSpring(player);
+            if(Ref.deadBloodReg.equals(location)) {
+                for(int i=0; i<4; i++)
+                    player.addPotionEffect(getEffect(i));
                 return;
             } else if(location.toString().equals("biomesoplenty:blood")) {
-                addPotionEffectBopBlood(player);
+                for(int i=4; i<6; i++)
+                    player.addPotionEffect(getEffect(i));
+                return;
+            } else if(location.toString().equals("biomesoplenty:hot_spring_water")) {
+                for(int i=6; i<11; i++)
+                    player.addPotionEffect(getEffect(i));
                 return;
             }
         }
@@ -66,29 +73,13 @@ public class PotionEffectsByFluidsHandler {
                 Potion potion = Potion.getPotionFromResourceLocation(effectString);
                 if (potion != null)
                     effects.add(new PotionEffect(potion, durations[i], amplifiers[i]));
+                else
+                    effects.add(new PotionEffect(MobEffects.INSTANT_DAMAGE,0,0));
             }
         }
         if (id >= 0 && id < effects.size())
             return new PotionEffect(effects.get(id));
         else
             return new PotionEffect(effects.get(0));
-    }
-
-    //Function containing potion effects for SRP deadblood.
-    private static void addPotionEffectDeadBlood(EntityPlayer player){
-        for(int i=0; i<4; i++)
-            player.addPotionEffect(getEffect(i));
-    }
-
-    //Function containing potion effects for BOP Blood.
-    private static void addPotionEffectBopBlood(EntityPlayer player){
-        for(int i=4; i<6; i++)
-            player.addPotionEffect(getEffect(i));
-    }
-
-    //Function containing potion effects for BOP Hot Spring Water.
-    private static void addPotionEffectHotSpring(EntityPlayer player){
-        for(int i=6; i<11; i++)
-            player.addPotionEffect(getEffect(i));
     }
 }

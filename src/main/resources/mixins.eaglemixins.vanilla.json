@@ -9,7 +9,10 @@
     "vanilla.BlockObserverMixin",
     "vanilla.EntityDropItemMixin",
     "vanilla.ItemStackMixin",
-    "vanilla.RandomValueRangeMixin"
+    "vanilla.RandomValueRangeMixin",
+    "vanilla.EntityAreaEffectCloudMixin",
+    "vanilla.EntityPotionMixin",
+    "vanilla.ItemPotionMixin"
   ],
   "injectors": {
     "maxShiftBy": 10
