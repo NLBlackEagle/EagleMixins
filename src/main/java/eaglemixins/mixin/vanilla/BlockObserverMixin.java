@@ -1,6 +1,6 @@
 package eaglemixins.mixin.vanilla;
 
-import eaglemixins.handlers.ForgeConfigHandler;
+import eaglemixins.config.ForgeConfigHandler;
 import net.minecraft.block.BlockObserver;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;

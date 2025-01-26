@@ -60,6 +60,9 @@ dependencies {
     implementation fg.deobf("curse.maven:rlartifacts-${rlartifacts_version}")
     implementation fg.deobf("curse.maven:first-aid-${first_aid_version}")
     implementation fg.deobf("curse.maven:fishsundeadrising-${fishsundeadrising_version}")
+    implementation fg.deobf("curse.maven:champions-${champions_version}")
+    implementation fg.deobf("curse.maven:otg-${otg_version}")
+    implementation fg.deobf("curse.maven:bop-${bop_version}")
 }
 
 mixin {

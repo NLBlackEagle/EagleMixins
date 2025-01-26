@@ -1,5 +1,6 @@
 package eaglemixins.handlers;
 
+import eaglemixins.config.ForgeConfigHandler;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;

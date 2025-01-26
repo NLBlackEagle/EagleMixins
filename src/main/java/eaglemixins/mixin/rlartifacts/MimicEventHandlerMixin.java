@@ -1,7 +1,7 @@
 package eaglemixins.mixin.rlartifacts;
 
 import artifacts.common.entity.EntityMimic;
-import eaglemixins.handlers.ForgeConfigHandler;
+import eaglemixins.config.ForgeConfigHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.entity.player.EntityPlayer;

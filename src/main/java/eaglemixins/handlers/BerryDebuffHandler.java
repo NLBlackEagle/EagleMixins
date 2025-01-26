@@ -1,5 +1,6 @@
 package eaglemixins.handlers;
 
+import biomesoplenty.api.item.BOPItems;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -43,7 +44,7 @@ public class BerryDebuffHandler {
 
         Item itemUsed = event.getItem().getItem();
         if (itemUsed.getRegistryName() == null) return;
-        if (!itemUsed.getRegistryName().toString().equals("biomesoplenty:berries")) return;
+        if (!itemUsed.equals(BOPItems.berries)) return;
 
         int duration = 60 + player.getRNG().nextInt(140);
         int amplifier = player.getRNG().nextInt(3);

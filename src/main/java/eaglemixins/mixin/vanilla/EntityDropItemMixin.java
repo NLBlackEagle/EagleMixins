@@ -24,9 +24,8 @@ public abstract class EntityDropItemMixin {
 
         ResourceLocation resourceLocation = stack.getItem().getRegistryName();
         if (resourceLocation == null) return;
-        String itemId = resourceLocation.toString();
+        String itemId = resourceLocation.getPath();
 
-        //This is a bit laggy but idk how to do this in a more performant way
         if (itemId.contains("living") || itemId.contains("sentient") || itemId.contains("dragonbone"))
             //Dont drop anything
             cir.setReturnValue(null);

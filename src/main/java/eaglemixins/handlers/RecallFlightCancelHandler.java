@@ -1,5 +1,6 @@
 package eaglemixins.handlers;
 
+import eaglemixins.util.Ref;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPotion;
@@ -18,7 +19,7 @@ public class RecallFlightCancelHandler {
     public static void onRightClick(PlayerInteractEvent.RightClickItem event) {
         EntityPlayer player = event.getEntityPlayer();
         if (player.world.isRemote) return;
-        if (!player.world.getBiome(player.getPosition()).getBiomeName().equals("Abyssal Rift")) return;
+        if (!Ref.entityIsInAbyssalRift(player)) return;
 
         ItemStack usedStack = event.getItemStack();
         Item usedItem = usedStack.getItem();
