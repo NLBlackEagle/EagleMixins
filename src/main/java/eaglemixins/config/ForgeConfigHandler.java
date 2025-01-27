@@ -26,9 +26,9 @@ public class ForgeConfigHandler {
 	@Config.Name("Server Options")
 	public static final ServerConfig server = new ServerConfig();
 
-	@Config.Comment("Client-Side Options")
+	/*@Config.Comment("Client-Side Options")
 	@Config.Name("Client Options")
-	public static final ClientConfig client = new ClientConfig();
+	public static final ClientConfig client = new ClientConfig();*/
 
 	public static class ServerConfig {
 		@Config.Comment("List of mobs that players will not get dismounted from in Abyssal Rift")
@@ -38,17 +38,6 @@ public class ForgeConfigHandler {
 				"minecraft:donkey",
 				"minecraft:pig",
 				"minecraft:llama"
-		};
-
-		@Config.Comment("List of mobs that can spawn FUR Parasites on death")
-		@Config.Name("Spawns FUR Parasite")
-		public String[] spawnsFURParasitesOnDeath = {
-				"minecraft:zombie",
-				"minecraft:husk",
-				"mod_lavacow:zombiefrozen",
-				"mod_lavacow:zombiemushroom",
-				"mod_lavacow:unburied",
-				"mod_lavacow:mummy"
 		};
 
 		@Config.Comment("List of item ids and their conductivity, separated by a space. For metadata use mod:itemid:metadata conductivity")
@@ -608,12 +597,8 @@ public class ForgeConfigHandler {
 		public boolean removeOldAttributes = true;
 	}
 
-	public static class ClientConfig {
-
-		@Config.Comment("Example client side config option")
-		@Config.Name("Example Client Option")
-		public boolean exampleClientOption = true;
-	}
+	/*public static class ClientConfig {
+	}*/
 
 	@Mod.EventBusSubscriber(modid = EagleMixins.MODID)
 	private static class EventHandler{
@@ -625,7 +610,7 @@ public class ForgeConfigHandler {
 				mentalberianEffects = null;
 				sussyberianEffects = null;
 				berianConstantEffect = null;
-				arrowAllowedEntities = null;
+				tippedArrowAllowedEntities = null;
 				conductivityMap = null;
 			}
 		}
@@ -672,16 +657,16 @@ public class ForgeConfigHandler {
 		return 0;
 	}
 
-	private static HashSet<ResourceLocation> arrowAllowedEntities = null;
-	public static HashSet<ResourceLocation> getArrowAllowedEntities() {
-		if(arrowAllowedEntities == null) {
+	private static HashSet<ResourceLocation> tippedArrowAllowedEntities = null;
+	public static HashSet<ResourceLocation> getTippedArrowAllowedEntities() {
+		if(tippedArrowAllowedEntities == null) {
 			HashSet<ResourceLocation> set = new HashSet<>();
 			for(String entity : server.tippedArrowEntities) {
 				set.add(new ResourceLocation(entity));
 			}
-			arrowAllowedEntities = set;
+			tippedArrowAllowedEntities = set;
 		}
-		return arrowAllowedEntities;
+		return tippedArrowAllowedEntities;
 	}
 
 	private static List<ItemStack> tippedArrowArrayLong = null;

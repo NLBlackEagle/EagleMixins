@@ -29,7 +29,7 @@ public class RandomTippedArrowHandler {
         if (entity == null || entity.world.isRemote) return;
 
         ResourceLocation entityId = EntityList.getKey(entity);
-        if (entityId == null || !ForgeConfigHandler.getArrowAllowedEntities().contains(entityId)) return;
+        if (entityId == null || !ForgeConfigHandler.getTippedArrowAllowedEntities().contains(entityId)) return;
 
         if (!(entity.getHeldItemMainhand().getItem() instanceof ItemBow)) return;
 

@@ -94,7 +94,7 @@ public class SentientWeaponEvolutionHandler {
                     if(!isMeleeWeapon)
                         newStack.getTagCompound().getCompoundTag("display").removeTag("Lore");
 
-                    boolean hasCurseOfPossession = EnchantmentHelper.getEnchantments(newStack).get(smeCoP) == null;
+                    boolean hasCurseOfPossession = EnchantmentHelper.getEnchantments(newStack).get(smeCoP) != null;
                     if(hasCurseOfPossession)
                         //replace item in slot if item has curse of possession
                         player.setItemStackToSlot(slot, newStack);

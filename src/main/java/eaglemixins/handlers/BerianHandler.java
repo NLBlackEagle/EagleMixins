@@ -40,7 +40,6 @@ public class BerianHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onPlayerInteractEntity(PlayerInteractEvent.EntityInteract event) {
-        if(event.getWorld().isRemote) return;
         if(!(event.getTarget() instanceof EntityVillager)) return;
         
         EntityVillager villager = (EntityVillager)event.getTarget();
@@ -54,6 +53,7 @@ public class BerianHandler {
             Potion potion = ForgeConfigHandler.getBerianConstantEffect();
             if(potion.isInstant()) potion.affectEntity(villager, villager, event.getEntityPlayer(), 1, 1.0D);
             else event.getEntityPlayer().addPotionEffect(new PotionEffect(potion, 200, 1));
+            event.setCanceled(true);
         }
         else if(villager.getEntityData().getBoolean("Mentalberian")) {
             List<Potion> potions = ForgeConfigHandler.getMentalberianEffects();
@@ -65,6 +65,7 @@ public class BerianHandler {
             Potion potion = ForgeConfigHandler.getBerianConstantEffect();
             if(potion.isInstant()) potion.affectEntity(villager, villager, event.getEntityPlayer(), 1, 1.0D);
             else event.getEntityPlayer().addPotionEffect(new PotionEffect(potion, 200, 1));
+            event.setCanceled(true);
         }
     }
 
