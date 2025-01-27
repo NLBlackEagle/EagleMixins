@@ -7,9 +7,10 @@
   "minVersion": "0.8",
   "mixins": [
     "EntityAvatonAIUseSpellMixin",
+    "EntitySandBurstMixin",
     "EntityUndertakerAIUseSpellMixin",
-    "ModEventHandlerMixin",
-    "ItemCrownMixin"
+    "ItemCrownMixin",
+    "ModEventHandlerMixin"
   ],
   "injectors": {
     "maxShiftBy": 10

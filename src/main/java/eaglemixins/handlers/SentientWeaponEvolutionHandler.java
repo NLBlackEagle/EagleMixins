@@ -91,14 +91,15 @@ public class SentientWeaponEvolutionHandler {
                     if (newItem == null) continue;
                     ItemStack newStack = new ItemStack(newItem);
                     newStack.setTagCompound(savedTags);
-                    if(!isMeleeWeapon)
+                    if (!isMeleeWeapon)
                         newStack.getTagCompound().getCompoundTag("display").removeTag("Lore");
 
                     boolean hasCurseOfPossession = EnchantmentHelper.getEnchantments(newStack).get(smeCoP) != null;
-                    if(hasCurseOfPossession)
+                    if (hasCurseOfPossession) {
                         //replace item in slot if item has curse of possession
+                        stack.shrink(1);    //This shouldn't be necessary but we do it anyway
                         player.setItemStackToSlot(slot, newStack);
-                    else {
+                    } else {
                         //otherwise throw it
                         stack.shrink(1);
                         player.entityDropItem(newStack, 0.5F);
