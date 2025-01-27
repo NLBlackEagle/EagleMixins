@@ -1,12 +1,15 @@
 {
   "required": true,
-  "package": "eaglemixins.mixin.rlartifacts",
+  "package": "eaglemixins.mixin.fishsundeadrising",
   "refmap": "mixins.eaglemixins.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "target": "@env(DEFAULT)",
   "minVersion": "0.8",
   "mixins": [
-    "MimicEventHandlerMixin"
+    "EntityAvatonAIUseSpellMixin",
+    "EntityUndertakerAIUseSpellMixin",
+    "ModEventHandlerMixin",
+    "ItemCrownMixin"
   ],
   "injectors": {
     "maxShiftBy": 10

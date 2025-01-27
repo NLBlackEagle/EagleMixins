@@ -56,7 +56,6 @@ public class DismountHandler {
     @SubscribeEvent
     public static void onEntityMount(EntityMountEvent event){
         if(!event.isMounting()) return;
-        if(event.getEntityMounting().world.isRemote) return;
         if(!(event.getEntityMounting() instanceof EntityPlayer)) return;
         if(!(event.getEntityBeingMounted() instanceof EntityLivingBase)) return;
         EntityLivingBase mount = (EntityLivingBase) event.getEntityBeingMounted();

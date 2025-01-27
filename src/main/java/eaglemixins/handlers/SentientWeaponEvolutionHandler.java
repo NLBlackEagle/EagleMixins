@@ -1,10 +1,15 @@
 package eaglemixins.handlers;
 
-import eaglemixins.util.Ref;
+import com.dhanantry.scapeandrunparasites.entity.ai.misc.EntityParasiteBase;
+import com.dhanantry.scapeandrunparasites.item.tool.WeaponToolArmorBase;
+import com.dhanantry.scapeandrunparasites.item.tool.WeaponToolMeleeBase;
+import com.dhanantry.scapeandrunparasites.item.tool.WeaponToolRangeBase;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.EntityList;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,54 +21,40 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import svenhjol.charm.world.entity.EntityChargedEmerald;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 public class SentientWeaponEvolutionHandler {
-    private static final ArrayList<String> livingWeaponsNoTag = new ArrayList<>(Arrays.asList(
-            "weapon_bow",
-            "armor_boots",
-            "armor_pants",
-            "armor_chest",
-            "armor_helm"
-    ));
-    private static final ArrayList<String> livingWeaponsWithTag = new ArrayList<>(Arrays.asList(
-            "weapon_scythe",
-            "weapon_axe",
-            "weapon_sword",
-            "weapon_cleaver",
-            "weapon_maul",
-            "weapon_lance"
-    ));
+    private static boolean isSRPLivingGear(Item item){
+        if(!(item instanceof WeaponToolMeleeBase || item instanceof WeaponToolArmorBase || item instanceof WeaponToolRangeBase))
+            return false;
+        ResourceLocation itemReg = item.getRegistryName();
+        return itemReg != null && !itemReg.getPath().contains("sentient");
+    }
     private static final String srpkillsKey = "srpkills";
+    private static final Enchantment smeCoP =  Enchantment.getEnchantmentByLocation("somanyenchantments:curseofpossession");
 
     @SubscribeEvent
     public static void onLivingDeath(LivingDeathEvent event){
         EntityLivingBase victim = event.getEntityLiving();
         if(victim == null || victim.world.isRemote) return;
-        ResourceLocation location = EntityList.getKey(victim);
-        if(location == null) return;
-        if(!location.getNamespace().equals(Ref.SRPMODID)) return;
+        if(!(victim instanceof EntityParasiteBase)) return;
 
         if(!(event.getSource().getTrueSource() instanceof EntityPlayer)) return;
         EntityPlayer player = (EntityPlayer) event.getSource().getTrueSource();
         if(player==null) return;
 
-        int srpItemsEquipped = 0;
+        //Count equipped srpGear
+        int srpGearEquipped = 0;
         for(ItemStack stack : player.getEquipmentAndArmor()){
             ResourceLocation resourceLocation = stack.getItem().getRegistryName();
-            if(resourceLocation != null && resourceLocation.getNamespace().equals(Ref.SRPMODID))
-                srpItemsEquipped++;
+            if(resourceLocation != null && isSRPLivingGear(stack.getItem()))
+                srpGearEquipped++;
         }
-        int dividedHealth = (int) (Math.floor(victim.getMaxHealth()) / srpItemsEquipped);
+        int dividedHealth = (int) (Math.floor(victim.getMaxHealth()) / srpGearEquipped);
 
-        for(ItemStack stack : player.getEquipmentAndArmor()) {
-            ResourceLocation resourceLocation = stack.getItem().getRegistryName();
-            if (resourceLocation != null && resourceLocation.getNamespace().equals(Ref.SRPMODID)) {
-                String itemId = resourceLocation.getPath();
-                boolean hasNoTag = livingWeaponsNoTag.contains(itemId);
-                boolean hasTag = livingWeaponsWithTag.contains(itemId);
-                if (!hasTag && !hasNoTag) continue;  //Not a living item
+        //Increase srpkills tag and evolve to sentient
+        for(EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {
+            ItemStack stack = player.getItemStackFromSlot(slot);
+            if (isSRPLivingGear(stack.getItem())) {
+                boolean isMeleeWeapon = stack.getItem() instanceof WeaponToolMeleeBase;    //Weapon true, bow and armor false
 
                 //Setup NBT tags if living item is fresh
                 if (!stack.hasTagCompound())
@@ -76,9 +67,9 @@ public class SentientWeaponEvolutionHandler {
                 stack.getTagCompound().setInteger(srpkillsKey, currentKills);
 
                 //Set Lore tags
-                if (hasNoTag) {
+                if (!isMeleeWeapon) {
                     String srpkillsToolTip = "" + TextFormatting.RESET + TextFormatting.BLUE + "---> " + currentKills;
-                    String itemToWrite = itemId.equals("weapon_bow") ? I18n.format(I18n.format("eaglemixins.srptooltip.bow")) : I18n.format("eaglemixins.srptooltip.armor");
+                    String itemToWrite = stack.getItem() instanceof WeaponToolRangeBase ? I18n.format(I18n.format("eaglemixins.srptooltip.bow")) : I18n.format("eaglemixins.srptooltip.armor");
                     String loreTag = "" + TextFormatting.RESET + TextFormatting.DARK_PURPLE + TextFormatting.ITALIC + " " + itemToWrite;
                     setLore(stack, srpkillsToolTip + loreTag);
                 } else {
@@ -94,15 +85,24 @@ public class SentientWeaponEvolutionHandler {
 
                     NBTTagCompound savedTags = stack.getTagCompound();
 
+                    String itemId = stack.getItem().getRegistryName().getPath(); //!=null already checked in isSRPLivingGear()
+
                     Item newItem = Item.getByNameOrId("srparasites:" + itemId + "_sentient");
                     if (newItem == null) continue;
                     ItemStack newStack = new ItemStack(newItem);
                     newStack.setTagCompound(savedTags);
-                    if(hasNoTag)
+                    if(!isMeleeWeapon)
                         newStack.getTagCompound().getCompoundTag("display").removeTag("Lore");
-                    player.entityDropItem(newStack, 0.5F);
 
-                    stack.shrink(1);
+                    boolean hasCurseOfPossession = EnchantmentHelper.getEnchantments(newStack).get(smeCoP) == null;
+                    if(hasCurseOfPossession)
+                        //replace item in slot if item has curse of possession
+                        player.setItemStackToSlot(slot, newStack);
+                    else {
+                        //otherwise throw it
+                        stack.shrink(1);
+                        player.entityDropItem(newStack, 0.5F);
+                    }
                 }
             }
         }

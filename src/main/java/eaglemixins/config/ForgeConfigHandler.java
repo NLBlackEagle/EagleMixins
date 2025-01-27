@@ -667,9 +667,8 @@ public class ForgeConfigHandler {
 			if(conductivityByMetadata.containsKey(metadata))
 				return conductivityByMetadata.get(metadata);
 			else
-				return conductivityByMetadata.get(-1);
+				return conductivityByMetadata.getOrDefault(-1,0);
 		}
-
 		return 0;
 	}
 

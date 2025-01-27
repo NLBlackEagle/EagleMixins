@@ -1,5 +1,6 @@
 package eaglemixins.handlers;
 
+import com.dhanantry.scapeandrunparasites.entity.ai.misc.EntityParasiteBase;
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.util.Ref;
 import net.minecraft.entity.Entity;
@@ -32,7 +33,7 @@ public class EntityRenameCancelHandler {
                     return;
                 }
             }
-        } else if (entityId.getNamespace().equals(Ref.SRPMODID)) {
+        } else if (target instanceof EntityParasiteBase) {
             for (String name : ForgeConfigHandler.server.blackListEntitiesNameChangeParasite) {
                 if (targetCustomName.contains(name) || nameOnNameTag.contains(name)) {
                     event.setCanceled(true);

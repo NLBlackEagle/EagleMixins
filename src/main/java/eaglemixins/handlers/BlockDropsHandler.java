@@ -29,6 +29,7 @@ public class BlockDropsHandler {
 
         // Aquaculture seaweed dropped from kelp, can be baked to become kelp and kelp can be used as a fuel source to smelt 2 items. (Same-ish as 1.16.5)
         if (harvestedBlock.equals(BOPBlocks.seaweed)) {
+            if(event.isSilkTouching()) return;
             Item item = Item.getByNameOrId("aquaculture:food");
             if (item != null) {
                 event.getDrops().clear();
@@ -41,6 +42,7 @@ public class BlockDropsHandler {
                 blockId.equals("iceandfire:dragon_ice") ||
                 harvestedBlock.equals(BOPBlocks.hard_ice)
         ) {
+            if(event.isSilkTouching()) return;
             event.getDrops().clear();
             addDrop(event.getDrops(), harvesterRNG, "simpledifficulty:ice_chunk", 1.0F);
             addDrop(event.getDrops(), harvesterRNG, "simpledifficulty:ice_chunk", 0.5F);
@@ -84,6 +86,7 @@ public class BlockDropsHandler {
 
         //Replace the Biome essence with randomized nbt data for data-less biome essence
         if (harvestedBlock.equals(BOPBlocks.biome_block)) {
+            if(event.isSilkTouching()) return;
             event.getDrops().clear();
             addDrop(event.getDrops(), harvesterRNG, BOPItems.biome_essence, 1F);
         }

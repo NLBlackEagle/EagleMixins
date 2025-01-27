@@ -27,13 +27,11 @@ public class EagleMixins {
         MinecraftForge.EVENT_BUS.register(DismountHandler.class);
         MinecraftForge.EVENT_BUS.register(DispelEntityHandler.class);
         MinecraftForge.EVENT_BUS.register(EntityRenameCancelHandler.class);
-        MinecraftForge.EVENT_BUS.register(FURParasiteSpawnHandler.class);
         MinecraftForge.EVENT_BUS.register(HealthValidationHandler.class);
         MinecraftForge.EVENT_BUS.register(PotionEffectsByFluidsHandler.class);
         MinecraftForge.EVENT_BUS.register(RandomTippedArrowHandler.class);
         MinecraftForge.EVENT_BUS.register(RandomTpCancelHandler.class);
         MinecraftForge.EVENT_BUS.register(RecallFlightCancelHandler.class);
-        MinecraftForge.EVENT_BUS.register(SkeletonKingSpawnHandler.class);
         MinecraftForge.EVENT_BUS.register(SentientWeaponEvolutionHandler.class);
         MinecraftForge.EVENT_BUS.register(SRParasitesHandler.class);
     }

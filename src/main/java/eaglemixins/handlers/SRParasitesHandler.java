@@ -1,6 +1,9 @@
 package eaglemixins.handlers;
 
 import biomesoplenty.api.item.BOPItems;
+import com.dhanantry.scapeandrunparasites.entity.ai.misc.EntityPStationaryArchitect;
+import com.dhanantry.scapeandrunparasites.entity.ai.misc.EntityParasiteBase;
+import com.dhanantry.scapeandrunparasites.entity.monster.deterrent.nexus.*;
 import eaglemixins.util.Ref;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -23,63 +26,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SRParasitesHandler {
-    private static final List<String> biomesParasitesStayAlive = Arrays.asList(
-            "Heath",
-            "Steppe",
-            "Wasteland",
-            "Frozen City Creek",
-            "Desert City Creek",
-            "Jungle City Creek",
-            "Ruins of Blight",
-            "Nuclear Ruins",
-            "Lair of the Thing",
-            "Parasite Biome"
-    );
-
-    // SRParasites in overworld Script Biome Whitelist, kill Beckons
-    @SubscribeEvent
-    public static void onLivingUpdate(LivingEvent.LivingUpdateEvent event) {
-        EntityLivingBase entity = event.getEntityLiving();
-        World world = entity.world;
-        if (world.getTotalWorldTime() % 50 != 0) return;
-        if (world.provider.getDimension() != 0 && world.provider.getDimension() != 3) return;
-
-        ResourceLocation entityId = EntityList.getKey(entity);
-        if (entityId == null) return;
-        if (!entityId.getNamespace().equals(Ref.SRPMODID)) return;
-
-        //Kill all other beckons around one beckon
-        if (entityId.getPath().contains("beckon")) {
-            for (Entity entity1 : entity.world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(entity.getPosition()).grow(32))) {
-                if (entity1 == entity) continue;
-                ResourceLocation entity1id = EntityList.getKey(entity1);
-                if (entity1id == null) continue;
-                if (entity1id.getPath().contains("beckon"))
-                    entity1.setDead();
-            }
-        }
-
-        if (world.provider.getDimension() == 3) return;
-
-        //Slowly kill Parasites outside Abyssal Rift and the other named biomes
-        //TODO: otg get biome instead of using this clientside function
-        String biomeName = entity.world.getBiome(entity.getPosition()).getBiomeName();
-        if (biomesParasitesStayAlive.contains(biomeName)) return;
-
-        float health = entity.getHealth();
-
-        if (Ref.entityIsInAbyssalRift(entity)) {
-            if (entityId.getPath().contains("beckon") || entityId.getPath().contains("dispatcher"))
-                entity.setDead();
-        } else if (health > 1000)
-            entity.setHealth(health / 50);
-        else if (health > 100)
-            entity.setHealth(health / 10);
-        else
-            entity.setHealth(health - 10);
-    }
-
-    private static final List<String> biomesParasiteSpawnersAllowed = Arrays.asList(
+    //Parasites will be allowed to spawn via spawners, stay alive and will drop (reduced) loot in these biomes
+    private static final List<String> overworldParasiteBiomes = Arrays.asList(
             "Heath",
             "Steppe",
             "Wasteland",
@@ -90,33 +38,14 @@ public class SRParasitesHandler {
             "Ruins of Blight"
     );
 
-    // SRParasites in overworld Cancel Spawns if not in Whitelisted Biome and From spawner
-    @SubscribeEvent
-    public static void onCheckSpawn(LivingSpawnEvent.CheckSpawn event){
-        if(!event.isSpawner()) return;
-        if(event.getWorld().provider.getDimension()!=0) return;
-        EntityLivingBase entity = event.getEntityLiving();
-        ResourceLocation entityId = EntityList.getKey(entity);
-        if(entityId == null) return;
-        if(!entityId.getNamespace().equals(Ref.SRPMODID)) return;
-        String biomeName = event.getWorld().getBiome(entity.getPosition()).getBiomeName();
-        //TODO: otg get biome instead of using this clientside function
-        if(!biomesParasiteSpawnersAllowed.contains(biomeName))
-            event.setResult(Event.Result.DENY);
-    }
+    //Parasites will be allowed to stay alive in these biomes as well
+    private static final List<String> overworldParasiteBiomesExtended = Arrays.asList(
+            "Frozen City Creek",
+            "Desert City Creek",
+            "Jungle City Creek"
+    );
 
-    private static final List<String> biomesParasiteDropsReduced = biomesParasiteSpawnersAllowed;
-        /*Arrays.asList(
-            "biomesoplenty:wasteland",
-            "Steppe",
-            "biomesoplenty:wasteland",
-            "openterraingenerator:overworld_abyssal_rift",
-            "srparasites:biome_parasite",
-            "openterraingenerator:overworld_ruins_of_blight",
-            "openterraingenerator:overworld_nuclear_ruins",
-            "openterraingenerator:overworld_lair_of_the_thing"
-    );*/
-
+    //Parasites with these names will always drop their loot without reduction, no matter the biome
     private static final List<String> parasiteNamesKeepDrops = Arrays.asList(
             "Sentient Horror",
             "Degrading Overseer",
@@ -133,6 +62,63 @@ public class SRParasitesHandler {
             corruptedAshes.setStackDisplayName("Corrupted Ashes");
         }
         return corruptedAshes.copy();
+    }
+
+    private static boolean isBeckon(Entity entity){
+        return entity instanceof EntityVenkrol ||
+                entity instanceof EntityVenkrolSII ||
+                entity instanceof EntityVenkrolSIII ||
+                entity instanceof EntityVenkrolSIV ||
+                entity instanceof EntityVenkrolSV;
+    }
+
+    // SRParasites in overworld Script Biome Whitelist, kill Beckons
+    @SubscribeEvent
+    public static void onLivingUpdate(LivingEvent.LivingUpdateEvent event) {
+        EntityLivingBase entity = event.getEntityLiving();
+        World world = entity.world;
+        if (world.getTotalWorldTime() % 50 != 23) return;
+        if (entity.dimension != 0 && entity.dimension != 3) return;
+
+        if (!(entity instanceof EntityParasiteBase)) return;
+
+        //Kill all Beckons and Dispatchers in Abyssal Rift
+        if (Ref.entityIsInAbyssalRift(entity)) {
+            if (entity instanceof EntityPStationaryArchitect)
+                entity.setDead();
+        //Otherwise kill all other beckons around one beckon
+        } else if (isBeckon(entity))
+            for (Entity entityNearby : entity.world.getEntitiesWithinAABB(EntityPStationaryArchitect.class, new AxisAlignedBB(entity.getPosition()).grow(32)))
+                if (entityNearby != entity && isBeckon(entityNearby))
+                    entityNearby.setDead();
+
+        //Rest of this method is for overworld only
+        if(entity.dimension == 3) return;
+
+        //Slowly kill Parasites outside specific biomes
+        //TODO: otg get biome instead of using this clientside function
+        String biomeName = entity.world.getBiome(entity.getPosition()).getBiomeName();
+        if (overworldParasiteBiomes.contains(biomeName) || overworldParasiteBiomesExtended.contains(biomeName)) return;
+
+        float health = entity.getHealth();
+        if (health > 1000)      entity.setHealth(health / 50);
+        else if (health > 100)  entity.setHealth(health / 10);
+        else                    entity.setHealth(health - 10);
+    }
+
+    // SRParasites in overworld Cancel Spawns if not in Whitelisted Biome and From spawner
+    @SubscribeEvent
+    public static void onCheckSpawn(LivingSpawnEvent.CheckSpawn event){
+        if(!event.isSpawner()) return;
+        if(event.getWorld().provider.getDimension()!=0) return;
+        EntityLivingBase entity = event.getEntityLiving();
+        ResourceLocation entityId = EntityList.getKey(entity);
+        if(entityId == null) return;
+        if(!(entity instanceof EntityParasiteBase)) return;
+        String biomeName = event.getWorld().getBiome(entity.getPosition()).getBiomeName();
+        //TODO: otg get biome instead of using this clientside function
+        if(!overworldParasiteBiomes.contains(biomeName))
+            event.setResult(Event.Result.DENY);
     }
 
     // OW SRParasites cancel loot if not in whitelisted biome
@@ -166,7 +152,7 @@ public class SRParasitesHandler {
             }
         }
         //Rest of this method only applies to parasites
-        if(!entityId.getNamespace().equals(Ref.SRPMODID)) return;
+        if(!(entity instanceof EntityParasiteBase)) return;
 
         //But not to ones that have special names
         if(entity.hasCustomName()) {
@@ -176,7 +162,7 @@ public class SRParasitesHandler {
                     return;
         }
 
-        if(biomesParasiteDropsReduced.contains(biomeName)){
+        if(overworldParasiteBiomes.contains(biomeName)){
             List<EntityItem> itemsToRemove = new ArrayList<>();
             List<EntityItem> itemsToAdd = new ArrayList<>();
             for (EntityItem drop : event.getDrops()) {
