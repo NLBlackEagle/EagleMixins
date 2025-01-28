@@ -31,7 +31,6 @@ public class ItemCrownMixin extends Item {
     @Inject(
             method = "onItemUse",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;getTileEntity(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/tileentity/TileEntity;"),
-            remap = false,
             cancellable = true
     )
     public void eagleMixins_furItemCrown_getTileEntity(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ, CallbackInfoReturnable<EnumActionResult> cir) {

@@ -17,7 +17,6 @@ public class WeaponToolMeleeBaseMixin {
     @Inject(
             method = "onUpdate",
             at = @At(value = "FIELD", target = "Lnet/minecraft/entity/Entity;ticksExisted:I", ordinal = 1),
-            remap = false,
             cancellable = true
     )
     public void eagleMixins_srpWeaponToolMeleeBase_onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected, CallbackInfo ci){
@@ -28,7 +27,6 @@ public class WeaponToolMeleeBaseMixin {
     @Inject(
             method = "hitEntity",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityLivingBase;getHealth()F"),
-            remap = false,
             cancellable = true
     )
     public void eagleMixins_srpWeaponToolMeleeBase_hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker, CallbackInfoReturnable<Boolean> cir, @Local boolean flag){

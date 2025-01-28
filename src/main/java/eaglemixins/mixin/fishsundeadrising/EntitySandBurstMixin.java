@@ -11,8 +11,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class EntitySandBurstMixin {
     @Redirect(
             method = "onUpdate",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"),
-            remap = false
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z")
     )
     public boolean eagleMixins_furUndertakerAIUseSpell_castSpell(World instance, Entity entity){
         //Make summoned forsaken not drop loot or xp

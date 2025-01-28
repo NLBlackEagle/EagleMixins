@@ -11,8 +11,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class ModEventHandlerMixin {
     @Redirect(
             method = "onEDeath",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/potion/PotionEffect;getAmplifier()I"),
-            remap = false
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/potion/PotionEffect;getAmplifier()I")
     )
     public int eagleMixins_furModEventHandler_getAmplifier(PotionEffect instance){
         if(!instance.getPotion().equals(ModMobEffects.INFESTED)) return instance.getAmplifier();
