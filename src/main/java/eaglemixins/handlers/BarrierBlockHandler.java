@@ -18,6 +18,7 @@ public class BarrierBlockHandler {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
+        if(event.getPlayer() != null && event.getPlayer().capabilities.isCreativeMode) return;
         IBlockState state = event.getState();
         Block block = state.getBlock();
         if (block.getRegistryName() == null || !block.getRegistryName().equals(BEDROCK)) {
@@ -37,6 +38,7 @@ public class BarrierBlockHandler {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
+        if(event.getEntityPlayer().capabilities.isCreativeMode) return;
         IBlockState state = event.getWorld().getBlockState(event.getPos());
         Block block = state.getBlock();
         if (block.getRegistryName() == null || !block.getRegistryName().equals(BEDROCK)) {
