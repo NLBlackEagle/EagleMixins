@@ -1,0 +1,19 @@
+eaglemixins.messages.mirrorcancel=Sientes una misteriosa fuerza viniendo desde abajo, y te arrebata el espejo de las manos
+eaglemixins.messages.potioncancel=Sientes una misteriosa fuerza viniendo desde abajo, y te arrebata la poción de las manos
+
+eaglemixins.messages.mountspooked=Parece que algo asustó a tu montura, y ésta no cooperará.
+eaglemixins.messages.ominousfeeling=Un sentimiento siniestro se apodera de tí, como si alguien te vigilara... Tal vez sea mejor continuar a pie
+
+eaglemixins.conductivity.tooltip=Conductividad +%s
+eaglemixins.conductivity.0=¡Toooques toqueeeees!
+eaglemixins.conductivity.1=Sientes que te dan toques...
+eaglemixins.conductivity.2=¿Qué es eso que cruje...?
+eaglemixins.conductivity.3=Se te empiezan a poner los pelos de punta
+eaglemixins.conductivity.4=Brrzzz kerack zrpp zrrrktttt
+eaglemixins.conductivity.5=Pikachu, ¡usa impactrueno!
+eaglemixins.conductivity.6=¿Sabías que la probabilidad de que te caiga un rayo es 1 en 1,222,000?
+eaglemixins.conductivity.7=Hay indicios de Ozono en el aire...
+
+eaglemixins.srptooltip.weapon="Tu arma probó la sangre, ahora desea más Parásitos..."
+eaglemixins.srptooltip.armor="Tu armadura probó la sangre, ahora desea más Parásitos..."
+eaglemixins.srptooltip.bow="Tu arco probó la sangre, ahora desea más Parásitos..."
