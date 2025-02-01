@@ -4,16 +4,21 @@ import biomesoplenty.api.item.BOPItems;
 import com.dhanantry.scapeandrunparasites.entity.ai.misc.EntityPStationaryArchitect;
 import com.dhanantry.scapeandrunparasites.entity.ai.misc.EntityParasiteBase;
 import com.dhanantry.scapeandrunparasites.entity.monster.deterrent.nexus.*;
+import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.util.Ref;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
@@ -24,6 +29,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public class SRParasitesHandler {
     //Parasites will be allowed to spawn via spawners, stay alive and will drop (reduced) loot in these biomes
@@ -59,7 +65,7 @@ public class SRParasitesHandler {
     private static ItemStack getCorruptedAshes(){
         if(corruptedAshes == null){
             corruptedAshes = new ItemStack(BOPItems.ash,1);
-            corruptedAshes.setStackDisplayName("Corrupted Ashes");
+            corruptedAshes.setStackDisplayName(I18n.format("eaglemixins.tooltip.corruptedashes"));
         }
         return corruptedAshes.copy();
     }
@@ -181,6 +187,22 @@ public class SRParasitesHandler {
         } else {
             event.getDrops().clear();
             event.setCanceled(true);
+        }
+    }
+
+    private static UUID atkUUID = UUID.fromString("b1880265-48be-4681-84b2-bf99bc3e16e1");
+    private static UUID hpUUID = UUID.fromString("0629ce1b-fdcf-4432-a9c0-1f51c588c615");
+    private static UUID armorUUID = UUID.fromString("34407975-a8dc-479c-8dcc-70cc914418dc");
+
+    @SubscribeEvent
+    public static void onEntityJoinWorld(EntityJoinWorldEvent event){
+        if(!(event.getEntity() instanceof EntityParasiteBase)) return;
+        EntityParasiteBase parasite = (EntityParasiteBase) event.getEntity();
+        if(parasite.world.isRemote) return;
+        if(Ref.entityIsInAbyssalRift(parasite)) {
+            parasite.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).applyModifier(new AttributeModifier(atkUUID,"AbyssalDmg", ForgeConfigHandler.server.abyssalDmgModifier-1,1));
+            parasite.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(new AttributeModifier(hpUUID,"AbyssalHP", ForgeConfigHandler.server.abyssalHPModifier-1,1));
+            parasite.getEntityAttribute(SharedMonsterAttributes.ARMOR).applyModifier(new AttributeModifier(armorUUID,"AbyssalArmor", ForgeConfigHandler.server.abyssalArmorModifier-1,1));
         }
     }
 }

@@ -40,6 +40,18 @@ public class ForgeConfigHandler {
 				"minecraft:llama"
 		};
 
+		@Config.Comment("Parasites spawned in Abyssal Rift will have dmg that is this much higher than other overworld parasites")
+		@Config.Name("Abyssal Rift Parasite Stat Multi: Dmg")
+		public float abyssalDmgModifier = 1;
+
+		@Config.Comment("Parasites spawned in Abyssal Rift will have health that is this much higher than other overworld parasites")
+		@Config.Name("Abyssal Rift Parasite Stat Multi: HP")
+		public float abyssalHPModifier = 1;
+
+		@Config.Comment("Parasites spawned in Abyssal Rift will have armor that is this much higher than other overworld parasites")
+		@Config.Name("Abyssal Rift Parasite Stat Multi: Armor")
+		public float abyssalArmorModifier = 1;
+
 		@Config.Comment("List of item ids and their conductivity, separated by a space. For metadata use mod:itemid:metadata conductivity")
 		@Config.Name("Item Conductivity")
 		String[] itemConductivities = {
