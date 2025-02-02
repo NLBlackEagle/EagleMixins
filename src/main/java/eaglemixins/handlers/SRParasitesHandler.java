@@ -190,9 +190,12 @@ public class SRParasitesHandler {
         }
     }
 
-    private static UUID atkUUID = UUID.fromString("b1880265-48be-4681-84b2-bf99bc3e16e1");
-    private static UUID hpUUID = UUID.fromString("0629ce1b-fdcf-4432-a9c0-1f51c588c615");
-    private static UUID armorUUID = UUID.fromString("34407975-a8dc-479c-8dcc-70cc914418dc");
+    private static final UUID atkUUID = UUID.fromString("b1880265-48be-4681-84b2-bf99bc3e16e1");
+    private static final UUID hpUUID = UUID.fromString("0629ce1b-fdcf-4432-a9c0-1f51c588c615");
+    private static final UUID armorUUID = UUID.fromString("34407975-a8dc-479c-8dcc-70cc914418dc");
+    private static final AttributeModifier dmgMod = new AttributeModifier(atkUUID,"AbyssalDmg", ForgeConfigHandler.server.abyssalDmgModifier-1,1);
+    private static final AttributeModifier hpMod = new AttributeModifier(hpUUID,"AbyssalHP", ForgeConfigHandler.server.abyssalHPModifier-1,1);
+    private static final AttributeModifier armorMod = new AttributeModifier(armorUUID,"AbyssalArmor", ForgeConfigHandler.server.abyssalArmorModifier-1,1);
 
     @SubscribeEvent
     public static void onEntityJoinWorld(EntityJoinWorldEvent event){
@@ -200,9 +203,12 @@ public class SRParasitesHandler {
         EntityParasiteBase parasite = (EntityParasiteBase) event.getEntity();
         if(parasite.world.isRemote) return;
         if(Ref.entityIsInAbyssalRift(parasite)) {
-            parasite.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).applyModifier(new AttributeModifier(atkUUID,"AbyssalDmg", ForgeConfigHandler.server.abyssalDmgModifier-1,1));
-            parasite.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(new AttributeModifier(hpUUID,"AbyssalHP", ForgeConfigHandler.server.abyssalHPModifier-1,1));
-            parasite.getEntityAttribute(SharedMonsterAttributes.ARMOR).applyModifier(new AttributeModifier(armorUUID,"AbyssalArmor", ForgeConfigHandler.server.abyssalArmorModifier-1,1));
+            if(!parasite.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).hasModifier(dmgMod))
+                parasite.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).applyModifier(dmgMod);
+            if(!parasite.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).hasModifier(hpMod))
+                parasite.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(hpMod);
+            if(!parasite.getEntityAttribute(SharedMonsterAttributes.ARMOR).hasModifier(armorMod))
+                parasite.getEntityAttribute(SharedMonsterAttributes.ARMOR).applyModifier(armorMod);
         }
     }
 }
