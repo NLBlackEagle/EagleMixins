@@ -12,6 +12,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ConductivityHandler {
     private static final String savedTimeKey = "LightningLastSavedTime";
@@ -82,6 +84,7 @@ public class ConductivityHandler {
     }
 
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     public static void onTooltip(ItemTooltipEvent event) {
         int conductivity = ForgeConfigHandler.getItemConductivity(event.getItemStack());
         if (conductivity > 0)
