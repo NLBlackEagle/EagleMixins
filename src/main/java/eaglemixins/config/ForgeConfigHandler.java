@@ -26,9 +26,9 @@ public class ForgeConfigHandler {
 	@Config.Name("Server Options")
 	public static final ServerConfig server = new ServerConfig();
 
-	/*@Config.Comment("Client-Side Options")
+	@Config.Comment("Client-Side Options")
 	@Config.Name("Client Options")
-	public static final ClientConfig client = new ClientConfig();*/
+	public static final ClientConfig client = new ClientConfig();
 
 	public static class ServerConfig {
 		@Config.Comment("List of mobs that players will not get dismounted from in Abyssal Rift")
@@ -609,8 +609,19 @@ public class ForgeConfigHandler {
 		public boolean removeOldAttributes = true;
 	}
 
-	/*public static class ClientConfig {
-	}*/
+	public static class ClientConfig {
+		@Config.Comment("How many seconds to display each loadingscreen picture")
+		@Config.Name("LoadingScreens: Frequency")
+		public int frequency = 10;
+
+		@Config.Comment("Whether the loadingscreen pictures are displayed in set order or randomised order")
+		@Config.Name("LoadingScreens: Display in Random Order")
+		public boolean randomOrder = true;
+
+		@Config.Comment("Whether there should be only one loadingscreen picture displayed per loading, no cycling during load. Will always display first picture in list if random order config is off")
+		@Config.Name("LoadingScreens: Don't Cycle")
+		public boolean disableCycling = false;
+	}
 
 	@Mod.EventBusSubscriber(modid = EagleMixins.MODID)
 	private static class EventHandler{

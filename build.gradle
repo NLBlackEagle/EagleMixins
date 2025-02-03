@@ -65,6 +65,7 @@ dependencies {
     implementation fg.deobf("curse.maven:champions-${champions_version}")
     implementation fg.deobf("curse.maven:openterraingenerator-${otg_version}")
     implementation fg.deobf("curse.maven:biomesoplenty-${bop_version}")
+    implementation fg.deobf("curse.maven:loadingscreens-${loadingscreens_version}")
 }
 
 mixin {
