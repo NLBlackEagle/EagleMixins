@@ -33,21 +33,14 @@ import java.util.UUID;
 public class SRParasitesHandler {
     //Parasites will be allowed to spawn via spawners, stay alive and will drop (reduced) loot in these biomes
     private static final List<String> overworldParasiteBiomes = Arrays.asList(
-            "Heath",
-            "Steppe",
-            "Wasteland",
-            "Abyssal Rift",
-            "Parasite Biome",
-            "Lair of the Thing",
-            "Nuclear Ruins",
-            "Ruins of Blight"
-    );
-
-    //Parasites will be allowed to stay alive in these biomes as well
-    private static final List<String> overworldParasiteBiomesExtended = Arrays.asList(
-            "Frozen City Creek",
-            "Desert City Creek",
-            "Jungle City Creek"
+            "biomesoplenty:heath",
+            "biomesoplenty:steppe",
+            "biomesoplenty:wasteland",
+            "openterraingenerator:overworld_abyssal_rift",
+            "srparasites:biome_parasite",
+            "openterraingenerator:overworld_lair_of_the_thing",
+            "openterraingenerator:overworld_nuclear_ruins",
+            "openterraingenerator:overworld_ruins_of_blight"
     );
 
     //Parasites with these names will always drop their loot without reduction, no matter the biome
@@ -101,9 +94,8 @@ public class SRParasitesHandler {
         if(entity.dimension == 3) return;
 
         //Slowly kill Parasites outside specific biomes
-        //TODO: otg get biome instead of using this clientside function
-        String biomeName = entity.world.getBiome(entity.getPosition()).getBiomeName();
-        if (overworldParasiteBiomes.contains(biomeName) || overworldParasiteBiomesExtended.contains(biomeName)) return;
+        ResourceLocation biomeReg = entity.world.getBiome(entity.getPosition()).getRegistryName();
+        if (biomeReg != null && overworldParasiteBiomes.contains(biomeReg.toString())) return;
 
         float health = entity.getHealth();
         if (health > 1000)      entity.setHealth(health / 50);
@@ -120,9 +112,8 @@ public class SRParasitesHandler {
         ResourceLocation entityId = EntityList.getKey(entity);
         if(entityId == null) return;
         if(!(entity instanceof EntityParasiteBase)) return;
-        String biomeName = event.getWorld().getBiome(entity.getPosition()).getBiomeName();
-        //TODO: otg get biome instead of using this clientside function
-        if(!overworldParasiteBiomes.contains(biomeName))
+        ResourceLocation biomeReg = event.getWorld().getBiome(entity.getPosition()).getRegistryName();
+        if(biomeReg != null && !overworldParasiteBiomes.contains(biomeReg.toString()))
             event.setResult(Event.Result.DENY);
     }
 
@@ -134,11 +125,8 @@ public class SRParasitesHandler {
         if(entity.dimension != 0) return;
         ResourceLocation entityId = EntityList.getKey(entity);
         if(entityId == null) return;
-        //TODO: otg get biome instead of using this clientside function
-        String biomeName = entity.world.getBiome(entity.getPosition()).getBiomeName();
 
         //Reduce enchanted book drops in Abyssal Rift (except from infernal mobs)
-        // Translators note: don't ask me why
         if(Ref.entityIsInAbyssalRift(entity)) {
             List<EntityItem> itemsToRemove = new ArrayList<>();
             if (!entity.getEntityData().hasKey("InfernalMobsMod")) {
@@ -167,7 +155,9 @@ public class SRParasitesHandler {
                     return;
         }
 
-        if(overworldParasiteBiomes.contains(biomeName)){
+        ResourceLocation biomeReg = entity.world.getBiome(entity.getPosition()).getRegistryName();
+
+        if(biomeReg != null && overworldParasiteBiomes.contains(biomeReg.toString())){
             List<EntityItem> itemsToRemove = new ArrayList<>();
             List<EntityItem> itemsToAdd = new ArrayList<>();
             for (EntityItem drop : event.getDrops()) {

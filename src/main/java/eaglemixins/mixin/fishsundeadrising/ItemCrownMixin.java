@@ -36,13 +36,13 @@ public class ItemCrownMixin extends Item {
     public void eagleMixins_furItemCrown_getTileEntity(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ, CallbackInfoReturnable<EnumActionResult> cir) {
         //Check both old (biome type) and new handling (biome name), return if biome doesnt fit either
 
-        //TODO: otg get biome instead of using this clientside function
-        String biomeName = worldIn.getBiome(player.getPosition()).getBiomeName();
-        boolean newHandling = biomeName.contains("Desert") || biomeName.contains("Dune") || biomeName.contains("Wasteland");
+        Biome biome = worldIn.getBiome(pos);
+        boolean correctBiome = BiomeDictionary.hasType(biome, BiomeDictionary.Type.MESA) ||
+                BiomeDictionary.hasType(biome, BiomeDictionary.Type.SAVANNA) ||
+                BiomeDictionary.hasType(biome, BiomeDictionary.Type.SANDY) ||
+                BiomeDictionary.hasType(biome, BiomeDictionary.Type.DEAD);
 
-        boolean oldHandling = BiomeDictionary.hasType(worldIn.getBiome(pos), BiomeDictionary.Type.HOT) && BiomeDictionary.hasType(worldIn.getBiome(pos), BiomeDictionary.Type.DRY) && BiomeDictionary.hasType(worldIn.getBiome(pos), BiomeDictionary.Type.SANDY);
-
-        if (!newHandling && !oldHandling)
+        if (!correctBiome)
             cir.setReturnValue(super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ));
     }
 }
