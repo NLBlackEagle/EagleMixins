@@ -4,7 +4,6 @@ import com.dhanantry.scapeandrunparasites.entity.ai.misc.EntityParasiteBase;
 import com.dhanantry.scapeandrunparasites.item.tool.WeaponToolArmorBase;
 import com.dhanantry.scapeandrunparasites.item.tool.WeaponToolMeleeBase;
 import com.dhanantry.scapeandrunparasites.item.tool.WeaponToolRangeBase;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
@@ -20,6 +19,10 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import svenhjol.charm.world.entity.EntityChargedEmerald;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class SentientWeaponEvolutionHandler {
     private static boolean isSRPLivingGear(Item item){
@@ -68,13 +71,13 @@ public class SentientWeaponEvolutionHandler {
 
                 //Set Lore tags
                 if (!isMeleeWeapon) {
-                    String srpkillsToolTip = "" + TextFormatting.RESET + TextFormatting.BLUE + "---> " + currentKills;
-                    String itemToWrite = stack.getItem() instanceof WeaponToolRangeBase ? I18n.format(I18n.format("eaglemixins.srptooltip.bow")) : I18n.format("eaglemixins.srptooltip.armor");
-                    String loreTag = "" + TextFormatting.RESET + TextFormatting.DARK_PURPLE + TextFormatting.ITALIC + " " + itemToWrite;
-                    setLore(stack, srpkillsToolTip + loreTag);
+                    List<String> loreTags = new ArrayList<>();
+                    loreTags.add("" + TextFormatting.RESET + TextFormatting.BLUE + "---> " + currentKills);
+                    loreTags.add(stack.getItem() instanceof WeaponToolRangeBase ? "eaglemixins.srptooltip.bow" : "eaglemixins.srptooltip.armor");
+                    setLocLore(stack, loreTags);
                 } else {
-                    String loreTag = "" + TextFormatting.RESET + TextFormatting.DARK_PURPLE + TextFormatting.ITALIC + " "+ I18n.format("eaglemixins.srptooltip.weapon");
-                    setLore(stack, loreTag);
+                    String loreTag = "eaglemixins.srptooltip.weapon";
+                    setLocLore(stack, Collections.singletonList(loreTag));
                 }
 
                 //Evolve
@@ -92,7 +95,7 @@ public class SentientWeaponEvolutionHandler {
                     ItemStack newStack = new ItemStack(newItem);
                     newStack.setTagCompound(savedTags);
                     if (!isMeleeWeapon)
-                        newStack.getTagCompound().getCompoundTag("display").removeTag("Lore");
+                        newStack.getTagCompound().getCompoundTag("display").removeTag("LocLore");
 
                     boolean hasCurseOfPossession = EnchantmentHelper.getEnchantments(newStack).get(smeCoP) != null;
                     if (hasCurseOfPossession) {
@@ -109,19 +112,18 @@ public class SentientWeaponEvolutionHandler {
         }
     }
 
-    private static void setLore(ItemStack stack, String srpkillsToolTip) {
-        NBTTagString toolTip = new NBTTagString(srpkillsToolTip);
+    private static void setLocLore(ItemStack stack, List<String> srpkillsToolTip) {
         NBTTagList lore = new NBTTagList();
-        lore.appendTag(toolTip);
+        for(String s : srpkillsToolTip)
+            lore.appendTag(new NBTTagString(s));
+
         if(stack.getTagCompound().hasKey("display")) {
             NBTTagCompound displayCompound = stack.getTagCompound().getCompoundTag("display");
-            if(displayCompound.hasKey("Lore"))
-                ((NBTTagList) displayCompound.getTag("Lore")).set(0,toolTip);
-            else
-                displayCompound.setTag("Lore", lore);
+            //TODO: this overwrites any other LocLore
+            displayCompound.setTag("LocLore", lore);
         } else {
             NBTTagCompound displayCompound = new NBTTagCompound();
-            displayCompound.setTag("Lore",lore);
+            displayCompound.setTag("LocLore",lore);
             stack.getTagCompound().setTag("display", displayCompound);
         }
     }

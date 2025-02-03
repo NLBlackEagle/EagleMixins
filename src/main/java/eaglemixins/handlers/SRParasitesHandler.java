@@ -6,7 +6,6 @@ import com.dhanantry.scapeandrunparasites.entity.ai.misc.EntityParasiteBase;
 import com.dhanantry.scapeandrunparasites.entity.monster.deterrent.nexus.*;
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.util.Ref;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
@@ -65,7 +64,7 @@ public class SRParasitesHandler {
     private static ItemStack getCorruptedAshes(){
         if(corruptedAshes == null){
             corruptedAshes = new ItemStack(BOPItems.ash,1);
-            corruptedAshes.setStackDisplayName(I18n.format("eaglemixins.tooltip.corruptedashes"));
+            corruptedAshes.setTranslatableName("eaglemixins.tooltip.corruptedashes");
         }
         return corruptedAshes.copy();
     }
