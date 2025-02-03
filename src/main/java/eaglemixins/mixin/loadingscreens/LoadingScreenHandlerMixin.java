@@ -45,7 +45,7 @@ public class LoadingScreenHandlerMixin {
         long sysTime = System.currentTimeMillis();
 
         //Setup (random) order on first frame and after 2 minutes (assumption: new login without restart -> re-randomise)
-        if (screenIdOrder == null || sysTime-lastTime > 5000) {     //120000
+        if (screenIdOrder == null || sysTime-lastTime > 120000) {
             screenIdOrder = new ArrayList<>();
             for (int i = 0; i < this.elements.size(); i++)
                 screenIdOrder.add(i);
