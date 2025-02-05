@@ -1,12 +1,12 @@
 package eaglemixins.util;
 
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.*;
 import net.minecraft.util.ResourceLocation;
 
 public class DisarmingUtility {
-    public static boolean isAllowedToDisarm(ItemStack stack, EntityLivingBase entityDisarmed){
+    public static boolean isAllowedToDisarm(ItemStack stack, Entity entityDisarmed){
         //Players are allowed to get their weapons disarmed
         if (entityDisarmed instanceof EntityPlayer) return true;
 
