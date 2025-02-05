@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class EnchantmentDisarmamentMixin {
     @Redirect(
             method = "HandleEnchant",
+            remap = false,
             at = @At(value = "INVOKE", target = "Lcom/Shultrea/Rin/Utility_Sector/EnchantmentsUtility;Disarm(Lnet/minecraft/entity/EntityLivingBase;)V")
     )
     private void stopDisarmingGoodStuff(EntityLivingBase target, @Local EntityLivingBase attacker){
