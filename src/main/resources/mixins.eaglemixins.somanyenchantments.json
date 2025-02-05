@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "eaglemixins.mixin.somanyenchantments",
+  "refmap": "mixins.eaglemixins.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "mixins": [
+    "EnchantmentDisarmamentMixin"
+  ],
+  "injectors": {
+    "maxShiftBy": 10
+  }
+}
