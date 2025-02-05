@@ -2,6 +2,7 @@ package eaglemixins.mixin.vanilla;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -21,6 +22,9 @@ public abstract class EntityDropItemMixin {
     public void stopDisarmingSentientDragonbone(ItemStack stack, float offsetY, CallbackInfoReturnable<EntityItem> cir) {
         //Players are allowed to drop their weapons or get their weapons disarmed
         if ((Entity) (Object) this instanceof EntityPlayer) return;
+
+        //Animals, i.e. dragons, are allowed to drop their materials
+        if ((Entity) (Object) this instanceof EntityAnimal) return;
 
         ResourceLocation resourceLocation = stack.getItem().getRegistryName();
         if (resourceLocation == null) return;
