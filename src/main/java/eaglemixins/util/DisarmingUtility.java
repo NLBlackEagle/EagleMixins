@@ -6,7 +6,7 @@ import net.minecraft.item.*;
 import net.minecraft.util.ResourceLocation;
 
 public class DisarmingUtility {
-    public static boolean isAllowedToDisarm(ItemStack stack, EntityLivingBase entityDisarmed, EntityLivingBase entityDisarming){
+    public static boolean isAllowedToDisarm(ItemStack stack, EntityLivingBase entityDisarmed){
         //Players are allowed to get their weapons disarmed
         if (entityDisarmed instanceof EntityPlayer) return true;
 
