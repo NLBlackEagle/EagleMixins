@@ -14,7 +14,8 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 public class CommonEventHandlerMixin {
     @ModifyArg(
             method = "onDamage",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/EntityPlayer;dropItem(Lnet/minecraft/item/ItemStack;Z)Lnet/minecraft/entity/item/EntityItem;")
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/EntityPlayer;dropItem(Lnet/minecraft/item/ItemStack;Z)Lnet/minecraft/entity/item/EntityItem;"),
+            remap = false
     )
     private ItemStack stopDisarmingGoodStuff_disarm(ItemStack stack, @Local EntityPlayer player, @Local EntityLivingBase target){
         if(DisarmingUtility.isAllowedToDisarm(stack, target, player))
@@ -25,7 +26,8 @@ public class CommonEventHandlerMixin {
 
     @ModifyArg(
             method = "onDamage",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityLivingBase;entityDropItem(Lnet/minecraft/item/ItemStack;F)Lnet/minecraft/entity/item/EntityItem;")
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityLivingBase;entityDropItem(Lnet/minecraft/item/ItemStack;F)Lnet/minecraft/entity/item/EntityItem;"),
+            remap = false
     )
     private ItemStack stopDisarmingGoodStuff_handDropChances(ItemStack stack, @Local EntityPlayer player, @Local EntityLivingBase target){
         if(DisarmingUtility.isAllowedToDisarm(stack, target, player))
