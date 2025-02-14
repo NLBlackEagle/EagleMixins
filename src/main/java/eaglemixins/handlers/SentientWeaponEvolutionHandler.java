@@ -10,11 +10,13 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -23,6 +25,7 @@ import svenhjol.charm.world.entity.EntityChargedEmerald;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class SentientWeaponEvolutionHandler {
     private static boolean isSRPLivingGear(Item item){
@@ -33,6 +36,7 @@ public class SentientWeaponEvolutionHandler {
     }
     private static final String srpkillsKey = "srpkills";
     private static final Enchantment smeCoP =  Enchantment.getEnchantmentByLocation("somanyenchantments:curseofpossession");
+    private static final Random rand = new Random();
 
     @SubscribeEvent
     public static void onLivingDeath(LivingDeathEvent event){
@@ -82,9 +86,16 @@ public class SentientWeaponEvolutionHandler {
 
                 //Evolve
                 if (currentKills > 50000) {
-                    EntityChargedEmerald lightningBolt = new EntityChargedEmerald(player.world, player);
-                    lightningBolt.setPosition(player.posX, player.posY, player.posZ);
-                    player.world.spawnEntity(lightningBolt);
+                    boolean isArmor = stack.getItem() instanceof ItemArmor;
+
+                    for(int i = 0; i < (isArmor ? 10 : 1); i++) {
+                        EntityChargedEmerald lightningBolt = new EntityChargedEmerald(player.world, player);
+                        BlockPos randPos = player.getPosition();
+                        if(isArmor)
+                            randPos = randPos.add(rand.nextGaussian() * 2, 0 , rand.nextGaussian() * 2);
+                        lightningBolt.setPosition(randPos.getX(), randPos.getY(), randPos.getZ());
+                        player.world.spawnEntity(lightningBolt);
+                    }
 
                     NBTTagCompound savedTags = stack.getTagCompound();
 
@@ -98,8 +109,8 @@ public class SentientWeaponEvolutionHandler {
                         newStack.getTagCompound().getCompoundTag("display").removeTag("LocLore");
 
                     boolean hasCurseOfPossession = EnchantmentHelper.getEnchantments(newStack).get(smeCoP) != null;
-                    if (hasCurseOfPossession) {
-                        //replace item in slot if item has curse of possession
+                    if (hasCurseOfPossession || isArmor) {
+                        //replace item in slot if item has curse of possession or is armor
                         stack.shrink(1);    //This shouldn't be necessary but we do it anyway
                         player.setItemStackToSlot(slot, newStack);
                     } else {
