@@ -50,7 +50,7 @@ public class BerianHandler {
         if (villager.hasCustomName()) return;
 
         //Old check using String instead of boolean
-        if (!villager.getEntityData().getString("SussyBerianNaming").isEmpty()) return;
+        if (villager.getEntityData().hasKey("SussyBerianNaming")) return;
         //New check
         if (villager.getEntityData().hasKey("BerianCheck")) return;
         villager.getEntityData().setBoolean("BerianCheck", true);
