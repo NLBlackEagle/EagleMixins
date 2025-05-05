@@ -15,6 +15,8 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import java.util.Random;
+
 
 public class RandomTippedArrowHandler {
 
@@ -66,9 +68,13 @@ public class RandomTippedArrowHandler {
         ItemStack offhand = attacker.getHeldItemOffhand();
         if(!(offhand.getItem() instanceof ItemTippedArrow)) return;
 
+        Random random = new Random();
+        int maxDuration = random.nextInt(1200) + 200;
+
         //Apply potion effects on attacked entity
         for (PotionEffect potionEffect : PotionUtils.getEffectsFromStack(offhand))
-            victim.addPotionEffect(potionEffect);
+            victim.addPotionEffect(new PotionEffect(potionEffect.getPotion(), maxDuration, 1));
+
 
         //Swap held tipped arrow for some mobs
         if (attacker.getEntityData().hasKey("NoArrowSwitch")) return;
