@@ -55,11 +55,23 @@ public abstract class PotionBase extends Potion {
     }
 
     @Override
-    public boolean shouldRenderHUD(PotionEffect effect) { return true; }
+    public boolean shouldRenderHUD(PotionEffect effect) {
+        if (effect.getEffectName() == "rad_weakness") { return false; } else {
+            return true;
+        }
+    }
 
     @Override
-    public boolean shouldRender(PotionEffect effect) { return true; }
+    public boolean shouldRender(PotionEffect effect) {
+        if (effect.getEffectName() == "rad_weakness") { return false; } else {
+            return true;
+        }
+    }
 
     @Override
-    public boolean shouldRenderInvText(PotionEffect effect) { return true; }
+    public boolean shouldRenderInvText(PotionEffect effect) {
+        if (effect.getEffectName() == "rad_weakness") { return false; } else {
+            return true;
+        }
+    }
 }
