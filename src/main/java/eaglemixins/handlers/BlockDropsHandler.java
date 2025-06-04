@@ -7,6 +7,11 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -15,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+
 
 public class BlockDropsHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -81,6 +88,25 @@ public class BlockDropsHandler {
                 addDrop(event.getDrops(), harvesterRNG, "contenttweaker:steel_nugget", 0.1F);
                 addDrop(event.getDrops(), harvesterRNG, "contenttweaker:steel_nugget", 0.1F);
             }
+            return;
+        }
+
+        //Resource Crate Loottable
+        if (blockId.equals("contenttweaker:resource_crate")) {
+            event.getDrops().clear();  // Clear default drops
+
+            World world = event.getWorld();
+            LootTableManager lootManager = world.getLootTableManager();
+            ResourceLocation lootTable = new ResourceLocation("eaglemixins", "blocks/resource_crate");
+
+            LootContext.Builder builder = new LootContext.Builder((WorldServer) world)
+                    .withLuck(event.getFortuneLevel());
+
+            List<ItemStack> loot = lootManager.getLootTableFromLocation(lootTable)
+                    .generateLootForPools(world.rand, builder.build());
+
+            event.getDrops().addAll(loot);
+
             return;
         }
 

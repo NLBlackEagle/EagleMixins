@@ -18,7 +18,7 @@ public class IrradiatedParasitesHandler {
     private static final UUID ARMOR_UUID = UUID.fromString("0cdaa41f-92d6-4575-9acc-3527810a859e");
 
     @SubscribeEvent
-    private static void onEntityTick(LivingEvent.LivingUpdateEvent event){
+    public  static void onEntityTick(LivingEvent.LivingUpdateEvent event){
         EntityLivingBase entity = event.getEntityLiving();
         if(!(entity instanceof EntityParasiteBase)) return;
         World world = entity.world;
