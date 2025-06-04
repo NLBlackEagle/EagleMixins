@@ -69,6 +69,7 @@ dependencies {
     implementation fg.deobf("curse.maven:sme-${sme_version}")
     implementation fg.deobf("curse.maven:bettersurvival-${bettersurvival_version}")
     implementation fg.deobf("curse.maven:rlcombat-${rlcombat_version}")
+    implementation fg.deobf("curse.maven:nuclearcraft-mod-${nuclearcraft_version}")
 }
 
 mixin {

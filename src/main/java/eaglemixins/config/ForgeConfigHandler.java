@@ -30,6 +30,10 @@ public class ForgeConfigHandler {
 	@Config.Name("Client Options")
 	public static final ClientConfig client = new ClientConfig();
 
+	@Config.Comment("Irradiated Options")
+	@Config.Name("Irradiated Options")
+	public static final IrradiatedConfig irradiated = new IrradiatedConfig();
+
 	public static class ServerConfig {
 		@Config.Comment("List of mobs that players will not get dismounted from in Abyssal Rift")
 		@Config.Name("Allowed Mounts in Abyssal Rift")

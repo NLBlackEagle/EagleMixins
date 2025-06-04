@@ -1,5 +1,6 @@
 package eaglemixins;
 
+import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.handlers.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -36,5 +37,6 @@ public class EagleMixins {
         MinecraftForge.EVENT_BUS.register(RecallFlightCancelHandler.class);
         MinecraftForge.EVENT_BUS.register(SentientWeaponEvolutionHandler.class);
         MinecraftForge.EVENT_BUS.register(SRParasitesHandler.class);
+        if(ForgeConfigHandler.irradiated.enabled) MinecraftForge.EVENT_BUS.register(IrradiatedParasitesHandler.class);
     }
 }
