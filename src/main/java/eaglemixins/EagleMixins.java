@@ -4,10 +4,10 @@ import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.handlers.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 @Mod(modid = EagleMixins.MODID, version = EagleMixins.VERSION, name = EagleMixins.NAME, dependencies = "required-after:fermiumbooter")
 public class EagleMixins {
@@ -38,5 +38,10 @@ public class EagleMixins {
         MinecraftForge.EVENT_BUS.register(SentientWeaponEvolutionHandler.class);
         MinecraftForge.EVENT_BUS.register(SRParasitesHandler.class);
         if(ForgeConfigHandler.irradiated.enabled) MinecraftForge.EVENT_BUS.register(IrradiatedParasitesHandler.class);
+    }
+    
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent event) {
+        EnhancedVisualsHandler.init();
     }
 }
