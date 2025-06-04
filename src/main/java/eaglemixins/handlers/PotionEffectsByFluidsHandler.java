@@ -22,6 +22,7 @@ public class PotionEffectsByFluidsHandler {
         EntityPlayer player = event.player;
         World world = player.world;
         if (world.isRemote) return;
+        if(player.isCreative() || player.isSpectator()) return;
         if (world.getTotalWorldTime() % 20 != 0) return;
 
         List<ResourceLocation> blockColumn = new ArrayList<>();

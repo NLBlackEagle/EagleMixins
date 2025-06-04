@@ -9,17 +9,16 @@ public class PotionRadiationSickness extends PotionBase {
     public static final PotionRadiationSickness INSTANCE = new PotionRadiationSickness();
     public PotionRadiationSickness() { super("radiation_sickness", true, 0xF3F4F9); }
 
-
     @Override
-    public boolean isReady(int duration, int amplifier) { return true; }
-
+    public boolean isReady(int duration, int amplifier) {
+        return true;
+    }
 
     @Override
     public void performEffect(EntityLivingBase entityLivingBase, int amplifier) {
         if(entityLivingBase.world.isRemote) return;
-        if(entityLivingBase.getActivePotionEffect(this) != null) return;
 
-        switch(entityLivingBase.getActivePotionEffect(this).getAmplifier()) {
+        switch(amplifier) {
             case 0:
             case 1:
             case 2: if (entityLivingBase instanceof EntityPlayer) { ((EntityPlayer) entityLivingBase).addExhaustion(0.005F * (float) (amplifier + 1)); }
