@@ -133,52 +133,52 @@
         {
           "type": "item",
           "name": "nuclearcraft:geiger_block",
-          "weight": 10
+          "weight": 5
         },
         {
           "type": "item",
           "name": "nuclearcraft:nitrogen_collector_compact",
-          "weight": 10
+          "weight": 5
         },
         {
           "type": "item",
           "name": "nuclearcraft:nitrogen_collector",
-          "weight": 10
+          "weight": 5
         },
         {
           "type": "item",
           "name": "nuclearcraft:water_source_dense",
-          "weight": 10
+          "weight": 5
         },
         {
           "type": "item",
           "name": "nuclearcraft:water_source_compact",
-          "weight": 10
+          "weight": 5
         },
         {
           "type": "item",
           "name": "nuclearcraft:water_source",
-          "weight": 10
+          "weight": 5
         },
         {
           "type": "item",
           "name": "nuclearcraft:helium_collector_dense",
-          "weight": 10
+          "weight": 5
         },
         {
           "type": "item",
           "name": "nuclearcraft:helium_collector_compact",
-          "weight": 10
+          "weight": 5
         },
         {
           "type": "item",
           "name": "nuclearcraft:helium_collector",
-          "weight": 10
+          "weight": 5
         },
         {
           "type": "item",
           "name": "nuclearcraft:nitrogen_collector_dense",
-          "weight": 10
+          "weight": 5
         },
         {
           "type": "item",
