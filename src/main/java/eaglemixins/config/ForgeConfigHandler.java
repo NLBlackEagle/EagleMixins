@@ -639,6 +639,7 @@ public class ForgeConfigHandler {
 				berianConstantEffect = null;
 				tippedArrowAllowedEntities = null;
 				conductivityMap = null;
+				irradiated.reset();
 			}
 		}
 	}
