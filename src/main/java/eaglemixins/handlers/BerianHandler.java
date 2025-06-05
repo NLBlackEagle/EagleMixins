@@ -40,7 +40,7 @@ public class BerianHandler {
     private static void updateBerian(Entity entity) {
         if (entity.world.isRemote) return;
         if (!(entity instanceof EntityVillager)) return;
-        if (ForgeConfigHandler.server.sussyberianChance <= 0.0D && ForgeConfigHandler.server.mentalberianChance <= 0.0D) return;
+        if (ForgeConfigHandler.berian.sussyberianChance <= 0.0D && ForgeConfigHandler.berian.mentalberianChance <= 0.0D) return;
 
         EntityVillager villager = (EntityVillager) entity;
         VillagerRegistry.VillagerProfession profession = villager.getProfessionForge();
@@ -57,13 +57,13 @@ public class BerianHandler {
 
         //First check whether it should be any berian, adding the two chances together
         // --> 5%+5%=10% of all librarians are berian
-        double combinedChance = ForgeConfigHandler.server.sussyberianChance + ForgeConfigHandler.server.mentalberianChance;
+        double combinedChance = ForgeConfigHandler.berian.sussyberianChance + ForgeConfigHandler.berian.mentalberianChance;
         if(villager.getRNG().nextFloat() < combinedChance) return;
 
         //Then the sussy vs mental roll can be independent, either it's a sussy or a mental
         // --> random float between 0 and sussy+mental smaller than sussy
         // (old handling had mental chance be actually (1-sussy) x mental, so 4.75% instead of 5%)
-        if(villager.getRNG().nextFloat() * combinedChance < ForgeConfigHandler.server.sussyberianChance){
+        if(villager.getRNG().nextFloat() * combinedChance < ForgeConfigHandler.berian.sussyberianChance){
             villager.setCustomNameTag("Sussyberian");
             villager.getEntityData().setBoolean("Sussyberian", true);
         } else {
@@ -86,7 +86,7 @@ public class BerianHandler {
     }
 
     private static void applyBerianEffects(EntityPlayer player, EntityVillager berian, boolean isSussy) {
-        List<Potion> potions = isSussy ? ForgeConfigHandler.getSussyberianEffects() : ForgeConfigHandler.getMentalberianEffects();
+        List<Potion> potions = isSussy ? ForgeConfigHandler.berian.getSussyberianEffects() : ForgeConfigHandler.berian.getMentalberianEffects();
         if (!potions.isEmpty()) {
             //Random potion
             Potion potion = potions.get(player.getRNG().nextInt(potions.size()));
@@ -96,7 +96,7 @@ public class BerianHandler {
                 player.addPotionEffect(new PotionEffect(potion, 200, 2));
         }
         //Always apply this potion
-        Potion potion = ForgeConfigHandler.getBerianConstantEffect();
+        Potion potion = ForgeConfigHandler.berian.getBerianConstantEffect();
         if (potion.isInstant())
             potion.affectEntity(berian, berian, player, 1, 1.0D);
         else

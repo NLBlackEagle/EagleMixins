@@ -43,7 +43,7 @@ public class ConductivityHandler {
         int conductivityOnEquipment = 0;
         for (ItemStack stack : player.getEquipmentAndArmor()) {
             if (stack.equals(ItemStack.EMPTY)) continue;
-            conductivityOnEquipment += ForgeConfigHandler.getItemConductivity(stack);
+            conductivityOnEquipment += ForgeConfigHandler.conductivity.getItemConductivity(stack);
         }
 
         if (!isThundering)
@@ -86,7 +86,7 @@ public class ConductivityHandler {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public static void onTooltip(ItemTooltipEvent event) {
-        int conductivity = ForgeConfigHandler.getItemConductivity(event.getItemStack());
+        int conductivity = ForgeConfigHandler.conductivity.getItemConductivity(event.getItemStack());
         if (conductivity > 0)
             event.getToolTip().add("" + TextFormatting.YELLOW + TextFormatting.ITALIC + I18n.format("eaglemixins.conductivity.tooltip",conductivity));
     }

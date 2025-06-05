@@ -17,7 +17,6 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import java.util.Random;
 
-
 public class RandomTippedArrowHandler {
 
     // Entities with tipped arrow in offhand apply potion effect on target hit
@@ -31,7 +30,7 @@ public class RandomTippedArrowHandler {
         if (entity == null || entity.world.isRemote) return;
 
         ResourceLocation entityId = EntityList.getKey(entity);
-        if (entityId == null || !ForgeConfigHandler.getTippedArrowAllowedEntities().contains(entityId)) return;
+        if (entityId == null || !ForgeConfigHandler.tippedarrows.getTippedArrowAllowedEntities().contains(entityId)) return;
 
         if (!(entity.getHeldItemMainhand().getItem() instanceof ItemBow)) return;
 
@@ -46,10 +45,10 @@ public class RandomTippedArrowHandler {
         }
 
         //Give entity tipped arrow
-        if (entity.getRNG().nextFloat() <= ForgeConfigHandler.server.tippedArrowReplacementChance) {
+        if (entity.getRNG().nextFloat() <= ForgeConfigHandler.tippedarrows.tippedArrowReplacementChance) {
             tag.setBoolean("ArrowEntity", true);
             //Start with non-long arrow, chance to replace every hit
-            entity.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, ForgeConfigHandler.getRandomArrowStack(entity.getRNG(), false));
+            entity.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, ForgeConfigHandler.tippedarrows.getRandomArrowStack(entity.getRNG(), false));
         }
     }
 
@@ -88,8 +87,8 @@ public class RandomTippedArrowHandler {
         //Other mobs have low chance for long arrow (1%) and only swap sometimes (20%)
         boolean isJester = attacker.hasCustomName() && attacker.getName().contains("Jester");
         if((isJester && doSwap) || (doSwap && newArrowIsLong))
-            attacker.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, ForgeConfigHandler.getRandomArrowStack(attacker.getRNG(),true));
+            attacker.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, ForgeConfigHandler.tippedarrows.getRandomArrowStack(attacker.getRNG(),true));
         else if(isJester || doSwap)
-            attacker.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, ForgeConfigHandler.getRandomArrowStack(attacker.getRNG(),false));
+            attacker.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, ForgeConfigHandler.tippedarrows.getRandomArrowStack(attacker.getRNG(),false));
     }
 }

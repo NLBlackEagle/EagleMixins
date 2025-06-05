@@ -1,4 +1,4 @@
-package eaglemixins.config;
+package eaglemixins.config.folders;
 
 import net.minecraftforge.common.config.Config;
 
