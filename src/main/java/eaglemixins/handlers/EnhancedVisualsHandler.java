@@ -26,49 +26,90 @@ public class EnhancedVisualsHandler {
 	
 	public static class RadiationHandler extends VisualHandler {
 		
-		//What % rads is considered the starting point for rendering
+		//Low rad render minimum
 		@CreativeConfig
-		public double minRadRender = 0.2;
-		//What % rads is considered the max point for rendering
+		public double lowRadRender = 0.2;
+		//Med rad render minimum
 		@CreativeConfig
-		public double maxRadRender = 1.0;
-		//Max render opacity mult
+		public double medRadRender = 0.5;
+		//High rad render minimum
 		@CreativeConfig
-		public double maxRenderOpacity = 0.5;
+		public double highRadRender = 0.8;
+		//Render opacity mult
+		@CreativeConfig
+		public double renderOpacityMult = 0.75;
 		//Opacity fade transition speed
 		@CreativeConfig
-		public double fadeFactor = 0.005;
+		public double fadeFactor = 0.05;
 		
 		@CreativeConfig
-		public VisualType radiation = new VisualTypeOverlay("radiation", 40);
+		public VisualType radiation_low = new VisualTypeOverlay("radiation_low", 30);
+		@CreativeConfig
+		public VisualType radiation_med = new VisualTypeOverlay("radiation_med", 20);
+		@CreativeConfig
+		public VisualType radiation_high = new VisualTypeOverlay("radiation_high", 10);
 		
-		public Visual radiationVisual;
+		public Visual radiationLowVisual;
+		public Visual radiationMedVisual;
+		public Visual radiationHighVisual;
 		
 		@Override
 		public void tick(@Nullable EntityPlayer player) {
-			if(radiationVisual == null) {
-				radiationVisual = new Visual(radiation, this, 0);
-				radiationVisual.setOpacityInternal(0);
-				VisualManager.add(radiationVisual);
+			if(radiationLowVisual == null) {
+				radiationLowVisual = new Visual(radiation_low, this, 0);
+				radiationLowVisual.setOpacityInternal(0);
+				VisualManager.add(radiationLowVisual);
+				
+				radiationMedVisual = new Visual(radiation_med, this, 0);
+				radiationMedVisual.setOpacityInternal(0);
+				VisualManager.add(radiationMedVisual);
+				
+				radiationHighVisual = new Visual(radiation_high, this, 0);
+				radiationHighVisual.setOpacityInternal(0);
+				VisualManager.add(radiationHighVisual);
 			}
+			
+			double lowOpac = 0.0D;
+			double medOpac = 0.0D;
+			double highOpac = 0.0D;
+			
 			if(player != null) {
-				double aimedRads = 0;
+				double radPerc = 0.0D;
 				if(NCConfig.radiation_enabled_public) {
 					IEntityRads playerRads = RadiationHelper.getEntityRadiation(player);
 					if(playerRads != null && !playerRads.isImmune()) {
-						aimedRads = playerRads.getRadsPercentage() / 100.0D;
+						radPerc = playerRads.getRadsPercentage() / 100.0D;
 					}
 				}
-				aimedRads = (aimedRads - minRadRender) / maxRadRender;
-				aimedRads = Math.max(0.0D, Math.min(aimedRads, 1.0D) * maxRenderOpacity);
 				
-				if(radiationVisual.getOpacityInternal() < aimedRads) {
-					radiationVisual.setOpacityInternal((float)Math.min(radiationVisual.getOpacityInternal() + fadeFactor, aimedRads));
+				if(radPerc > highRadRender) {
+					lowOpac = renderOpacityMult;
+					medOpac = renderOpacityMult;
+					highOpac = renderOpacityMult * Math.min(1.0D, (radPerc - highRadRender) / Math.max(0.01D, (1.0D - highRadRender)));
 				}
-				else if(radiationVisual.getOpacityInternal() > aimedRads) {
-					radiationVisual.setOpacityInternal((float)Math.max(radiationVisual.getOpacityInternal() - fadeFactor, aimedRads));
+				else if(radPerc > medRadRender) {
+					lowOpac = renderOpacityMult;
+					medOpac = renderOpacityMult * Math.min(1.0D, (radPerc - medRadRender) / Math.max(0.01D, (highRadRender - medRadRender)));
+				}
+				else if(radPerc > lowRadRender) {
+					lowOpac = renderOpacityMult * Math.min(1.0D, (radPerc - lowRadRender) / Math.max(0.01D, (medRadRender - lowRadRender)));
 				}
 			}
+			
+			if(radiationLowVisual.getOpacityInternal() < lowOpac)
+				radiationLowVisual.setOpacityInternal((float)Math.min(radiationLowVisual.getOpacityInternal() + fadeFactor, lowOpac));
+			else if(radiationLowVisual.getOpacityInternal() > lowOpac)
+				radiationLowVisual.setOpacityInternal((float)Math.max(radiationLowVisual.getOpacityInternal() - fadeFactor, lowOpac));
+			
+			if(radiationMedVisual.getOpacityInternal() < medOpac)
+				radiationMedVisual.setOpacityInternal((float)Math.min(radiationMedVisual.getOpacityInternal() + fadeFactor, medOpac));
+			else if(radiationMedVisual.getOpacityInternal() > medOpac)
+				radiationMedVisual.setOpacityInternal((float)Math.max(radiationMedVisual.getOpacityInternal() - fadeFactor, medOpac));
+			
+			if(radiationHighVisual.getOpacityInternal() < highOpac)
+				radiationHighVisual.setOpacityInternal((float)Math.min(radiationHighVisual.getOpacityInternal() + fadeFactor, highOpac));
+			else if(radiationHighVisual.getOpacityInternal() > highOpac)
+				radiationHighVisual.setOpacityInternal((float)Math.max(radiationHighVisual.getOpacityInternal() - fadeFactor, highOpac));
 		}
 	}
 }
