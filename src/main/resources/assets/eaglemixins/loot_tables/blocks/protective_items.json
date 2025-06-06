@@ -1,0 +1,77 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "name": "Protective Items",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "loot_table",
+          "name": "eaglemixins:blocks/empty_loot",
+          "weight": 50
+        },
+        {
+          "type": "item",
+          "name": "nuclearcraft:geiger_counter",
+          "weight": 5
+        },
+        {
+          "type": "item",
+          "name": "nuclearcraft:radaway_slow",
+          "weight": 4
+        },
+        {
+          "type": "item",
+          "name": "nuclearcraft:rad_x",
+          "weight": 4
+        },
+        {
+          "type": "item",
+          "name": "nuclearcraft:radaway",
+          "weight": 4
+        },
+        {
+          "type": "item",
+          "name": "nuclearcraft:chest_hazmat",
+          "weight": 8
+        },
+        {
+          "type": "item",
+          "name": "nuclearcraft:boots_hazmat",
+          "weight": 8
+        },
+        {
+          "type": "item",
+          "name": "nuclearcraft:legs_hazmat",
+          "weight": 8
+        },
+        {
+          "type": "item",
+          "name": "nuclearcraft:helm_hazmat",
+          "weight": 8
+        },
+        {
+          "type": "item",
+          "name": "nuclearcraft:rad_shielding",
+          "weight": 5,
+          "functions": [
+            {
+              "function": "minecraft:set_data",
+              "data": 0
+            },
+            {
+              "function": "minecraft:set_data",
+              "data": 1,
+              "conditions": [{"condition": "random_chance","chance": 0.3}]
+            },
+            {
+              "function": "minecraft:set_data",
+              "data": 2,
+              "conditions": [{"condition": "random_chance","chance": 0.1}]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

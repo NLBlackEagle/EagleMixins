@@ -1,0 +1,58 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "name": "Resource Crate Drops",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "nuclearcraft:upgrade",
+          "weight": 5,
+          "functions": [
+            {
+              "function": "minecraft:set_data",
+              "data": 0
+            },
+            {
+              "function": "minecraft:set_data",
+              "data": 1,
+              "conditions": [{"condition": "random_chance","chance": 0.5}]
+            }
+          ]
+        },
+        {
+          "type": "item",
+          "name": "nuclearcraft:ingot",
+          "weight": 15,
+          "functions": [
+            {
+              "function": "minecraft:set_data",
+              "data": 2
+            },
+            {
+              "function": "minecraft:set_data",
+              "data": 3,
+              "conditions": [{"condition": "random_chance","chance": 0.3}]
+            },
+            {
+              "function": "minecraft:set_data",
+              "data": 4,
+              "conditions": [{"condition": "random_chance","chance": 0.3}]
+            },
+            {
+              "function": "minecraft:set_data",
+              "data": 5,
+              "conditions": [{"condition": "random_chance","chance": 0.3}]
+            },
+            {
+              "function": "minecraft:set_data",
+              "data": 6,
+              "conditions": [{"condition": "random_chance","chance": 0.3}]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

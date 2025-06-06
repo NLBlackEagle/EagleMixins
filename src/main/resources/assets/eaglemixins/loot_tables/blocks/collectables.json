@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "name": "Collectables",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "nuclearcraft:record_hyperspace",
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "name": "nuclearcraft:record_money_for_nothing",
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "name": "nuclearcraft:record_wanderer",
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "name": "nuclearcraft:record_end_of_the_world",
+          "weight": 1
+        }
+      ]
+    }
+  ]
+}

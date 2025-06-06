@@ -1,0 +1,56 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "name": "Collectors",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "nuclearcraft:nitrogen_collector_compact",
+          "weight": 5
+        },
+        {
+          "type": "item",
+          "name": "nuclearcraft:nitrogen_collector",
+          "weight": 5
+        },
+        {
+          "type": "item",
+          "name": "nuclearcraft:water_source_dense",
+          "weight": 5
+        },
+        {
+          "type": "item",
+          "name": "nuclearcraft:water_source_compact",
+          "weight": 5
+        },
+        {
+          "type": "item",
+          "name": "nuclearcraft:water_source",
+          "weight": 5
+        },
+        {
+          "type": "item",
+          "name": "nuclearcraft:helium_collector_dense",
+          "weight": 5
+        },
+        {
+          "type": "item",
+          "name": "nuclearcraft:helium_collector_compact",
+          "weight": 5
+        },
+        {
+          "type": "item",
+          "name": "nuclearcraft:helium_collector",
+          "weight": 5
+        },
+        {
+          "type": "item",
+          "name": "nuclearcraft:nitrogen_collector_dense",
+          "weight": 5
+        }
+      ]
+    }
+  ]
+}
