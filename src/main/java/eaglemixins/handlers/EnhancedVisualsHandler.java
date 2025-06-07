@@ -26,18 +26,30 @@ public class EnhancedVisualsHandler {
 	
 	public static class RadiationHandler extends VisualHandler {
 		
-		//Low rad render minimum
+		//Radiation % to begin rendering low radiation
 		@CreativeConfig
-		public double lowRadRender = 0.2;
-		//Med rad render minimum
+		public double renderThresholdLow = 0.2;
+		//Radiation % to begin rendering medium radiation
 		@CreativeConfig
-		public double medRadRender = 0.5;
-		//High rad render minimum
+		public double renderThresholdMedium = 0.5;
+		//Radiation % to begin rendering high radiation
 		@CreativeConfig
-		public double highRadRender = 0.8;
-		//Render opacity mult
+		public double renderThresholdHigh = 0.8;
+		
+		//Max rendering opacity of low radiation
 		@CreativeConfig
-		public double renderOpacityMult = 0.75;
+		public double maxOpacityLow = 0.6;
+		//Max rendering opacity of medium radiation
+		@CreativeConfig
+		public double maxOpacityMedium = 0.8;
+		//Max rendering opacity of high radiation
+		@CreativeConfig
+		public double maxOpacityHigh = 1.0;
+		
+		//Max general rendering opacity
+		@CreativeConfig
+		public double maxOpacity = 0.8;
+		
 		//Opacity fade transition speed
 		@CreativeConfig
 		public double fadeFactor = 0.05;
@@ -82,19 +94,23 @@ public class EnhancedVisualsHandler {
 					}
 				}
 				
-				if(radPerc > highRadRender) {
-					lowOpac = renderOpacityMult;
-					medOpac = renderOpacityMult;
-					highOpac = renderOpacityMult * Math.min(1.0D, (radPerc - highRadRender) / Math.max(0.01D, (1.0D - highRadRender)));
+				if(radPerc > renderThresholdHigh) {
+					lowOpac = maxOpacity;
+					medOpac = maxOpacity;
+					highOpac = maxOpacity * Math.min(1.0D, (radPerc - renderThresholdHigh) / Math.max(0.01D, (1.0D - renderThresholdHigh)));
 				}
-				else if(radPerc > medRadRender) {
-					lowOpac = renderOpacityMult;
-					medOpac = renderOpacityMult * Math.min(1.0D, (radPerc - medRadRender) / Math.max(0.01D, (highRadRender - medRadRender)));
+				else if(radPerc > renderThresholdMedium) {
+					lowOpac = maxOpacity;
+					medOpac = maxOpacity * Math.min(1.0D, (radPerc - renderThresholdMedium) / Math.max(0.01D, (renderThresholdHigh - renderThresholdMedium)));
 				}
-				else if(radPerc > lowRadRender) {
-					lowOpac = renderOpacityMult * Math.min(1.0D, (radPerc - lowRadRender) / Math.max(0.01D, (medRadRender - lowRadRender)));
+				else if(radPerc > renderThresholdLow) {
+					lowOpac = maxOpacity * Math.min(1.0D, (radPerc - renderThresholdLow) / Math.max(0.01D, (renderThresholdMedium - renderThresholdLow)));
 				}
 			}
+			
+			lowOpac *= maxOpacityLow;
+			medOpac *= maxOpacityMedium;
+			highOpac *= maxOpacityHigh;
 			
 			if(radiationLowVisual.getOpacityInternal() < lowOpac)
 				radiationLowVisual.setOpacityInternal((float)Math.min(radiationLowVisual.getOpacityInternal() + fadeFactor, lowOpac));
