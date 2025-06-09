@@ -21,9 +21,9 @@ public class PotionRadiationSickness extends PotionBase {
         switch(amplifier) {
             case 0:
             case 1:
-            case 2: if (entityLivingBase instanceof EntityPlayer) { ((EntityPlayer) entityLivingBase).addExhaustion(0.005F * (float) (amplifier + 1)); }
-            case 3: if (entityLivingBase.getHealth() > 1.0F) { entityLivingBase.attackEntityFrom(DamageSource.MAGIC, 1.0F);}
-            case 4: entityLivingBase.attackEntityFrom(DamageSource.WITHER, 1.0F); //entityLivingBase.attackEntityFrom(new DamageSource("Radiation"), 1.0F);
+            case 2: if (entityLivingBase instanceof EntityPlayer) { ((EntityPlayer) entityLivingBase).addExhaustion(0.005F * (float) (amplifier + 1)); break;}
+            case 3: if (entityLivingBase.getHealth() > 1.0F) { entityLivingBase.attackEntityFrom(DamageSource.MAGIC, 1.0F); break;}
+            case 4: entityLivingBase.attackEntityFrom(DamageSource.WITHER, 1.0F); break; //entityLivingBase.attackEntityFrom(new DamageSource("Radiation"), 1.0F);
         }
     }
 }
