@@ -41,16 +41,17 @@ public class PotionRadiationSickness extends PotionBase {
 
                     if (currentHealth > 0.75f * maxHealth) {
                         entityLivingBase.attackEntityFrom(RadiationDamageSource.RADIATION, 1.0F);
-                        break;
+
                     }
                 }
+                break;
             case 4:
                 entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationWeakness.INSTANCE));
                 entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationFatigue.INSTANCE));
                 if (entityLivingBase instanceof EntityPlayer) {
                     entityLivingBase.attackEntityFrom(RadiationDamageSource.RADIATION, 1.0F);
-                    break; //entityLivingBase.attackEntityFrom(new DamageSource("Radiation"), 1.0F);
                 }
+                break;
         }
     }
 }
