@@ -8,7 +8,7 @@ import net.minecraft.potion.PotionEffect;
 public class PotionRadiationSickness extends PotionBase {
 
     public static final PotionRadiationSickness INSTANCE = new PotionRadiationSickness();
-    public PotionRadiationSickness() { super("radiation_sickness", true, 0xF3F4F9); }
+    public PotionRadiationSickness() { super("radiation_sickness", true, 0x9BA132); }
 
     @Override
     public boolean isReady(int duration, int amplifier) {
@@ -39,7 +39,7 @@ public class PotionRadiationSickness extends PotionBase {
                     float currentHealth = entityLivingBase.getHealth();
                     float maxHealth = entityLivingBase.getMaxHealth();
 
-                    if (currentHealth > 0.75f * maxHealth) {
+                    if (currentHealth > 0.65f * maxHealth) {
                         entityLivingBase.attackEntityFrom(RadiationDamageSource.RADIATION, 1.0F);
 
                     }
