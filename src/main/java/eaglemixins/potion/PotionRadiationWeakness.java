@@ -12,7 +12,7 @@ public class PotionRadiationWeakness extends PotionBase {
 
     private static final UUID WEAKNESS_MODIFIER_UUID = UUID.fromString("3c3a8cd3-2bc2-4ad9-9a9a-3d25b7b2a5f3");
     public static final PotionRadiationWeakness INSTANCE = new PotionRadiationWeakness();
-    public PotionRadiationWeakness() {super("radiation_weakness", true, 0xF3F4F9);}
+    public PotionRadiationWeakness() {super("radiation_weakness", true, 0x9BA132);}
 
     @Override
     public boolean shouldRender(PotionEffect effect) { return false; }
