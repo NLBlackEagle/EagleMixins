@@ -90,6 +90,12 @@
     "isCreative": false
   },
   {
+    "motive": "lava",
+    "width": 3,
+    "height": 4,
+    "isCreative": false
+  },
+  {
     "motive": "ocean",
     "width": 3,
     "height": 4,
