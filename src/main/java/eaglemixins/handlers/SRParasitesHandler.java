@@ -26,32 +26,34 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 public class SRParasitesHandler {
-    //Parasites will be allowed to spawn via spawners, stay alive and will drop (reduced) loot in these biomes
-    private static final List<String> overworldParasiteBiomes = Arrays.asList(
-            "biomesoplenty:heath",
-            "biomesoplenty:steppe",
-            "biomesoplenty:wasteland",
-            "openterraingenerator:overworld_abyssal_rift",
-            "srparasites:biome_parasite",
-            "openterraingenerator:overworld_lair_of_the_thing",
-            "openterraingenerator:overworld_nuclear_ruins",
-            "openterraingenerator:overworld_ruins_of_blight"
-    );
 
-    //Parasites with these names will always drop their loot without reduction, no matter the biome
-    private static final List<String> parasiteNamesKeepDrops = Arrays.asList(
-            "Sentient Horror",
-            "Degrading Overseer",
-            "Malformed Observer",
-            "Shivaxi",
-            "Corrupted Carrier",
-            "Necrotic Blight"
-    );
+    //Parasites will be allowed to spawn via spawners, stay alive and will drop (reduced) loot in these biomes
+    //Handled in ForgeConfigHandler class
+    public static boolean isBiomeAllowed(ResourceLocation biomeId) {
+        String id = biomeId.toString();
+
+        for (String entry : ForgeConfigHandler.srparasites.biomeList) {
+            if (matches(id, entry)) {
+                return ForgeConfigHandler.srparasites.biomeListIsWhitelist;
+            }
+        }
+
+        // If no match:
+        return !ForgeConfigHandler.srparasites.biomeListIsWhitelist;
+    }
+
+
+    private static boolean matches(String id, String pattern) {
+        if (pattern.endsWith("*")) {
+            return id.startsWith(pattern.substring(0, pattern.length() - 1));
+        } else {
+            return id.equalsIgnoreCase(pattern);
+        }
+    }
 
     private static ItemStack corruptedAshes = null;
     private static ItemStack getCorruptedAshes(){
@@ -95,7 +97,7 @@ public class SRParasitesHandler {
 
         //Slowly kill Parasites outside specific biomes
         ResourceLocation biomeReg = entity.world.getBiome(entity.getPosition()).getRegistryName();
-        if (biomeReg != null && overworldParasiteBiomes.contains(biomeReg.toString())) return;
+        if (biomeReg != null && SRParasitesHandler.isBiomeAllowed(biomeReg)) return;
 
         float health = entity.getHealth();
         if (health > 1000)      entity.setHealth(health / 50);
@@ -113,7 +115,7 @@ public class SRParasitesHandler {
         if(entityId == null) return;
         if(!(entity instanceof EntityParasiteBase)) return;
         ResourceLocation biomeReg = event.getWorld().getBiome(entity.getPosition()).getRegistryName();
-        if(biomeReg != null && !overworldParasiteBiomes.contains(biomeReg.toString()))
+        if (biomeReg != null && !SRParasitesHandler.isBiomeAllowed(biomeReg))
             event.setResult(Event.Result.DENY);
     }
 
@@ -148,16 +150,20 @@ public class SRParasitesHandler {
         if(!(entity instanceof EntityParasiteBase)) return;
 
         //But not to ones that have special names
-        if(entity.hasCustomName()) {
+        if (entity.hasCustomName()) {
             String customName = entity.getName();
-            for (String specialName : parasiteNamesKeepDrops)
-                if (customName.contains(specialName))
+
+            ForgeConfigHandler.berian.getMentalberianEffects();
+            for (String whitelistName : ForgeConfigHandler.srparasites.keepLootNames) {
+                if (customName.contains(whitelistName)) {
                     return;
+                }
+            }
         }
 
         ResourceLocation biomeReg = entity.world.getBiome(entity.getPosition()).getRegistryName();
 
-        if(biomeReg != null && overworldParasiteBiomes.contains(biomeReg.toString())){
+        if (biomeReg != null && !SRParasitesHandler.isBiomeAllowed(biomeReg)){
             List<EntityItem> itemsToRemove = new ArrayList<>();
             List<EntityItem> itemsToAdd = new ArrayList<>();
             for (EntityItem drop : event.getDrops()) {

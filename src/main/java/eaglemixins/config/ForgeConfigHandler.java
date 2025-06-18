@@ -1,9 +1,6 @@
 package eaglemixins.config;
 
-import eaglemixins.config.folders.BerianConfig;
-import eaglemixins.config.folders.ConductivityConfig;
-import eaglemixins.config.folders.IrradiatedConfig;
-import eaglemixins.config.folders.TippedArrowConfig;
+import eaglemixins.config.folders.*;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -38,6 +35,10 @@ public class ForgeConfigHandler {
 	@Config.Name("Berian Options")
 	public static final BerianConfig berian = new BerianConfig();
 
+	@Config.Comment("SRParasites Options")
+	@Config.Name("SRParasites Options")
+	public static final SRParasiteConfig srparasites = new SRParasiteConfig();
+
 	public static class ServerConfig {
 		@Config.Comment("List of mobs that players will not get dismounted from in Abyssal Rift")
 		@Config.Name("Allowed Mounts in Abyssal Rift")
@@ -67,6 +68,7 @@ public class ForgeConfigHandler {
 				"Dismounter",
 				"Dispel",
 				"Sarevok",
+				"IHaveNoClue",
 				"Jester"
 		};
 
@@ -125,7 +127,7 @@ public class ForgeConfigHandler {
 	}
 
 	@Mod.EventBusSubscriber(modid = EagleMixins.MODID)
-	private static class EventHandler{
+	public static class EventHandler {
 
 		@SubscribeEvent
 		public static void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
@@ -135,6 +137,7 @@ public class ForgeConfigHandler {
 				berian.reset();
 				conductivity.reset();
 				irradiated.reset();
+				srparasites.reset();
 			}
 		}
 	}
