@@ -49,6 +49,15 @@ public class ForgeConfigHandler {
 				"minecraft:llama"
 		};
 
+		@Config.Comment("Whenever Abyssal Rift/Parasite biomes will warn & dismount players")
+		@Config.Name("Dismount Players in Parasite Biomes")
+		public boolean abyssalMounts = false;
+
+		@Config.Comment("Give Dismounting entities the ability to dismount players when they target a player in Abyssal Rift or Parasite biomes")
+		@Config.Name("Dismount on target:")
+		public boolean dismounterTarget = true;
+
+
 		@Config.Comment("Parasites spawned in Abyssal Rift will have dmg that is this much higher than other overworld parasites")
 		@Config.Name("Abyssal Rift Parasite Stat Multi: Dmg")
 		public float abyssalDmgModifier = 1;

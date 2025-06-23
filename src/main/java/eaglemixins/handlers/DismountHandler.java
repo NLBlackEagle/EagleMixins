@@ -12,6 +12,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityMountEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -51,10 +52,34 @@ public class DismountHandler {
         }
     }
 
+    //If player is in Parasite Biome/Abyssal Rift entities with name "Dismounter" can dismount players by targeting them.
+    @SubscribeEvent
+    public void onPlayerDamaged(LivingAttackEvent event) {
+        if (!ForgeConfigHandler.server.dismounterTarget) {return;}
+        EntityLivingBase victim = event.getEntityLiving();
+        if (!victim.isRiding()) return;
+        if (event.getSource() == null) return;
+
+        if (!biomeNames.contains(victim.world.getBiome(victim.getPosition()).getRegistryName())) {
+            if (victim instanceof EntityPlayer)
+                if ((event.getSource().getTrueSource() instanceof EntityLivingBase) && (victim.isRiding())) {
+                    EntityLivingBase attacker = (EntityLivingBase) event.getSource().getTrueSource();
+                    if (attacker.hasCustomName())
+                        if (attacker.getName().contains("Dismounter") || attacker.getName().contains("Dismounting"))
+                            event.getEntityLiving().dismountRidingEntity();
+                    event.getEntityLiving().removePassengers();
+                }
+        }
+    }
+
+
     private static final List<ResourceLocation> biomeNames = Arrays.asList(Ref.abyssalRiftReg, Ref.parasiteBiomeReg);
 
+
+    // Dismount if in Abyssal Rift/Parasite biome
     @SubscribeEvent
     public static void onEntityMount(EntityMountEvent event){
+        if (!ForgeConfigHandler.server.abyssalMounts) {return;}
         if(!event.isMounting()) return;
         if(!(event.getEntityMounting() instanceof EntityPlayer)) return;
         if(!(event.getEntityBeingMounted() instanceof EntityLivingBase)) return;
@@ -92,6 +117,10 @@ public class DismountHandler {
             event.player.dismountRidingEntity();
             return;
         }
+
+
+        //If Abyssal Dismount is disabled do return; here
+        if (!ForgeConfigHandler.server.abyssalMounts) {return;}
 
         //Otherwise handle Parasite Biome / Abyssal Rift dismount
         if (!biomeNames.contains(player.world.getBiome(player.getPosition()).getRegistryName())){
