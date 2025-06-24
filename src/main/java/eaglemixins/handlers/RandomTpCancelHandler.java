@@ -4,6 +4,7 @@ import eaglemixins.util.Ref;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemChorusFruit;
+import net.minecraft.item.ItemEnderPearl;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
@@ -24,6 +25,7 @@ public class RandomTpCancelHandler {
         if(entity.world.isRemote) return;
         if (!(entity instanceof EntityPlayer)) return;
         if (!(event.getItem().getItem() instanceof ItemChorusFruit)) return;
+        if (!(event.getItem().getItem() instanceof ItemEnderPearl)) return;
         if (!Ref.entityIsInAbyssalRift(entity)) return;
 
         applyTpCooldownDebuffs((EntityPlayer) entity);
