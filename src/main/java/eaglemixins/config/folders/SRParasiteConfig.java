@@ -2,16 +2,18 @@ package eaglemixins.config.folders;
 
 import net.minecraftforge.common.config.Config;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class SRParasiteConfig {
 
+    @Config.Comment("Treat the allowed biomes list as whitelist. Set to false to treat as blacklist")
+    @Config.Name("SRParasites allowed biomes is whitelist")
     public boolean biomeListIsWhitelist = true;
 
     //Parasites will be allowed to spawn via spawners, stay alive and will drop (reduced) loot in these biomes
-    @Config.Comment({
-            "List of biome IDs to whitelist or blacklist depending on biomeListIsWhitelist.",
-            "This list supports the * wildcard, example: biomesoplenty:* would whitelist all biomesoplenty biomes."
-
-    })
+    @Config.Comment("List of biome IDs to whitelist or blacklist depending on biomeListIsWhitelist.\n" +
+            "This list supports the * wildcard, example: biomesoplenty:* would whitelist all biomesoplenty biomes.")
     @Config.Name("SRParasites allowed biomes")
     public String[] biomeList = {
             "biomesoplenty:heath",
@@ -24,10 +26,9 @@ public class SRParasiteConfig {
             "openterraingenerator:overworld_ruins_of_blight"
     };
 
-    @Config.Comment({
-            "Parasite display names that are allowed to always drop loot (even outside allowed biomes).",
-            "This matches the entity's *custom display name*, not its ID."
-    })
+    @Config.Comment("Parasite display names that are allowed to always drop loot (even outside allowed biomes).\n" +
+            "This matches the entity's *custom display name*, not its ID.\n" +
+            "It's enough if the custom name contains any of these listed strings for it to be always allowed to drop loot.")
     @Config.Name("Parasite full loot-drop enabler")
     public String[] keepLootNames = {
             "Sentient Horror",
@@ -38,8 +39,22 @@ public class SRParasiteConfig {
             "Necrotic Blight"
     };
 
+    List<String> allowedBiomeList = null;
+    public List<String> getAllowedBiomeList(){
+        if(allowedBiomeList == null)
+            allowedBiomeList = Arrays.asList(biomeList);
+        return allowedBiomeList;
+    }
+
+    List<String> allowedParasiteNamesLoot = null;
+    public List<String> getAllowedParasiteNamesLoot(){
+        if(allowedParasiteNamesLoot == null)
+            allowedParasiteNamesLoot = Arrays.asList(keepLootNames);
+        return allowedParasiteNamesLoot;
+    }
+
     public void reset(){
-        biomeList = null;
-        keepLootNames = null;
+        allowedBiomeList = null;
+        allowedParasiteNamesLoot = null;
     }
 }

@@ -35,24 +35,14 @@ public class SRParasitesHandler {
     //Handled in ForgeConfigHandler class
     public static boolean isBiomeAllowed(ResourceLocation biomeId) {
         String id = biomeId.toString();
+        String modid = biomeId.getNamespace() + ":*";
 
-        for (String entry : ForgeConfigHandler.srparasites.biomeList) {
-            if (matches(id, entry)) {
-                return ForgeConfigHandler.srparasites.biomeListIsWhitelist;
-            }
-        }
+        boolean isInList = ForgeConfigHandler.srparasites.getAllowedBiomeList().contains(modid) ||
+                ForgeConfigHandler.srparasites.getAllowedBiomeList().stream().anyMatch(listedBiome -> listedBiome.equalsIgnoreCase(id));
 
-        // If no match:
-        return !ForgeConfigHandler.srparasites.biomeListIsWhitelist;
-    }
-
-
-    private static boolean matches(String id, String pattern) {
-        if (pattern.endsWith("*")) {
-            return id.startsWith(pattern.substring(0, pattern.length() - 1));
-        } else {
-            return id.equalsIgnoreCase(pattern);
-        }
+        //true (allowed) if in list and whitelist, or not in list and blacklist
+        //false (not allowed) if in list and blacklist, or not in list and whitelist
+        return isInList == ForgeConfigHandler.srparasites.biomeListIsWhitelist;
     }
 
     private static ItemStack corruptedAshes = null;
@@ -65,6 +55,7 @@ public class SRParasitesHandler {
     }
 
     private static boolean isBeckon(Entity entity){
+        if(!(entity instanceof EntityPStationaryArchitect)) return false;
         return entity instanceof EntityVenkrol ||
                 entity instanceof EntityVenkrolSII ||
                 entity instanceof EntityVenkrolSIII ||
@@ -111,8 +102,6 @@ public class SRParasitesHandler {
         if(!event.isSpawner()) return;
         if(event.getWorld().provider.getDimension()!=0) return;
         EntityLivingBase entity = event.getEntityLiving();
-        ResourceLocation entityId = EntityList.getKey(entity);
-        if(entityId == null) return;
         if(!(entity instanceof EntityParasiteBase)) return;
         ResourceLocation biomeReg = event.getWorld().getBiome(entity.getPosition()).getRegistryName();
         if (biomeReg != null && !SRParasitesHandler.isBiomeAllowed(biomeReg))
@@ -150,16 +139,9 @@ public class SRParasitesHandler {
         if(!(entity instanceof EntityParasiteBase)) return;
 
         //But not to ones that have special names
-        if (entity.hasCustomName()) {
-            String customName = entity.getName();
-
-            ForgeConfigHandler.berian.getMentalberianEffects();
-            for (String whitelistName : ForgeConfigHandler.srparasites.keepLootNames) {
-                if (customName.contains(whitelistName)) {
-                    return;
-                }
-            }
-        }
+        if (entity.hasCustomName() &&
+                ForgeConfigHandler.srparasites.getAllowedParasiteNamesLoot().stream().anyMatch(entity.getName()::contains))
+            return;
 
         ResourceLocation biomeReg = entity.world.getBiome(entity.getPosition()).getRegistryName();
 
