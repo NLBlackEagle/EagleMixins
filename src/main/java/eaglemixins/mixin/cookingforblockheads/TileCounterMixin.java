@@ -1,11 +1,13 @@
 package eaglemixins.mixin.cookingforblockheads;
 
 import net.blay09.mods.cookingforblockheads.tile.TileCounter;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.IInteractionObject;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.IWorldNameable;
 import net.minecraft.world.storage.loot.ILootContainer;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
@@ -18,17 +20,34 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(TileCounter.class)
 @Implements({
-        @Interface(iface = ILootContainer.class, prefix = "lootContainer$")
+        @Interface(iface = ILootContainer.class, prefix = "lootContainer$"),
+        @Interface(iface = IWorldNameable.class, prefix = "worldNameable$")
 })
 public abstract class TileCounterMixin extends TileEntity {
 
     @Unique
     protected ResourceLocation eagleMixins$lootTable;
 
+    @Unique
+    protected String eagleMixins$customName;
+
     public ResourceLocation lootContainer$getLootTable() {
         ResourceLocation lootTable = this.eagleMixins$lootTable;
         this.eagleMixins$lootTable = null;
         return lootTable;
+    }
+
+    public String worldNameable$getName() {
+        return this.worldNameable$hasCustomName() ? this.eagleMixins$customName : "container.cookingforblockheads:counter";
+    }
+
+    public boolean worldNameable$hasCustomName() {
+        return this.eagleMixins$customName != null && !this.eagleMixins$customName.isEmpty();
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        return this.worldNameable$hasCustomName() ? new TextComponentString(this.worldNameable$getName()) : new TextComponentTranslation(this.worldNameable$getName());
     }
 
     @Inject(
@@ -39,6 +58,9 @@ public abstract class TileCounterMixin extends TileEntity {
         if (compound.hasKey("LootTable", 8)) {
             this.eagleMixins$lootTable = new ResourceLocation(compound.getString("LootTable"));
         }
+        if (compound.hasKey("CustomName", 8)) {
+            this.eagleMixins$customName = compound.getString("CustomName");
+        }
     }
 
     @Inject(
@@ -48,6 +70,9 @@ public abstract class TileCounterMixin extends TileEntity {
     public void writeToNBT(NBTTagCompound compound, CallbackInfoReturnable<NBTTagCompound> cir) {
         if (this.eagleMixins$lootTable != null) {
             compound.setString("LootTable", this.eagleMixins$lootTable.toString());
+        }
+        if (this.worldNameable$hasCustomName()) {
+            compound.setString("CustomName", this.eagleMixins$customName);
         }
     }
 }
