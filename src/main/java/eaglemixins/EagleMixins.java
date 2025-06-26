@@ -39,7 +39,7 @@ public class EagleMixins {
         MinecraftForge.EVENT_BUS.register(SRParasitesHandler.class);
         MinecraftForge.EVENT_BUS.register(BlockBreakSlowHandler.class);
         if(ForgeConfigHandler.irradiated.enabled) MinecraftForge.EVENT_BUS.register(IrradiatedParasitesHandler.class);
-
+        MinecraftForge.EVENT_BUS.register(TileCounterHandler.class);
     }
     
     @Mod.EventHandler
