@@ -48,7 +48,7 @@
             {
               "function": "minecraft:set_data",
               "data": 6,
-              "conditions": [{"condition": "random_chance","chance": 0.3}]
+              "conditions": [{"condition": "random_chance","chance": 0.01}]
             }
           ]
         }
