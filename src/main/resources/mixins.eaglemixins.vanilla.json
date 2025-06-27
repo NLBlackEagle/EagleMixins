@@ -11,7 +11,8 @@
     "vanilla.RandomValueRangeMixin",
     "vanilla.EntityAreaEffectCloudMixin",
     "vanilla.EntityPotionMixin",
-    "vanilla.ItemPotionMixin"
+    "vanilla.ItemPotionMixin",
+    "vanilla.GuiIngameForgeMixin"
   ],
   "injectors": {
     "maxShiftBy": 10
