@@ -7,7 +7,9 @@ import c4.champions.common.capability.IChampionship;
 import c4.champions.common.rank.Rank;
 import c4.champions.common.rank.RankManager;
 import c4.champions.common.util.ChampionHelper;
+import com.lothrazar.playerbosses.EntityPlayerBoss;
 import eaglemixins.config.ForgeConfigHandler;
+import eaglemixins.handlers.util.AbyssalRiftSpawn;
 import eaglemixins.util.Ref;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -18,6 +20,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -27,6 +30,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import static eaglemixins.handlers.util.AbyssalRiftSpawn.isAbyssalRiftSpawn;
+
 //By fonny, copied from RLMixins.DregoraScriptHandler
 public class BlightedShivaxiHandler {
     private static final String blightedShivaxiName = TextFormatting.DARK_RED + "☢ " + TextFormatting.DARK_GREEN + TextFormatting.BOLD + "Blighted Shivaxi" + TextFormatting.RESET + TextFormatting.DARK_RED + " ☢";
@@ -35,11 +40,9 @@ public class BlightedShivaxiHandler {
     public static void onLivingDeath(LivingDeathEvent event) {
         EntityLivingBase entity = event.getEntityLiving();
         if (entity == null || entity.world.isRemote || entity.dimension != 0) return;
-
-        ResourceLocation entityId = EntityList.getKey(entity);
-        if (!Ref.playerBossReg.equals(entityId)) return;
+        if (!(entity instanceof EntityPlayerBoss)) return;
         if (!entity.getName().equals("Shivaxi")) return;
-        if (!Ref.entityIsInAbyssalRift(entity)) return;
+        if (!isAbyssalRiftSpawn(entity)) return;
 
         entity.world.createExplosion(entity, entity.posX, entity.posY, entity.posZ, 4, false);
 
@@ -110,9 +113,7 @@ public class BlightedShivaxiHandler {
         if(event.getAmount() > 100 && !entity.isNonBoss())
             event.setAmount(100);
 
-        ResourceLocation entityId = EntityList.getKey(entity);
-        if (entityId == null) return;
-        if(entityId.equals(Ref.playerBossReg)){
+        if(entity instanceof EntityPlayerBoss){
             float maxHealth = entity.getMaxHealth();
             float phase2 = maxHealth/2;
             float phase3 = maxHealth/4;
@@ -159,6 +160,14 @@ public class BlightedShivaxiHandler {
                     entity.getEntityData().setInteger(spawnCountKey,spawnedCounter);
                 }
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onCheckSpawn(LivingSpawnEvent.CheckSpawn event) {
+        Entity entity = event.getEntity();
+        if (entity instanceof AbyssalRiftSpawn) {
+            ((AbyssalRiftSpawn) entity).updateSpawnPosition(event.getWorld(), event.getX(), event.getY(), event.getZ());
         }
     }
 

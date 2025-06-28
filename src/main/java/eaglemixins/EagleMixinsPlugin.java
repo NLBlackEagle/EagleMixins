@@ -21,6 +21,7 @@ public class EagleMixinsPlugin implements IFMLLoadingPlugin {
 		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.bettersurvival.json", () -> Loader.isModLoaded("mujmajnkraftsbettersurvival"));
 		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.somanyenchantments.json", () -> Loader.isModLoaded("somanyenchantments"));
 		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.cookingforblockheads.json", () -> Loader.isModLoaded("cookingforblockheads"));
+		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.playerbosses.json", () -> Loader.isModLoaded("playerbosses"));
 	}
 
 	@Override

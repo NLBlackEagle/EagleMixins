@@ -4,7 +4,9 @@ import biomesoplenty.api.item.BOPItems;
 import com.dhanantry.scapeandrunparasites.entity.ai.misc.EntityPStationaryArchitect;
 import com.dhanantry.scapeandrunparasites.entity.ai.misc.EntityParasiteBase;
 import com.dhanantry.scapeandrunparasites.entity.monster.deterrent.nexus.*;
+import com.lothrazar.playerbosses.EntityPlayerBoss;
 import eaglemixins.config.ForgeConfigHandler;
+import eaglemixins.handlers.util.AbyssalRiftSpawn;
 import eaglemixins.util.Ref;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -28,6 +30,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static eaglemixins.handlers.util.AbyssalRiftSpawn.isAbyssalRiftSpawn;
 
 public class SRParasitesHandler {
 
@@ -128,13 +132,13 @@ public class SRParasitesHandler {
                 }
             }
             event.getDrops().removeAll(itemsToRemove);
-
-            //Remove normal Shivaxi Boss drops in Abyssal Rift
-            if(entityId.equals(Ref.playerBossReg)) {
-                event.setCanceled(true);
-                return;
-            }
         }
+
+        if (entity instanceof EntityPlayerBoss && isAbyssalRiftSpawn(entity)) {
+            event.setCanceled(true);
+            return;
+        }
+
         //Rest of this method only applies to parasites
         if(!(entity instanceof EntityParasiteBase)) return;
 

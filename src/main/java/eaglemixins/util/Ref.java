@@ -8,7 +8,6 @@ import net.minecraft.util.ResourceLocation;
 public class Ref {
     public static final String SRPMODID = "srparasites";
 
-    public static final ResourceLocation playerBossReg = new ResourceLocation("playerbosses:player_boss");
     public static final ResourceLocation dragonBossReg = new ResourceLocation("srparasites:sim_dragone");
 
     public static final ResourceLocation deadBloodReg = new ResourceLocation(SRPMODID+":deadblood");

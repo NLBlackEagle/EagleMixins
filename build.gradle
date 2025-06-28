@@ -74,6 +74,7 @@ dependencies {
     implementation fg.deobf("curse.maven:creativecore-${creativecore_version}")
     implementation fg.deobf("curse.maven:cooking-for-blockheads-${cooking_for_blockheads_version}")
     implementation fg.deobf("curse.maven:quark-${quark_version}")
+    implementation fg.deobf("curse.maven:giant-player-boss-${giant_player_boss_version}")
 }
 
 mixin {
