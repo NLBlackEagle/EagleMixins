@@ -22,3 +22,6 @@ eaglemixins.tooltip.corruptedashes=Corrupted Ashes
 eaglemixins.effects.radiation_sickness=Contaminated
 
 death.attack.radiation=%1$s was consumed by radiation
+
+selectWorld.dregoraCreate=Create Dregora World
+selectWorld.vanillaCreate=Create Vanilla World

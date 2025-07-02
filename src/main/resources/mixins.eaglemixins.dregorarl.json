@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "eaglemixins.mixin.dregorarl",
+  "refmap": "mixins.eaglemixins.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "mixins": [
+  ],
+  "client": [
+    "WorldPackerMixin"
+  ],
+  "injectors": {
+    "maxShiftBy": 10
+  }
+}
