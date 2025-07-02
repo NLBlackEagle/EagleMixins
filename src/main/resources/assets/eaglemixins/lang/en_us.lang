@@ -25,3 +25,7 @@ death.attack.radiation=%1$s was consumed by radiation
 
 selectWorld.dregoraCreate=Create Dregora World
 selectWorld.vanillaCreate=Create Vanilla World
+
+stat.eaglemixins.glitch_count=Number of Glitches
+overlay.teleport.normal=Teleportation in progress...
+overlay.teleport.glitch=The air thickens, you feel uneasy.\nSomething terrible has happened and you can only hope it is temporary...

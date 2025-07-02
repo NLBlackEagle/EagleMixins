@@ -4,10 +4,10 @@ import eaglemixins.util.Ref;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemChorusFruit;
-import net.minecraft.item.ItemEnderPearl;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -18,6 +18,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class RandomTpCancelHandler {
+
+    //when throwing enderpearl
+    @SubscribeEvent
+    public static void onEnderPearl(EnderTeleportEvent event) {
+        EntityLivingBase entity = event.getEntityLiving();
+        if(entity.world.isRemote) return;
+        if (!(entity instanceof EntityPlayer)) return;
+        if (!Ref.entityIsInAbyssalRift(entity)) return;
+
+        applyTpCooldownDebuffs((EntityPlayer) entity);
+    }
     //When eating chorus fruit
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onItemUseFinish(LivingEntityUseItemEvent.Finish event) {
@@ -25,7 +36,6 @@ public class RandomTpCancelHandler {
         if(entity.world.isRemote) return;
         if (!(entity instanceof EntityPlayer)) return;
         if (!(event.getItem().getItem() instanceof ItemChorusFruit)) return;
-        if (!(event.getItem().getItem() instanceof ItemEnderPearl)) return;
         if (!Ref.entityIsInAbyssalRift(entity)) return;
 
         applyTpCooldownDebuffs((EntityPlayer) entity);
