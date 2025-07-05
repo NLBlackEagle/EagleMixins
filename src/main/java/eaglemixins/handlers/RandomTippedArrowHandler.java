@@ -5,7 +5,6 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
@@ -18,7 +17,6 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import java.util.Random;
 
 public class RandomTippedArrowHandler {
 
