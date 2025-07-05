@@ -1,6 +1,7 @@
 package eaglemixins;
 
 import eaglemixins.config.ForgeConfigHandler;
+import eaglemixins.config.folders.AbyssalConfig;
 import eaglemixins.handlers.*;
 import eaglemixins.network.PacketStartTeleportOverlay;
 import eaglemixins.network.PacketStopTeleportOverlay;
@@ -29,6 +30,7 @@ public class EagleMixins {
 
 	@Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        MinecraftForge.EVENT_BUS.register(AbyssalRiftHandler.class);
         MinecraftForge.EVENT_BUS.register(BarrierBlockHandler.class);
         MinecraftForge.EVENT_BUS.register(BerianHandler.class);
         MinecraftForge.EVENT_BUS.register(BerryDebuffHandler.class);

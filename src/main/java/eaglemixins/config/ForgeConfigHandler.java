@@ -19,6 +19,10 @@ public class ForgeConfigHandler {
 	@Config.Name("Client Options")
 	public static final ClientConfig client = new ClientConfig();
 
+	@Config.Comment("Abyssal Rift Options")
+	@Config.Name("Abyssal Rift Options")
+	public static final AbyssalConfig abyssal = new AbyssalConfig();
+
 	@Config.Comment("Irradiated Options")
 	@Config.Name("Irradiated Options")
 	public static final IrradiatedConfig irradiated = new IrradiatedConfig();
@@ -40,35 +44,10 @@ public class ForgeConfigHandler {
 	public static final SRParasiteConfig srparasites = new SRParasiteConfig();
 
 	public static class ServerConfig {
-		@Config.Comment("List of mobs that players will not get dismounted from in Abyssal Rift")
-		@Config.Name("Allowed Mounts in Abyssal Rift")
-		public String[] allowedAbyssalMounts = {
-				"minecraft:horse",
-				"minecraft:donkey",
-				"minecraft:pig",
-				"minecraft:llama"
-		};
-
-		@Config.Comment("Whenever Abyssal Rift/Parasite biomes will warn & dismount players")
-		@Config.Name("Dismount Players in Parasite Biomes")
-		public boolean abyssalMounts = false;
 
 		@Config.Comment("Give Dismounting entities the ability to dismount players when they target a player in Abyssal Rift or Parasite biomes")
 		@Config.Name("Dismount on target:")
 		public boolean dismounterTarget = true;
-
-
-		@Config.Comment("Parasites spawned in Abyssal Rift will have dmg that is this much higher than other overworld parasites")
-		@Config.Name("Abyssal Rift Parasite Stat Multi: Dmg")
-		public float abyssalDmgModifier = 1;
-
-		@Config.Comment("Parasites spawned in Abyssal Rift will have health that is this much higher than other overworld parasites")
-		@Config.Name("Abyssal Rift Parasite Stat Multi: HP")
-		public float abyssalHPModifier = 1;
-
-		@Config.Comment("Parasites spawned in Abyssal Rift will have armor that is this much higher than other overworld parasites")
-		@Config.Name("Abyssal Rift Parasite Stat Multi: Armor")
-		public float abyssalArmorModifier = 1;
 
 		@Config.Comment("Cannot rename any mob with or to these names")
 		@Config.Name("Blacklisted Name Change Any Mob")

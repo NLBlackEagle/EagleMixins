@@ -79,14 +79,14 @@ public class DismountHandler {
     // Dismount if in Abyssal Rift/Parasite biome
     @SubscribeEvent
     public static void onEntityMount(EntityMountEvent event){
-        if (!ForgeConfigHandler.server.abyssalMounts) {return;}
+        if (!ForgeConfigHandler.abyssal.abyssalMounts) {return;}
         if(!event.isMounting()) return;
         if(!(event.getEntityMounting() instanceof EntityPlayer)) return;
         if(!(event.getEntityBeingMounted() instanceof EntityLivingBase)) return;
         EntityLivingBase mount = (EntityLivingBase) event.getEntityBeingMounted();
         ResourceLocation mountId = EntityList.getKey(mount);
         if(mountId!=null)
-            for(String allowedMount : ForgeConfigHandler.server.allowedAbyssalMounts)
+            for(String allowedMount : ForgeConfigHandler.abyssal.allowedAbyssalMounts)
                 if(allowedMount.equals(mountId.toString()))
                     return;
 
@@ -120,7 +120,7 @@ public class DismountHandler {
 
 
         //If Abyssal Dismount is disabled do return; here
-        if (!ForgeConfigHandler.server.abyssalMounts) {return;}
+        if (!ForgeConfigHandler.abyssal.abyssalMounts) {return;}
 
         //Otherwise handle Parasite Biome / Abyssal Rift dismount
         if (!biomeNames.contains(player.world.getBiome(player.getPosition()).getRegistryName())){
@@ -130,7 +130,7 @@ public class DismountHandler {
 
         ResourceLocation mountId = EntityList.getKey(player.getRidingEntity());
         if(mountId != null)
-            for(String allowedMount : ForgeConfigHandler.server.allowedAbyssalMounts)
+            for(String allowedMount : ForgeConfigHandler.abyssal.allowedAbyssalMounts)
                 if(allowedMount.equals(mountId.toString()))
                     return;
 

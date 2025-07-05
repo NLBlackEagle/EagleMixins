@@ -406,7 +406,7 @@ public class EntitySpawnListener extends Entity {
             LOGGER.error("[EagleMixins] Failed to load teleport destinations: {}", e.getMessage());
         }
 
-        // ⬇️ Register fallback linkIds 0–6 if missing
+        // Register fallback linkIds 0–6 if missing
         registerDefaultLinkIfMissing(0, new BlockPos(-950, 80, -2228), new BlockPos(-8247, 80, -12929)); // Frozen Greens
         registerDefaultLinkIfMissing(1, new BlockPos(-2355, 80, -642), new BlockPos(-14345, 80, -6923)); // The Highlands
         registerDefaultLinkIfMissing(2, new BlockPos(-1987, 80, 1453), new BlockPos(-14394, 80, 7793)); // Valley of Sulfur

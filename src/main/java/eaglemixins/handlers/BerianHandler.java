@@ -58,11 +58,10 @@ public class BerianHandler {
         //First check whether it should be any berian, adding the two chances together
         // --> 5%+5%=10% of all librarians are berian
         double combinedChance = ForgeConfigHandler.berian.sussyberianChance + ForgeConfigHandler.berian.mentalberianChance;
-        if(villager.getRNG().nextFloat() < combinedChance) return;
+        if(villager.getRNG().nextFloat() > combinedChance) return;
 
         //Then the sussy vs mental roll can be independent, either it's a sussy or a mental
         // --> random float between 0 and sussy+mental smaller than sussy
-        // (old handling had mental chance be actually (1-sussy) x mental, so 4.75% instead of 5%)
         if(villager.getRNG().nextFloat() * combinedChance < ForgeConfigHandler.berian.sussyberianChance){
             villager.setCustomNameTag("Sussyberian");
             villager.getEntityData().setBoolean("Sussyberian", true);

@@ -39,6 +39,18 @@ public class SRParasiteConfig {
             "Necrotic Blight"
     };
 
+    @Config.Comment("All Beckons near one beckon will be killed")
+    @Config.Name("Kill Beckon nearby")
+    public boolean killNearbyBeckon = true;
+
+    @Config.Comment("All SRParasites outside of the allowed biomes in the allowed biome whitelist will automatically be killed")
+    @Config.Name("Kill Parasites outside alllowed biomes")
+    public boolean killEscapedParasites = true;
+
+    @Config.Comment("Parasite drops in the overworld have a chance to instead drop as corrupted ashes. This is the chance for that to happen.")
+    @Config.Name("Corrupted Ashes chance")
+    public float chanceCorruptedAshes = 0.375f;
+
     List<String> allowedBiomeList = null;
     public List<String> getAllowedBiomeList(){
         if(allowedBiomeList == null)
