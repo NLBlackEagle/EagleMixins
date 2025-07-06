@@ -73,7 +73,7 @@ public class RandomTippedArrowHandler {
 
         //Apply potion effects on attacked entity
         for (PotionEffect effect : PotionUtils.getEffectsFromStack(offhand)) {
-            float durationMulti = 0.8F + 0.2F * attacker.getRNG().nextFloat();
+            float durationMulti = 0.8F + 0.4F * attacker.getRNG().nextFloat();
             //TODO: eagle you can vary this multiplier if you really want a random duration. Rn its 80% to 100% of the original duration due to 0.8 + 0.2*[0 to 1]
             //TODO: i already added the vanilla 1/8 multi for duration so the usual 3mins turn to 22.5 secs
             // and the usual 8 mins turn to 1 minute
