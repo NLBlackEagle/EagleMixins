@@ -37,10 +37,10 @@ public class PotionRadiationSickness extends PotionBase {
 
         switch (amplifier) {
             case 0:
-                entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationWeakness.INSTANCE, 40,0));
+                entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationWeakness.INSTANCE, 40, 0));
                 break;
             case 1:
-                entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationWeakness.INSTANCE, 40,0));
+                entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationWeakness.INSTANCE, 40, 0));
                 entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationFatigue.INSTANCE, 40, 0));
                 break;
             case 2:
@@ -55,17 +55,19 @@ public class PotionRadiationSickness extends PotionBase {
                     float currentHealth = entityLivingBase.getHealth();
                     float maxHealth = entityLivingBase.getMaxHealth();
 
-                    if (currentHealth > 0.65f * maxHealth) {
+                    if (currentHealth > 0.5f * maxHealth) {
                         entityLivingBase.attackEntityFrom(RadiationDamageSource.RADIATION, 1.0F);
 
                     }
                 }
                 break;
-            case 4:
-                entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationWeakness.INSTANCE,40, amplifier - 1));
-                entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationFatigue.INSTANCE,40, amplifier - 1));
-                if (entityLivingBase instanceof EntityPlayer) {
-                    entityLivingBase.attackEntityFrom(RadiationDamageSource.RADIATION, 1.0F);
+            default:
+                if (amplifier >= 4) {
+                    entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationWeakness.INSTANCE, 40, amplifier - 1));
+                    entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationFatigue.INSTANCE, 40, amplifier - 1));
+                    if (entityLivingBase instanceof EntityPlayer) {
+                        entityLivingBase.attackEntityFrom(RadiationDamageSource.RADIATION, 1.0F);
+                    }
                 }
                 break;
         }
