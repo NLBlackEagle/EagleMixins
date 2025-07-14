@@ -13,11 +13,19 @@ public class Ref {
     public static final ResourceLocation deadBloodReg = new ResourceLocation(SRPMODID+":deadblood");
 
     public static final ResourceLocation abyssalRiftReg = new ResourceLocation("openterraingenerator:overworld_abyssal_rift");
+
+    public static final ResourceLocation abyssalGateReg = new ResourceLocation("openterraingenerator:overworld_abyssal_gate");
+
     public static final ResourceLocation parasiteBiomeReg = new ResourceLocation(SRPMODID+":biome_parasite");
 
     public static boolean entityIsInAbyssalRift(Entity entity){
         ResourceLocation biomeReg = entity.world.getBiome(entity.getPosition()).getRegistryName();
         return biomeReg != null && biomeReg.equals(abyssalRiftReg);
+    }
+
+    public static boolean entityIsInAbyssalGate(Entity entity){
+        ResourceLocation biomeReg = entity.world.getBiome(entity.getPosition()).getRegistryName();
+        return biomeReg != null && biomeReg.equals(abyssalGateReg);
     }
 
     private static PotionEffect lightning = null;

@@ -26,6 +26,7 @@ public class RandomTpCancelHandler {
         if(entity.world.isRemote) return;
         if (!(entity instanceof EntityPlayer)) return;
         if (!Ref.entityIsInAbyssalRift(entity)) return;
+        if (!Ref.entityIsInAbyssalGate(entity)) return;
 
         applyTpCooldownDebuffs((EntityPlayer) entity);
     }
