@@ -6,12 +6,15 @@ import com.google.gson.reflect.TypeToken;
 import eaglemixins.EagleMixins;
 import eaglemixins.network.PacketStartTeleportOverlay;
 import eaglemixins.network.PacketStopTeleportOverlay;
+import eaglemixins.potion.PotionTeleportationSickness;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEndPortal;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -132,7 +135,17 @@ public class EntitySpawnListener extends Entity {
                     NBTTagCompound persistTag = nearbyPlayer.getEntityData().getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
                     if (persistTag.getBoolean("justTeleported") && persistTag.getInteger("linkId") == linkId) {
                         BlockPos finalPos = pos.add(0, 3, 3);
-                        nearbyPlayer.setPositionAndUpdate(finalPos.getX() + 0.5, finalPos.getY(), finalPos.getZ() + 0.5);
+
+                        MinecraftServer server = nearbyPlayer.getServer();
+                        if (server != null) {
+                            server.addScheduledTask(() -> {
+                                // Put teleportation or entity manipulation here
+                                nearbyPlayer.setPositionAndUpdate(finalPos.getX() + 0.5, finalPos.getY(), finalPos.getZ() + 0.5);
+                                // Give Teleportation Sickness
+                                nearbyPlayer.addPotionEffect(new PotionEffect(PotionTeleportationSickness.INSTANCE, 200, 0));
+
+                            });
+                        }
 
                         if (nearbyPlayer instanceof EntityPlayerMP) {
                             EagleMixins.NETWORK.sendTo(new PacketStopTeleportOverlay(), (EntityPlayerMP) nearbyPlayer);
@@ -217,7 +230,16 @@ public class EntitySpawnListener extends Entity {
 
                     // Teleport
                     Objects.requireNonNull(mp.getServer()).getPlayerList().transferPlayerToDimension(mp, originDim, new DummyTeleporter(targetWorld));
-                    mp.setPositionAndUpdate(x, y, z);
+
+                    MinecraftServer server = mp.getServer();
+                    if (server != null) {
+                        server.addScheduledTask(() -> {
+                            // Put teleportation or entity manipulation here
+                            mp.setPositionAndUpdate(x + 0.5, y, z + 0.5);
+                            // Give Teleportation Sickness
+                            mp.addPotionEffect(new PotionEffect(PotionTeleportationSickness.INSTANCE, 200, 0));
+                        });
+                    }
 
                     // Stop the teleport overlay
                     EagleMixins.NETWORK.sendTo(new PacketStopTeleportOverlay(), mp);
@@ -273,6 +295,10 @@ public class EntitySpawnListener extends Entity {
 
         if (!foundPortal) return;
 
+        // Check whenever the player has the Teleportation Sickness Potion active, and if so cancel teleportation.
+        if (player.getActivePotionEffect(PotionTeleportationSickness.INSTANCE) != null) { return; }
+
+
         NBTTagCompound persistTag = player.getEntityData().getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
 
         for (Map.Entry<Integer, TeleportData> entry : LINK_ID_DESTINATIONS.entrySet()) {
@@ -305,11 +331,23 @@ public class EntitySpawnListener extends Entity {
                 }
 
                 if (data.receiver != null) {
+
                     // Exact receiver coords
-                    player.setPositionAndUpdate(
-                            data.receiver.getX() + 0.5,
-                            data.receiver.getY() + 2,
-                            data.receiver.getZ() + 3.5);
+
+                    MinecraftServer server = player.getServer();
+                    if (server != null) {
+                        server.addScheduledTask(() -> {
+                            // Put teleportation or entity manipulation here
+                            player.setPositionAndUpdate(
+                                    data.receiver.getX() + 0.5,
+                                    data.receiver.getY() + 2,
+                                    data.receiver.getZ() + 3.5
+                            );
+                            // Give Teleportation Sickness
+                            player.addPotionEffect(new PotionEffect(PotionTeleportationSickness.INSTANCE, 200, 0));
+                        });
+                    }
+
                 } else if (data.tempReceiver != null) {
 
                     if (player instanceof EntityPlayerMP) {
@@ -318,10 +356,19 @@ public class EntitySpawnListener extends Entity {
 
                     // Fallback: safe surface block
                     BlockPos safePos = world.getTopSolidOrLiquidBlock(new BlockPos(data.tempReceiver.getX(), 0, data.tempReceiver.getZ()));
-                    player.setPositionAndUpdate(
-                            safePos.getX() + 0.5,
-                            safePos.getY(),
-                            safePos.getZ() + 0.5);
+
+
+                    MinecraftServer server = player.getServer();
+                    if (server != null) {
+                        server.addScheduledTask(() -> {
+                            // Put teleportation or entity manipulation here
+                            player.setPositionAndUpdate(
+                                    safePos.getX() + 0.5,
+                                    safePos.getY(),
+                                    safePos.getZ() + 0.5);
+                        });
+                    }
+
                 } else {
                     continue; // No destination
                 }
@@ -354,12 +401,26 @@ public class EntitySpawnListener extends Entity {
                 }
 
                 if (data.sender != null) {
+
+
                     // Use exact sender coords with +1 Y
-                    player.setPositionAndUpdate(
-                            data.sender.getX() + 0.5,
-                            data.sender.getY() + 2,
-                            data.sender.getZ() + 3.5
-                    );
+
+                    MinecraftServer server = player.getServer();
+                    if (server != null) {
+                        server.addScheduledTask(() -> {
+                            // Put teleportation or entity manipulation here
+                            player.setPositionAndUpdate(
+                                    data.sender.getX() + 0.5,
+                                    data.sender.getY() + 2,
+                                    data.sender.getZ() + 3.5
+                            );
+                            // Give Teleportation Sickness
+                            player.addPotionEffect(new PotionEffect(PotionTeleportationSickness.INSTANCE, 200, 0));
+                        });
+                    }
+
+
+
                 } else {
 
                     if (player instanceof EntityPlayerMP) {
@@ -371,11 +432,18 @@ public class EntitySpawnListener extends Entity {
                     BlockPos safePos = world.getTopSolidOrLiquidBlock(
                             new BlockPos(fallback.getX(), 0, fallback.getZ())
                     );
-                    player.setPositionAndUpdate(
-                            safePos.getX() + 0.5,
-                            safePos.getY() + 0.5,
-                            safePos.getZ() + 0.5
-                    );
+
+                    MinecraftServer server = player.getServer();
+                    if (server != null) {
+                        server.addScheduledTask(() -> {
+                            // Put teleportation or entity manipulation here
+                            player.setPositionAndUpdate(
+                                    safePos.getX() + 0.5,
+                                    safePos.getY() + 0.5,
+                                    safePos.getZ() + 0.5
+                            );
+                        });
+                    }
                 }
 
                 persistTag.setBoolean("justTeleported", true);
@@ -488,7 +556,15 @@ public class EntitySpawnListener extends Entity {
 
         // Example glitch coordinates (near spawn or static)
         BlockPos glitchSpawn = new BlockPos(0, 100, 0);
-        player.setPositionAndUpdate(glitchSpawn.getX() + 0.5, glitchSpawn.getY(), glitchSpawn.getZ() + 0.5);
+
+
+        MinecraftServer server = player.getServer();
+        if (server != null) {
+            server.addScheduledTask(() -> {
+                // Put teleportation or entity manipulation here
+                player.setPositionAndUpdate(glitchSpawn.getX() + 0.5, glitchSpawn.getY(), glitchSpawn.getZ() + 0.5);
+            });
+        }
 
         // Transfer player to dimension 3
         if (!player.world.isRemote && player instanceof EntityPlayerMP) {

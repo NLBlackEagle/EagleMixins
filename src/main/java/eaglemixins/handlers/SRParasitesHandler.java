@@ -73,7 +73,7 @@ public class SRParasitesHandler {
                 entity.setDead();
         //Otherwise kill all other beckons around one beckon
         } else if (ForgeConfigHandler.srparasites.killNearbyBeckon && isBeckon(entity))
-            for (Entity entityNearby : entity.world.getEntitiesWithinAABB(EntityPStationaryArchitect.class, new AxisAlignedBB(entity.getPosition()).grow(32)))
+            for (Entity entityNearby : entity.world.getEntitiesWithinAABB(EntityPStationaryArchitect.class, new AxisAlignedBB(entity.getPosition()).grow(ForgeConfigHandler.srparasites.killNearbyBeckonRange)))
                 if (entityNearby != entity && isBeckon(entityNearby))
                     entityNearby.setDead();
 

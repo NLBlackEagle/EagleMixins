@@ -16,6 +16,7 @@ public class TeleportOverlayHandler {
 
     private static long startTime = -1;
     private static final int MAX_DURATION_TICKS = 500; // 25 seconds
+    private static final int MAX_DURATION_TICKS_DIM = 200; // 10 seconds (only in dimension 3)
     private static boolean active = false;
     private static boolean glitchActive = false;
 
@@ -54,7 +55,9 @@ public class TeleportOverlayHandler {
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         GlStateManager.color(0F, 0F, 0F, 1F);
 
-        drawRect(0, 0, width, height, 0xFF000000);
+        if (!glitchActive) {
+            drawRect(0, 0, width, height, 0xFF000000);
+        }
 
         // 🔥 FIX: Re-enable texture2D so font rendering works
         GlStateManager.enableTexture2D();
@@ -78,15 +81,15 @@ public class TeleportOverlayHandler {
         if (!active || event.phase != TickEvent.Phase.END) return;
 
         long elapsed = System.currentTimeMillis() - startTime;
-        if (elapsed > MAX_DURATION_TICKS * 50L || playerHasMovedFromTeleportOrigin()) {
+        Minecraft mc = Minecraft.getMinecraft();
+
+        if (elapsed > MAX_DURATION_TICKS_DIM * 50L && mc.player.dimension == 3) {
+            cleanup();
+        } else if (elapsed > MAX_DURATION_TICKS * 50L) {
             cleanup();
         }
     }
 
-    private boolean playerHasMovedFromTeleportOrigin() {
-        // Optional: Implement position tracking if needed
-        return false;
-    }
 
     private void cleanup() {
 

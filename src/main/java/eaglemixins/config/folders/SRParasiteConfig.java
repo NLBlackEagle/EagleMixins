@@ -43,6 +43,10 @@ public class SRParasiteConfig {
     @Config.Name("Kill Beckon nearby")
     public boolean killNearbyBeckon = true;
 
+    @Config.Comment("Range in radius blocks searched around the beckon for nearby beckons")
+    @Config.Name("Kill Beckon nearby range")
+    public int killNearbyBeckonRange = 32;
+
     @Config.Comment("All SRParasites outside of the allowed biomes in the allowed biome whitelist will automatically be killed")
     @Config.Name("Kill Parasites outside alllowed biomes")
     public boolean killEscapedParasites = true;
