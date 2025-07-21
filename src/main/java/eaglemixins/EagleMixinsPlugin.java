@@ -22,7 +22,7 @@ public class EagleMixinsPlugin implements IFMLLoadingPlugin {
 		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.somanyenchantments.json", () -> Loader.isModLoaded("somanyenchantments"));
 		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.cookingforblockheads.json", () -> Loader.isModLoaded("cookingforblockheads"));
 		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.playerbosses.json", () -> Loader.isModLoaded("playerbosses"));
-		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.dregorarl.json", () -> Loader.isModLoaded("drl"));
+		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.dregorarl.json", () -> Loader.isModLoaded("dregorarl"));
 		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.otg.json", () -> Loader.isModLoaded("openterraingenerator"));
 		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.vc.json", () -> Loader.isModLoaded("variedcommodities"));
 	}

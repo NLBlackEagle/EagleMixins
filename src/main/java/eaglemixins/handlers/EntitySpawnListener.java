@@ -31,10 +31,8 @@ import svenhjol.charm.world.feature.EndPortalRunes;
 
 import java.io.*;
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class EntitySpawnListener extends Entity {
 
@@ -43,6 +41,7 @@ public class EntitySpawnListener extends Entity {
     private static final Map<Integer, TeleportData> LINK_ID_DESTINATIONS = new HashMap<>();
     private static File configFile;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final Queue<EntityPlayer> teleportQueue = new ConcurrentLinkedQueue<>();
 
     private static boolean configInitialized = false;
 
@@ -92,6 +91,7 @@ public class EntitySpawnListener extends Entity {
         compound.setBoolean("isReceiver", this.isReceiver);
     }
 
+
     @Override
     public void onUpdate() {
         super.onUpdate();
@@ -130,32 +130,12 @@ public class EntitySpawnListener extends Entity {
             } else if (isReceiver && data.receiver == null) {
                 data.receiver = pos;
 
-
                 for (EntityPlayer nearbyPlayer : world.playerEntities) {
                     NBTTagCompound persistTag = nearbyPlayer.getEntityData().getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
                     if (persistTag.getBoolean("justTeleported") && persistTag.getInteger("linkId") == linkId) {
-                        BlockPos finalPos = pos.add(0, 3, 3);
 
-                        MinecraftServer server = nearbyPlayer.getServer();
-                        if (server != null) {
-                            server.addScheduledTask(() -> {
-                                // Put teleportation or entity manipulation here
-                                nearbyPlayer.setPositionAndUpdate(finalPos.getX() + 0.5, finalPos.getY(), finalPos.getZ() + 0.5);
-                                // Give Teleportation Sickness
-                                nearbyPlayer.addPotionEffect(new PotionEffect(PotionTeleportationSickness.INSTANCE, 200, 0));
-
-                            });
-                        }
-
-                        if (nearbyPlayer instanceof EntityPlayerMP) {
-                            EagleMixins.NETWORK.sendTo(new PacketStopTeleportOverlay(), (EntityPlayerMP) nearbyPlayer);
-                        }
-
-                        //LOGGER.info("[EagleMixins] Final teleport complete for player {} to {}", nearbyPlayer.getName(), finalPos);
-
-                        persistTag.removeTag("justTeleported");
-                        persistTag.removeTag("linkId");
-                        nearbyPlayer.getEntityData().setTag(EntityPlayer.PERSISTED_NBT_TAG, persistTag);
+                        // Instead of teleporting immediately, enqueue the player
+                        teleportQueue.add(nearbyPlayer);
                         break;
                     }
                 }
@@ -167,15 +147,44 @@ public class EntitySpawnListener extends Entity {
         }
     }
 
+    @SubscribeEvent
+    public static void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+
+        while (!teleportQueue.isEmpty()) {
+            EntityPlayer player = teleportQueue.poll();
+            if (player == null || player.world == null) continue;
+
+            NBTTagCompound persistTag = player.getEntityData().getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
+            int linkId = persistTag.getInteger("linkId");
+            TeleportData data = LINK_ID_DESTINATIONS.get(linkId);
+
+            if (data != null && data.receiver != null) {
+                BlockPos finalPos = data.receiver.add(0, 3, 3);
+                player.setPositionAndUpdate(finalPos.getX() + 0.5, finalPos.getY(), finalPos.getZ() + 0.5);
+                player.addPotionEffect(new PotionEffect(PotionTeleportationSickness.INSTANCE, 200, 0));
+
+                if (player instanceof EntityPlayerMP) {
+                    EagleMixins.NETWORK.sendTo(new PacketStopTeleportOverlay(), (EntityPlayerMP) player);
+                }
+
+                persistTag.removeTag("justTeleported");
+                persistTag.removeTag("linkId");
+                player.getEntityData().setTag(EntityPlayer.PERSISTED_NBT_TAG, persistTag);
+            }
+        }
+    }
+
+
     private static BlockPos getTempReceiverCoordsFor(int linkId) {
         switch (linkId) {
             case 0: return new BlockPos(-8247, 80, -12929); // Frozen Greens
-            case 1: return new BlockPos(-14345, 80, -6923); // The Highlands
-            case 2: return new BlockPos(-14394, 80, 7793);  // Valley of Sulfur
-            case 3: return new BlockPos(-2363, 80, 15883);  // Southern Green
-            case 4: return new BlockPos(13505, 80, -8554);  // Sea of Decay
-            case 5: return new BlockPos(3303, 80, -13134);  // Green Desert
-            case 6: return new BlockPos(7988, 80, 13359);   // Permafrost
+            case 1: return new BlockPos(-15878, 80, -4301); // The Highlands
+            case 2: return new BlockPos(-13520, 80, 7636);  // Valley of Sulfur
+            case 3: return new BlockPos(-2607, 80, 16323);  // Southern Green
+            case 4: return new BlockPos(13476, 80, -8398);  // Sea of Decay
+            case 5: return new BlockPos(7070, 80, -15844);  // Green Desert
+            case 6: return new BlockPos(5502, 80, 13754);   // Permafrost
             default: return new BlockPos(0, 80, 0);
         }
     }
@@ -476,12 +485,12 @@ public class EntitySpawnListener extends Entity {
 
         // Register fallback linkIds 0–6 if missing
         registerDefaultLinkIfMissing(0, new BlockPos(-950, 80, -2228), new BlockPos(-8247, 80, -12929)); // Frozen Greens
-        registerDefaultLinkIfMissing(1, new BlockPos(-2355, 80, -642), new BlockPos(-14345, 80, -6923)); // The Highlands
-        registerDefaultLinkIfMissing(2, new BlockPos(-1987, 80, 1453), new BlockPos(-14394, 80, 7793)); // Valley of Sulfur
-        registerDefaultLinkIfMissing(3, new BlockPos(-116, 80, 2455), new BlockPos(-2363, 80, 15883)); // Southern Green
-        registerDefaultLinkIfMissing(4, new BlockPos(2407, 80, -401), new BlockPos(13505, 80, -8554)); // Sea of Decay
-        registerDefaultLinkIfMissing(5, new BlockPos(1171, 80, -2126), new BlockPos(3303, 80, -13134)); // Green Desert
-        registerDefaultLinkIfMissing(6, new BlockPos(1831, 80, 1635), new BlockPos(7988, 80, 13359)); // Permafrost
+        registerDefaultLinkIfMissing(1, new BlockPos(-2355, 80, -642), new BlockPos(-15878, 80, -7636)); // The Highlands
+        registerDefaultLinkIfMissing(2, new BlockPos(-1987, 80, 1453), new BlockPos(-13520, 80, 7636)); // Valley of Sulfur
+        registerDefaultLinkIfMissing(3, new BlockPos(-116, 80, 2455), new BlockPos(-2607, 80, 16323)); // Southern Green
+        registerDefaultLinkIfMissing(4, new BlockPos(2407, 80, -401), new BlockPos(13476, 80, -8398)); // Sea of Decay
+        registerDefaultLinkIfMissing(5, new BlockPos(1171, 80, -2126), new BlockPos(7070, 80, -15844)); // Green Desert
+        registerDefaultLinkIfMissing(6, new BlockPos(1831, 80, 1635), new BlockPos(5502, 80, 13754)); // Permafrost
 
         saveDestinationsToDisk(); // Persist changes if any were added
 
