@@ -34,7 +34,8 @@ import static eaglemixins.handlers.util.AbyssalRiftSpawn.isAbyssalRiftSpawn;
 
 //By fonny, copied from RLMixins.DregoraScriptHandler
 public class BlightedShivaxiHandler {
-    private static final String blightedShivaxiName = TextFormatting.DARK_RED + "☢ " + TextFormatting.DARK_GREEN + TextFormatting.BOLD + "Blighted Shivaxi" + TextFormatting.RESET + TextFormatting.DARK_RED + " ☢";
+    private static final String symbol = "\u2622";
+    private static final String blightedShivaxiName = TextFormatting.DARK_RED + symbol + " " + TextFormatting.DARK_GREEN + TextFormatting.BOLD + "Blighted Shivaxi" + TextFormatting.RESET + TextFormatting.DARK_RED + " " + symbol;
 
     @SubscribeEvent
     public static void onLivingDeath(LivingDeathEvent event) {
