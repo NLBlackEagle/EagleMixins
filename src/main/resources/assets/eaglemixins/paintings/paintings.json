@@ -154,5 +154,35 @@
     "width": 1,
     "height": 2,
     "isCreative": false
+  },
+  {
+    "motive": "hotkotlin",
+    "width": 1,
+    "height": 2,
+    "isCreative": false
+  },
+  {
+    "motive": "lobster",
+    "width": 3,
+    "height": 2,
+    "isCreative": false
+  },
+  {
+    "motive": "krillissue",
+    "width": 1,
+    "height": 1,
+    "isCreative": false
+  },
+  {
+    "motive": "ray",
+    "width": 3,
+    "height": 2,
+    "isCreative": false
+  },
+  {
+    "motive": "nischidmgreduct",
+    "width": 3,
+    "height": 2,
+    "isCreative": false
   }
 ]
