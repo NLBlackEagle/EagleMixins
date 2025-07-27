@@ -143,7 +143,10 @@ public class EntitySpawnListener extends Entity {
 
             LINK_ID_DESTINATIONS.put(linkId, data);
             saveDestinationsToDisk();
-            this.setDead();
+            MinecraftServer server = world.getMinecraftServer();
+            if (server != null) {
+                server.addScheduledTask(() -> this.setDead());
+            }
         }
     }
 
