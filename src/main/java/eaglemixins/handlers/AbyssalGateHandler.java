@@ -6,6 +6,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -38,6 +39,24 @@ public class AbyssalGateHandler {
 
         if (heldItem.getItem() == quarkRune && biomeName.toString().equals("openterraingenerator:overworld_abyssal_gate")) {
             player.sendStatusMessage(new TextComponentTranslation("eaglemixins.message.abyssal_runes"), true);
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onBlockBreak(BlockEvent.BreakEvent event) {
+
+        EntityPlayer player = event.getPlayer();
+        World world = event.getWorld();
+        BlockPos pos = event.getPos();
+
+        if (player == null) return;
+        if (!(event.getPos().getY() <= 10)) return;
+
+        ResourceLocation biomeName = world.getBiome(pos).getRegistryName();
+
+        if (biomeName != null && biomeName.toString().equals("openterraingenerator:overworld_abyssal_gate")) {
+            player.sendStatusMessage(new TextComponentTranslation("eaglemixins.message.block_break_denied"), true);
             event.setCanceled(true);
         }
     }
