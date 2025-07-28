@@ -34,6 +34,7 @@ public class PotionRadiationSickness extends PotionBase {
     @Override
     public void performEffect(EntityLivingBase entityLivingBase, int amplifier) {
         if (entityLivingBase.world.isRemote) return;
+        if (!(entityLivingBase instanceof EntityPlayer)) { return;}
 
         switch (amplifier) {
             case 0:

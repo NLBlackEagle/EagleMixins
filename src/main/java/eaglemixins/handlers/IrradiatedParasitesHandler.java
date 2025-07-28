@@ -39,6 +39,10 @@ public class IrradiatedParasitesHandler {
         if(entityRadiation == null) return;
         double radsPercent = entityRadiation.getRadsPercentage();
 
+        if (entity.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH) == null) { return;}
+        if (entity.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE) == null) { return;}
+        if (entity.getEntityAttribute(SharedMonsterAttributes.ARMOR) == null) { return;}
+
         entity.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).removeModifier(HP_UUID);
         entity.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).removeModifier(DMG_UUID);
         entity.getEntityAttribute(SharedMonsterAttributes.ARMOR).removeModifier(ARMOR_UUID);
