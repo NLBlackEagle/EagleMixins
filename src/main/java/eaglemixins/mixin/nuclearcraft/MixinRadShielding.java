@@ -1,5 +1,6 @@
 package eaglemixins.mixin.nuclearcraft;
 
+import nc.recipe.vanilla.recipe.ShapelessArmorRadShieldingRecipe;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
@@ -11,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(targets = "nc.recipe.vanilla.recipe.ShapelessArmorRadShieldingRecipe")
+@Mixin(ShapelessArmorRadShieldingRecipe.class)
 public abstract class MixinRadShielding {
 
     @Inject(method = "matches", at = @At("HEAD"), cancellable = true)

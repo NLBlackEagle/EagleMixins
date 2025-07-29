@@ -29,6 +29,7 @@ public class EagleMixins {
 
 	@Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        MinecraftForge.EVENT_BUS.register(NuclearCraftInteractions.class);
         MinecraftForge.EVENT_BUS.register(AbyssalRiftHandler.class);
         MinecraftForge.EVENT_BUS.register(BarrierBlockHandler.class);
         MinecraftForge.EVENT_BUS.register(BerianHandler.class);

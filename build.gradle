@@ -68,6 +68,7 @@ dependencies {
     implementation fg.deobf("curse.maven:loadingscreens-${loadingscreens_version}")
     implementation fg.deobf("curse.maven:sme-${sme_version}")
     implementation fg.deobf("curse.maven:bettersurvival-${bettersurvival_version}")
+    implementation fg.deobf("curse.maven:reskillable-${reskillable_version}")
     implementation fg.deobf("curse.maven:rlcombat-${rlcombat_version}")
     implementation fg.deobf("curse.maven:nuclearcraft-mod-${nuclearcraft_version}")
     implementation fg.deobf("curse.maven:enhancedvisuals-${enhancedvisuals_version}")
@@ -81,6 +82,7 @@ dependencies {
 
 mixin {
     add sourceSets.main, "mixins.${mod_id}.refmap.json"
+    defaultObfuscationEnv = "searge"
 }
 
 processResources {
