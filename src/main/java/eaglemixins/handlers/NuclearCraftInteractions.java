@@ -15,7 +15,7 @@ public class NuclearCraftInteractions {
         World world = event.getWorld();
         Block block = world.getBlockState(pos).getBlock();
 
-        if (block.getRegistryName() != null && block.getRegistryName().getNamespace().equals("nuclearcraft")) {
+        if (block.getRegistryName() != null && ((block.getRegistryName().getNamespace().equals("nuclearcraft")) || block.getRegistryName().getNamespace().equals("cookingforblockheads"))) {
             // If Reskillable tried to block the interaction, override it
             if (event.isCanceled()) {
                 event.setCanceled(false);

@@ -98,6 +98,10 @@ public class ForgeConfigHandler {
 		@Config.Comment("Removes old item attributes (atk dmg and atk speed) from 1.0.4")
 		@Config.Name("Remove old Attribute Modifiers")
 		public boolean removeOldAttributes = true;
+
+		@Config.Name("Fix Biomes O Plenty Door Duplication")
+		@Config.Comment("Prevents Biomes O Plenty doors from dropping twice when broken")
+		public static boolean fixBOPDoorDupe = true;
 	}
 
 	public static class ClientConfig {
