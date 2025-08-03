@@ -25,7 +25,15 @@ public class BarrierBlockHandler {
             return;
         }
         int meta = block.getMetaFromState(state);
-        if (meta == 6) {
+        if (meta == 0) {
+            if (isIndestructible(event.getPlayer(), PENDANT)) {
+                event.setCanceled(true);
+            }
+        } else if (meta == 5) {
+            if (isIndestructible(event.getPlayer(), PENDANT)) {
+                event.setCanceled(true);
+            }
+        } else if (meta == 6) {
             if (isIndestructible(event.getPlayer(), PENDANT)) {
                 event.setCanceled(true);
             }
@@ -45,7 +53,15 @@ public class BarrierBlockHandler {
             return;
         }
         int meta = block.getMetaFromState(state);
-        if (meta == 6) {
+        if (meta == 0) {
+            if (isIndestructible(event.getEntityPlayer(), PENDANT)) {
+                event.setCanceled(true);
+            }
+        } else if (meta == 5) {
+            if (isIndestructible(event.getEntityPlayer(), PENDANT)) {
+                event.setCanceled(true);
+            }
+        } else if (meta == 6) {
             if (isIndestructible(event.getEntityPlayer(), PENDANT)) {
                 event.setCanceled(true);
             }
