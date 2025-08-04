@@ -13,7 +13,8 @@
     "vanilla.EntityPotionMixin",
     "vanilla.ItemPotionMixin",
     "vanilla.GuiIngameForgeMixin",
-    "vanilla.TrapdoorLadderMixin"
+    "vanilla.TrapdoorLadderMixin",
+    "vanilla.PlayerBreathMixin"
   ],
   "injectors": {
     "defaultRequire": 1,
