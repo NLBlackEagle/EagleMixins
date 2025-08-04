@@ -1,14 +1,17 @@
 package eaglemixins.handlers;
 
+
 import eaglemixins.util.Ref;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemChorusFruit;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -18,6 +21,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class RandomTpCancelHandler {
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
+    public static void OnLivingDamageEvent(LivingHurtEvent event) {
+        EntityLivingBase entity = event.getEntityLiving();
+        if(entity.world.isRemote) return;
+        if (!(entity instanceof EntityPlayer)) return;
+        if (event.getSource() != DamageSource.IN_WALL) return;
+        if (!Ref.entityIsInAbyssalGate(entity)) return;
+
+        applyTpCooldownDebuffs((EntityPlayer) entity);
+    }
 
     //when throwing enderpearl
     @SubscribeEvent
