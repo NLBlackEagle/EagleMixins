@@ -6,7 +6,6 @@
   "target": "@env(INIT)",
   "minVersion": "0.8",
   "mixins": [
-    "MixinNCBlockTrapDoor",
     "MixinRadShielding"
   ],
   "injectors": {

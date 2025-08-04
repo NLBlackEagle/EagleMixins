@@ -12,9 +12,11 @@
     "vanilla.EntityAreaEffectCloudMixin",
     "vanilla.EntityPotionMixin",
     "vanilla.ItemPotionMixin",
-    "vanilla.GuiIngameForgeMixin"
+    "vanilla.GuiIngameForgeMixin",
+    "vanilla.TrapdoorLadderMixin"
   ],
   "injectors": {
+    "defaultRequire": 1,
     "maxShiftBy": 10
   }
 }

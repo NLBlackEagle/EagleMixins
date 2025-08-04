@@ -2,8 +2,10 @@ package eaglemixins.handlers;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -30,6 +32,7 @@ public class BlockNoclipHandler {
         World world = event.getWorld();
         BlockPos pos = event.getPos();
         Block block = world.getBlockState(pos).getBlock();
+        IBlockState state = event.getWorld().getBlockState(event.getPos());
 
         ResourceLocation rl = Block.REGISTRY.getNameForObject(block);
         if (rl == null) return;
@@ -44,6 +47,14 @@ public class BlockNoclipHandler {
         // Cancel if block above is not air or a liquid
         if (!matAbove.isReplaceable() && !matAbove.isLiquid() && matAbove != Material.AIR) {
             event.setCanceled(true);
+
+            if (!event.getWorld().isRemote) {
+                String blockName = state.getBlock().getLocalizedName();
+                event.getEntityPlayer().sendStatusMessage(
+                        new TextComponentString("§cThe " + blockName + " is obstructed."),
+                        true // true = action bar
+                );
+            }
         }
     }
 }
