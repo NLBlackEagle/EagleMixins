@@ -17,4 +17,22 @@ public class BlockHelper {
             }
         }
     }
+
+    @ZenMethod
+    public static void setBlockResistance(String name, Float resistance) {
+        for (Block block : CommonProxy.BLOCKS) {
+            if (block.getRegistryName().toString().equals(name)) {
+                block.setResistance(resistance);
+            }
+        }
+    }
+
+    @ZenMethod
+    public static void setBlockHarvestLevel(String name, String toolClass, int harvestLevel) {
+        for (Block block : CommonProxy.BLOCKS) {
+            if (block.getRegistryName().toString().equals(name)) {
+                block.setHarvestLevel(toolClass, harvestLevel);
+            }
+        }
+    }
 }
