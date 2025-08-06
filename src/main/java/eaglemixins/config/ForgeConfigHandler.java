@@ -7,9 +7,15 @@ import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import eaglemixins.EagleMixins;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 
 @Config(modid = EagleMixins.MODID)
 public class ForgeConfigHandler {
+
+	@Config.Ignore
+	public static final Set<String> cachedDrinkableBlocks = new HashSet<>();
 
 	@Config.Comment("Server-Side Options")
 	@Config.Name("Server Options")
@@ -44,6 +50,12 @@ public class ForgeConfigHandler {
 	public static final SRParasiteConfig srparasites = new SRParasiteConfig();
 
 	public static class ServerConfig {
+
+		@Config.Comment("Add Blocks you can drink from, like water")
+		@Config.Name("Additional Water Blocks:")
+		public String[] waterblockListdrinkables = {
+				"cookingforblockheads:sink"
+		};
 
 		@Config.Comment("Give Dismounting entities the ability to dismount players when they target a player in Abyssal Rift or Parasite biomes")
 		@Config.Name("Dismount on target:")
@@ -118,6 +130,16 @@ public class ForgeConfigHandler {
 		public boolean disableCycling = false;
 	}
 
+	public static void refreshDrinkableBlockCache() {
+		cachedDrinkableBlocks.clear();
+
+		if (server.waterblockListdrinkables != null) {
+			for (String s : server.waterblockListdrinkables) {
+				cachedDrinkableBlocks.add(s.toLowerCase(Locale.ROOT));
+			}
+		}
+	}
+
 	@Mod.EventBusSubscriber(modid = EagleMixins.MODID)
 	public static class EventHandler {
 
@@ -130,8 +152,8 @@ public class ForgeConfigHandler {
 				conductivity.reset();
 				irradiated.reset();
 				srparasites.reset();
+				ForgeConfigHandler.refreshDrinkableBlockCache();
 			}
 		}
 	}
-
 }
