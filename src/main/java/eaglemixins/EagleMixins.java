@@ -29,7 +29,6 @@ public class EagleMixins {
 
 	@Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        MinecraftForge.EVENT_BUS.register(TooltipColorDebugger.class);
         MinecraftForge.EVENT_BUS.register(BlockNoclipHandler.class);
         MinecraftForge.EVENT_BUS.register(NuclearCraftInteractions.class);
         MinecraftForge.EVENT_BUS.register(AbyssalRiftHandler.class);
