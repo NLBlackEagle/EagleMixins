@@ -1,8 +1,14 @@
 package eaglemixins.mixin.legendarytooltips;
 
 import com.anthonyhilyard.legendarytooltips.LegendaryTooltipsConfig;
+import com.anthonyhilyard.legendarytooltips.util.Selectors;
+import com.anthonyhilyard.legendarytooltips.util.TextColor;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.config.Configuration;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -11,121 +17,102 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Mixin(LegendaryTooltipsConfig.class)
-public class LegendaryTooltipsConfigMixin {
+public class LegendaryTooltipsConfigMixin extends Configuration {
+
+    @Unique
+    private final String[] eagleMixins$startColors = new String[64];
+
+    @Unique
+    private final String[] eagleMixins$endColors = new String[64];
+
+    @Unique
+    private final String[] eagleMixins$bgColors = new String[64];
+
+    @Final
+    @Shadow(remap = false)
+    private List<List<String>> itemSelectors;
+
+    @Final
+    @Shadow(remap = false)
+    private List<Integer> framePriorities;
+
+    @Final
+    @Shadow(remap = false)
+    private transient Map<ItemStack, Integer> frameLevelCache;
+
+    @Shadow(remap = false)
+    private Integer getColor(String colorString) {
+        colorString = colorString.toLowerCase().replace("0x", "").replace("#", "");
+        Integer color = TextColor.parseColor(colorString);
+        if (color == null && (colorString.length() == 6 || colorString.length() == 8)) {
+            color = TextColor.parseColor("#" + colorString);
+        }
+
+        return color;
+    }
 
     @Inject(method = "getCustomBorderStartColor", at = @At("HEAD"), cancellable = true, remap = false)
-    private void eaglemixins$guardStartColor(int level, CallbackInfoReturnable<Integer> cir) {
-        if (level >= 64) {
-            cir.setReturnValue(-1);
+    private void eaglemixins$extendStartColor(int level, CallbackInfoReturnable<Integer> cir) {
+        if (level >= 0 && level < 64 && this.eagleMixins$startColors[level] != null) {
+            Integer startColor = this.getColor(this.eagleMixins$startColors[level]);
+            cir.setReturnValue(startColor > 0 && startColor <= 16777215 ? startColor | -16777216 : startColor);
         }
     }
 
     @Inject(method = "getCustomBorderEndColor", at = @At("HEAD"), cancellable = true, remap = false)
-    private void eaglemixins$guardEndColor(int level, CallbackInfoReturnable<Integer> cir) {
-        if (level >= 64) {
-            cir.setReturnValue(-1);
+    private void eaglemixins$extendEndColor(int level, CallbackInfoReturnable<Integer> cir) {
+        if (level >= 0 && level < 64 && this.eagleMixins$endColors[level] != null) {
+            Integer endColor = this.getColor(this.eagleMixins$endColors[level]);
+            cir.setReturnValue(endColor > 0 && endColor <= 16777215 ? endColor | -16777216 : endColor);
         }
     }
 
     @Inject(method = "getCustomBackgroundColor", at = @At("HEAD"), cancellable = true, remap = false)
-    private void eaglemixins$guardBgColor(int level, CallbackInfoReturnable<Integer> cir) {
-        if (level >= 64) {
-            cir.setReturnValue(-1);
+    private void eaglemixins$extendBgColor(int level, CallbackInfoReturnable<Integer> cir) {
+        if (level >= 0 && level < 64 && this.eagleMixins$bgColors[level] != null) {
+            Integer bgColor = this.getColor(this.eagleMixins$bgColors[level]);
+            cir.setReturnValue(bgColor > 0 && bgColor <= 16777215 ? bgColor | -16777216 : bgColor);
         }
     }
 
-    @Inject(method = "getFrameLevelForItem", at = @At("RETURN"), cancellable = true, remap = false)
-    private void eaglemixins$debugFrameLevel(ItemStack item, CallbackInfoReturnable<Integer> cir) {
-        int result = cir.getReturnValue();
-
-        // Debug log to check what's going on with frame levels 16 and 17+
-        if ((result >= 16) && (result < 17)) {
-            System.out.println("[LegendaryTooltipsConfigMixin] Frame level = " + result + " for item: " + item.getItem().getRegistryName() + " | Damage = " + item.getItemDamage());
+    @Inject(method = "getFrameLevelForItem", at = @At("HEAD"), cancellable = true, remap = false)
+    private void eaglemixins$expandFrameLevel(ItemStack item, CallbackInfoReturnable<Integer> cir) {
+        if (!this.frameLevelCache.containsKey(item)) {
+            for (int i = 16; i < 64; ++i) {
+                if (i < this.framePriorities.size()) {
+                    int frameIndex = this.framePriorities.get(i);
+                    if (frameIndex < this.itemSelectors.size()) {
+                        for (String entry : this.itemSelectors.get(frameIndex)) {
+                            if (Selectors.itemMatches(item, entry)) {
+                                this.frameLevelCache.put(item, frameIndex);
+                                cir.setReturnValue(frameIndex);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void eaglemixins$expandConfig(File file, CallbackInfo ci) {
-        try {
-            LegendaryTooltipsConfig instance = (LegendaryTooltipsConfig)(Object)this;
-            if (instance == null) {
-                System.out.println("[LegendaryTooltipsConfigMixin] ERROR: instance is null.");
-                return;
-            }
+        int i;
+        for (i = 16; i < 64; ++i) {
+            this.itemSelectors.add(Arrays.asList(this.getStringList(String.format("level%d_entries", i), "definitions", new String[0], "")));
+        }
 
-            // === Expand itemSelectors ===
-            try {
-                Field selectorsField = LegendaryTooltipsConfig.class.getDeclaredField("itemSelectors");
-                selectorsField.setAccessible(true);
-                List<List<String>> selectors = (List<List<String>>) selectorsField.get(instance);
-                System.out.println("[LegendaryTooltipsConfigMixin] itemSelectors (initial size): " + selectors.size());
+        this.eagleMixins$startColors[0] = this.getString("level0_start_color", "colors", "#FF996922", "");
+        this.eagleMixins$endColors[0] = this.getString("level0_end_color", "colors", "#FF5A3A1D", "");
+        this.eagleMixins$bgColors[0] = this.getString("level0_bg_color", "colors", "#F0160A00", "");
 
-                while (selectors.size() < 64) selectors.add(new ArrayList<>());
-                System.out.println("[LegendaryTooltipsConfigMixin] itemSelectors extended to size: " + selectors.size());
-            } catch (Exception ex) {
-                System.out.println("[LegendaryTooltipsConfigMixin] ERROR in itemSelectors:");
-                ex.printStackTrace();
-            }
-
-            // === Expand framePriorities ===
-            try {
-                Field prioritiesField = LegendaryTooltipsConfig.class.getDeclaredField("framePriorities");
-                prioritiesField.setAccessible(true);
-                List<Integer> priorities = (List<Integer>) prioritiesField.get(instance);
-                System.out.println("[LegendaryTooltipsConfigMixin] framePriorities (initial size): " + priorities.size());
-
-                for (int i = priorities.size(); i < 64; i++) priorities.add(i);
-                System.out.println("[LegendaryTooltipsConfigMixin] framePriorities extended to size: " + priorities.size());
-            } catch (Exception ex) {
-                System.out.println("[LegendaryTooltipsConfigMixin] ERROR in framePriorities:");
-                ex.printStackTrace();
-            }
-
-            // === Expand color arrays ===
-            try {
-                Field startColorsField = LegendaryTooltipsConfig.class.getDeclaredField("startColors");
-                Field endColorsField = LegendaryTooltipsConfig.class.getDeclaredField("endColors");
-                Field bgColorsField = LegendaryTooltipsConfig.class.getDeclaredField("bgColors");
-
-                startColorsField.setAccessible(true);
-                endColorsField.setAccessible(true);
-                bgColorsField.setAccessible(true);
-
-                String[] startColors = Arrays.copyOf((String[]) startColorsField.get(instance), 64);
-                String[] endColors   = Arrays.copyOf((String[]) endColorsField.get(instance), 64);
-                String[] bgColors    = Arrays.copyOf((String[]) bgColorsField.get(instance), 64);
-
-                System.out.println("[LegendaryTooltipsConfigMixin] Color arrays extended to size 64.");
-
-                Field selectorsField = LegendaryTooltipsConfig.class.getDeclaredField("itemSelectors");
-                selectorsField.setAccessible(true);
-                List<List<String>> selectors = (List<List<String>>) selectorsField.get(instance);
-
-                for (int i = 16; i < 64; i++) {
-                    startColors[i] = instance.getString(String.format("level%d_start_color", i), "colors", "#FF996922", "");
-                    endColors[i]   = instance.getString(String.format("level%d_end_color", i), "colors", "#FF5A3A1D", "");
-                    bgColors[i]    = instance.getString(String.format("level%d_bg_color", i), "colors", "#F0160A00", "");
-
-                    String[] entries = instance.getStringList(String.format("level%d_entries", i), "definitions", new String[0], "");
-                    selectors.set(i, Arrays.asList(entries));
-                }
-
-                startColorsField.set(instance, startColors);
-                endColorsField.set(instance, endColors);
-                bgColorsField.set(instance, bgColors);
-
-                System.out.println("[LegendaryTooltipsConfigMixin] Color values and selectors set for levels 16–63.");
-            } catch (Exception ex) {
-                System.out.println("[LegendaryTooltipsConfigMixin] ERROR in color arrays or entry patching:");
-                ex.printStackTrace();
-            }
-
-        } catch (Exception outer) {
-            System.out.println("[LegendaryTooltipsConfigMixin] CRITICAL failure:");
-            outer.printStackTrace();
+        for (i = 1; i < 64; ++i) {
+            this.eagleMixins$startColors[i] = this.getString(String.format("level%d_start_color", i), "colors", "#FF996922", "");
+            this.eagleMixins$endColors[i] = this.getString(String.format("level%d_end_color", i), "colors", "#FF5A3A1D", "");
+            this.eagleMixins$bgColors[i] = this.getString(String.format("level%d_bg_color", i), "colors", "#F0160A00", "");
         }
     }
 }
