@@ -34,3 +34,6 @@ overlay.teleport.glitch=The air thickens, you feel uneasy.\nSomething terrible h
 eaglemixins.message.dimensional.fall_damage=You fell a great height, luckily the damage appears to be minimal.
 eaglemixins.message.abyssal_runes=The rune doesn't seem to fit this slot, perhaps I should leave it be.
 eaglemixins.message.block_break_denied=The ground seems hardened here, you fail to breach through.
+
+tile.eaglemixins.deepslate.name=Deepslate
+block.eaglemixins.deepslate.name=Deepslate

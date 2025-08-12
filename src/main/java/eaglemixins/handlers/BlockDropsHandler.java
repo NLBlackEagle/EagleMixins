@@ -31,6 +31,7 @@ public class BlockDropsHandler {
     public static void onHarvestDrops(BlockEvent.HarvestDropsEvent event) {
 
         if (event.getWorld().isRemote) return;
+        if (event.getHarvester() == null) return;
         Random harvesterRNG = event.getHarvester().getRNG();
 
         IBlockState state = event.getState();
@@ -40,15 +41,19 @@ public class BlockDropsHandler {
 
         // Aquaculture seaweed dropped from kelp, can be baked to become kelp and kelp can be used as a fuel source to smelt 2 items. (Same-ish as 1.16.5)
         if (harvestedBlock.equals(BOPBlocks.seaweed)) {
-
-            if (event.getHarvester() == null) return;
-
             if(event.isSilkTouching()) return;
             Item item = Item.getByNameOrId("aquaculture:food");
             if (item != null) {
                 event.getDrops().clear();
                 event.getDrops().add(new ItemStack(item, 1, 0));
             }
+            return;
+        }
+
+        if (blockId.equals("eaglemixins:deepslate")) {
+            if(event.isSilkTouching()) return;
+            event.getDrops().clear();
+            addDrop(event.getDrops(), harvesterRNG, "contenttweaker:cobbled_deepslate", 1.0F);
             return;
         }
 
@@ -152,7 +157,7 @@ public class BlockDropsHandler {
 
         //Theta and Eta Barriers
         if (blockId.equals("dimstack:bedrock")) {
-            if (event.getHarvester() == null) return;
+
             event.getDrops().clear();
             int blockState = harvestedBlock.getMetaFromState(state);
             // On Theta Barrier Destroyed
@@ -247,21 +252,21 @@ public class BlockDropsHandler {
 
     private static final Map<String, BlockSpec> DEEPSLATE_MAP = new HashMap<>();
     static {
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_copper_ore",  parseBlockSpec("iceandfire:copper_ore"));
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_silver_ore",  parseBlockSpec("iceandfire:silver_ore"));
+        DEEPSLATE_MAP.put("contenttweaker:deepslate_copper_ore",  parseBlockSpec("contenttweaker:deepslate_copper_ore"));
+        DEEPSLATE_MAP.put("contenttweaker:deepslate_silver_ore",  parseBlockSpec("contenttweaker:deepslate_silver_ore"));
         DEEPSLATE_MAP.put("contenttweaker:deepslate_diamond_ore", parseBlockSpec("minecraft:diamond_ore"));
         DEEPSLATE_MAP.put("contenttweaker:deepslate_emerald_ore", parseBlockSpec("minecraft:emerald_ore"));
         DEEPSLATE_MAP.put("contenttweaker:deepslate_lapis_ore",   parseBlockSpec("minecraft:lapis_ore"));
         DEEPSLATE_MAP.put("contenttweaker:deepslate_redstone_ore",parseBlockSpec("minecraft:redstone_ore"));
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_gold_ore",    parseBlockSpec("minecraft:gold_ore"));
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_iron_ore",    parseBlockSpec("minecraft:iron_ore"));
+        DEEPSLATE_MAP.put("contenttweaker:deepslate_gold_ore",    parseBlockSpec("contenttweaker:deepslate_gold_ore"));
+        DEEPSLATE_MAP.put("contenttweaker:deepslate_iron_ore",    parseBlockSpec("contenttweaker:deepslate_iron_ore"));
         DEEPSLATE_MAP.put("contenttweaker:deepslate_coal_ore",    parseBlockSpec("minecraft:coal_ore"));
         // NuclearCraft meta variants:
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_lead_ore",    parseBlockSpec("nuclearcraft:ore:2"));
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_thorium_ore", parseBlockSpec("nuclearcraft:ore:3"));
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_uranium_ore", parseBlockSpec("nuclearcraft:ore:4"));
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_boron_ore",   parseBlockSpec("nuclearcraft:ore:5"));
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_lithium_ore", parseBlockSpec("nuclearcraft:ore:6"));
+        DEEPSLATE_MAP.put("contenttweaker:deepslate_lead_ore",    parseBlockSpec("contenttweaker:deepslate_lead_ore"));
+        DEEPSLATE_MAP.put("contenttweaker:deepslate_thorium_ore", parseBlockSpec("contenttweaker:deepslate_thorium_ore"));
+        DEEPSLATE_MAP.put("contenttweaker:deepslate_uranium_ore", parseBlockSpec("contenttweaker:deepslate_uranium_ore"));
+        DEEPSLATE_MAP.put("contenttweaker:deepslate_boron_ore",   parseBlockSpec("contenttweaker:deepslate_boron_ore"));
+        DEEPSLATE_MAP.put("contenttweaker:deepslate_lithium_ore", parseBlockSpec("contenttweaker:deepslate_lithium_ore"));
         DEEPSLATE_MAP.put("contenttweaker:deepslate_crystal_ore", parseBlockSpec("scalinghealth:crystalore"));
     }
 
