@@ -18,7 +18,7 @@ import org.apache.logging.log4j.Logger;
 public class EagleMixins {
 
     public static final String MODID = "eaglemixins";
-    public static final String VERSION = "1.1.3";
+    public static final String VERSION = "1.1.4";
     public static final String NAME = "EagleMixins";
     public static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final SimpleNetworkWrapper NETWORK = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
