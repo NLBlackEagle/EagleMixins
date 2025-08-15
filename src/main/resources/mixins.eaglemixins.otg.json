@@ -6,15 +6,13 @@
   "target": "@env(DEFAULT)",
   "minVersion": "0.8",
   "mixins": [
-    "GuiHandlerMixin",
-    "LayerMixin",
-    "LayerZoomFuzzyMixin"
+    "GuiHandlerMixin"
   ],
   "client": [
-    "OTGGuiDimensionListMixin",
-    "OTGGuiDimensionSettingsListMixin",
+    "OTGGuiWorldSelectionMixin",
     "OTGGuiPresetListMixin",
-    "OTGGuiWorldSelectionMixin"
+    "OTGGuiDimensionSettingsListMixin",
+    "OTGGuiDimensionListMixin"
   ],
   "injectors": {
     "maxShiftBy": 10
