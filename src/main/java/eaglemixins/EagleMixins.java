@@ -55,6 +55,7 @@ public class EagleMixins {
         if(ForgeConfigHandler.irradiated.enabled) MinecraftForge.EVENT_BUS.register(IrradiatedParasitesHandler.class);
         MinecraftForge.EVENT_BUS.register(TileCounterHandler.class);
         MinecraftForge.EVENT_BUS.register(EntitySpawnListener.class);
+        MinecraftForge.EVENT_BUS.register(new TeleportEvents());
         ForgeConfigHandler.refreshDrinkableBlockCache();
     }
 

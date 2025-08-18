@@ -20,7 +20,7 @@ eaglemixins.srptooltip.bow=Your bow tasted blood, now it longs for Parasites...
 
 eaglemixins.tooltip.corruptedashes=Corrupted Ashes
 eaglemixins.effects.radiation_sickness=Contaminated
-eaglemixins.effects.teleportation_sickness=Teleportation Sickness
+eaglemixins.effects.teleportation_sickness=Warp Sickness
 
 death.attack.radiation=%1$s was consumed by radiation
 
