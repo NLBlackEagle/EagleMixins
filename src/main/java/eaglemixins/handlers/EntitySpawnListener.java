@@ -3,9 +3,7 @@ package eaglemixins.handlers;
 import eaglemixins.EagleMixins;
 import eaglemixins.teleport.TeleportData;
 import eaglemixins.teleport.TeleportRegistry;
-import eaglemixins.teleport.TeleportService;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -67,19 +65,16 @@ public class EntitySpawnListener extends Entity {
             TeleportData data = TeleportRegistry.getOrCreate(linkId);
 
             if (isSender) {
-                // was: data.sender = center; TeleportRegistry.markTempReceiverIfEmpty(linkId); TeleportRegistry.put(linkId, data);
-                TeleportRegistry.updateSender(linkId, center);
+                data.sender = center;
                 TeleportRegistry.markTempReceiverIfEmpty(linkId);
-
             } else if (isReceiver && data.receiver == null) {
-                // was: data.receiver = center; TeleportRegistry.put(linkId, data);
-                TeleportRegistry.updateReceiver(linkId, center);
+                data.receiver = center;
 
-                // unchanged: enqueue nearby player that justTeleported for this linkId
-                for (EntityPlayer nearbyPlayer : world.playerEntities) {
-                    NBTTagCompound persistTag = nearbyPlayer.getEntityData().getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
-                    if (persistTag.getBoolean("justTeleported") && persistTag.getInteger("linkId") == linkId) {
-                        TeleportService.enqueue(nearbyPlayer);
+                // Find nearby player that justTeleported with same linkId and let TeleportService finish it
+                for (net.minecraft.entity.player.EntityPlayer p : world.playerEntities) {
+                    NBTTagCompound persist = p.getEntityData().getCompoundTag(net.minecraft.entity.player.EntityPlayer.PERSISTED_NBT_TAG);
+                    if (persist.getBoolean("justTeleported") && persist.getInteger("linkId") == linkId) {
+                        eaglemixins.teleport.TeleportService.enqueue(p);
                         break;
                     }
                 }

@@ -3,7 +3,6 @@ package eaglemixins.teleport;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import org.apache.logging.log4j.LogManager;
@@ -55,18 +54,6 @@ public final class TeleportRegistry {
         ensureInit();
         REGISTRY.put(linkId, data);
         saveToDisk();
-    }
-
-    public static synchronized void updateSender(int linkId, BlockPos sender) {
-        TeleportData d = getOrCreate(linkId);
-        d.sender = sender;
-        put(linkId, d);
-    }
-
-    public static synchronized void updateReceiver(int linkId, BlockPos receiver) {
-        TeleportData d = getOrCreate(linkId);
-        d.receiver = receiver;
-        put(linkId, d);
     }
 
     public static synchronized void markTempReceiverIfEmpty(int linkId) {
