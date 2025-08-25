@@ -47,10 +47,10 @@ public class TooltipDecorMixin {
         Gui.drawModalRectWithCustomSizedTexture(x - 6, y + height - 8 + 6, frameU, frameV + 8, 8, 8, textureSize, textureSize); // bottom left
         Gui.drawModalRectWithCustomSizedTexture(x + width - 8 + 6, y + height - 8 + 6, frameU + 56, frameV + 8, 8, 8, textureSize, textureSize); // bottom right
 
-        // Top and bottom borders (48px wide)
+        // Top and bottom middle section
         if (width >= 48) {
-            Gui.drawModalRectWithCustomSizedTexture(x + width / 2 - 24, y - 6, frameU + 8, frameV, 48, 8, textureSize, textureSize); // top center
-            Gui.drawModalRectWithCustomSizedTexture(x + width / 2 - 24, y + height - 8 + 6, frameU + 8, frameV + 8, 48, 8, textureSize, textureSize); // bottom center
+            Gui.drawModalRectWithCustomSizedTexture(x + (width / 2) - 24, y - 9, frameU + 8, frameV, 48, 8, textureSize, textureSize);
+            Gui.drawModalRectWithCustomSizedTexture(x + (width / 2) - 24, y + height - 8 + 9, frameU + 8, frameV + 8, 48, 8, textureSize, textureSize);
         }
 
         GlStateManager.popMatrix();
