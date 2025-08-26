@@ -4,6 +4,7 @@ import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.handlers.*;
 import eaglemixins.network.PacketStartTeleportOverlay;
 import eaglemixins.network.PacketStopTeleportOverlay;
+import eaglemixins.registry.RadiationResistanceRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -61,6 +62,12 @@ public class EagleMixins {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
+
+        net.minecraftforge.common.config.ConfigManager.sync(
+                EagleMixins.MODID, net.minecraftforge.common.config.Config.Type.INSTANCE
+        );
+
+        RadiationResistanceRegistry.reloadFromConfig();
         EnhancedVisualsHandler.init();
         EntitySpawnListener.init();
         ModStats.init();

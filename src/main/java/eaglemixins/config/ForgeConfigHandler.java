@@ -51,6 +51,18 @@ public class ForgeConfigHandler {
 
 	public static class ServerConfig {
 
+		@Config.Comment({
+				"Radiation resistance per entity.",
+				"Format: <entity_id>=<value>",
+				"Example: minecraft:sheep=1.0"
+		})
+		@Config.Name("RadiationResistanceList")
+		public String[] radiationResistanceList = new String[] {
+				"iceandfire:firedragon=1000.0",
+				"iceandfire:icedragon=1000.0",
+				"iceandfire:lightningdragon=1000.0"
+		};
+
 		@Config.Comment("Add Blocks you can drink from, like water")
 		@Config.Name("Additional Water Blocks:")
 		public String[] waterblockListdrinkables = {
@@ -114,6 +126,7 @@ public class ForgeConfigHandler {
 		@Config.Name("Fix Biomes O Plenty Door Duplication")
 		@Config.Comment("Prevents Biomes O Plenty doors from dropping twice when broken")
 		public static boolean fixBOPDoorDupe = true;
+
 	}
 
 	public static class ClientConfig {
