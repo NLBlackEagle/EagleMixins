@@ -3,11 +3,11 @@
   "package": "eaglemixins.mixin.nuclearcraft",
   "refmap": "mixins.eaglemixins.refmap.json",
   "compatibilityLevel": "JAVA_8",
-  "target": "@env(INIT)",
+  "target": "@env(DEFAULT)",
   "minVersion": "0.8",
   "mixins": [
     "MixinRadShielding",
-    "MixinTickUpdatesHook"
+    "MixinBlockFluidClassicRadiation"
   ],
   "injectors": {
     "maxShiftBy": 10

@@ -15,6 +15,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+
 @Mod(modid = EagleMixins.MODID, version = EagleMixins.VERSION, name = EagleMixins.NAME, dependencies = "required-after:fermiumbooter")
 public class EagleMixins {
 
@@ -23,7 +24,6 @@ public class EagleMixins {
     public static final String NAME = "EagleMixins";
     public static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final SimpleNetworkWrapper NETWORK = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
-
 
     @Mod.Instance(value = MODID)
     public static EagleMixins INSTANCE;
