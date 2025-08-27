@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "name": "casing",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "nuclearcraft:fission_block",
+          "weight": 5,
+          "functions": [{"function": "minecraft:set_data", "data": 0}]
+        }
+      ]
+    }
+  ]
+}

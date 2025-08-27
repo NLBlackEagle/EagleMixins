@@ -1,0 +1,76 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "name": "cooler",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "loot_table",
+          "name": "eaglemixins:blocks/coolers/cooler_0",
+          "weight": 1
+        },
+        {
+          "type": "loot_table",
+          "name": "eaglemixins:blocks/coolers/cooler_1",
+          "weight": 1
+        },
+        {
+          "type": "loot_table",
+          "name": "eaglemixins:blocks/coolers/cooler_2",
+          "weight": 1
+        },
+        {
+          "type": "loot_table",
+          "name": "eaglemixins:blocks/coolers/cooler_3",
+          "weight": 1
+        },
+        {
+          "type": "loot_table",
+          "name": "eaglemixins:blocks/coolers/cooler_4",
+          "weight": 1
+        },
+        {
+          "type": "loot_table",
+          "name": "eaglemixins:blocks/coolers/cooler_5",
+          "weight": 1
+        },
+        {
+          "type": "loot_table",
+          "name": "eaglemixins:blocks/coolers/cooler_6",
+          "weight": 1
+        },
+        {
+          "type": "loot_table",
+          "name": "eaglemixins:blocks/coolers/cooler_7",
+          "weight": 1
+        },
+        {
+          "type": "loot_table",
+          "name": "eaglemixins:blocks/coolers/cooler_8",
+          "weight": 1
+        },
+        {
+          "type": "loot_table",
+          "name": "eaglemixins:blocks/coolers/cooler_11",
+          "weight": 1
+        },
+        {
+          "type": "loot_table",
+          "name": "eaglemixins:blocks/coolers/cooler_12",
+          "weight": 1
+        },
+        {
+          "type": "loot_table",
+          "name": "eaglemixins:blocks/coolers/cooler_13",
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "name": "nuclearcraft:active_cooler",
+          "weight": 1
+        }
+      ]
+    }
+  ]
+}

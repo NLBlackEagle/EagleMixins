@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "name": "cooler",
+      "rolls": {
+        "min": 1,
+        "max": 8
+      },
+      "entries": [
+        {
+          "type": "loot_table",
+          "name": "eaglemixins:blocks/casing/casing_0",
+          "weight": 1
+        },
+        {
+          "type": "loot_table",
+          "name": "eaglemixins:blocks/casing/casing_1",
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "name": "nuclearcraft:reactor_casing_transparent",
+          "weight": 5
+        }
+      ]
+    }
+  ]
+}

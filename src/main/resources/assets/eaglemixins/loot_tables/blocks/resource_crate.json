@@ -5,7 +5,7 @@
       "name": "Resource Crate Drops",
       "rolls": {
         "min": 1,
-        "max": 7
+        "max": 13
       },
       "bonus_rolls": {
         "min": 0,
@@ -15,6 +15,16 @@
         {
           "type": "loot_table",
           "name": "eaglemixins:blocks/collectables",
+          "weight": 1
+        },
+        {
+          "type": "loot_table",
+          "name": "eaglemixins:blocks/coolers",
+          "weight": 1
+        },
+        {
+          "type": "loot_table",
+          "name": "eaglemixins:blocks/casing",
           "weight": 1
         },
         {
@@ -35,7 +45,7 @@
         {
           "type": "loot_table",
           "name": "eaglemixins:blocks/empty_loot",
-          "weight": 30
+          "weight": 20
         }
       ]
     }

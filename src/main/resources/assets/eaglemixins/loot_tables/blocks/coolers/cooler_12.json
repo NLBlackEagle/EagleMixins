@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "name": "cooler",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "nuclearcraft:cooler",
+          "weight": 5,
+          "functions": [{"function": "minecraft:set_data", "data": 12}]
+        }
+      ]
+    }
+  ]
+}
