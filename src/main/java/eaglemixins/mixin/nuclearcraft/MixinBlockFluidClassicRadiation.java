@@ -1,6 +1,5 @@
 package eaglemixins.mixin.nuclearcraft;
 
-import eaglemixins.EagleMixins;
 import nc.capability.radiation.source.IRadiationSource;
 import nc.radiation.RadiationHelper;
 import nc.radiation.RadSources;
@@ -21,41 +20,31 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Random;
 
 /**
- * Corium-style radiation for specific fluids by injecting into the shared
- * BlockFluidClassic#updateTick that the target fluid blocks inherit.
+ * Corium-style radiation for any fluid whose FLUID_MAP entry (from S:radiation_fluids)
+ * is > 0. No hardcoded block IDs; we key off the fluid's registry *name*.
  */
 @Mixin(value = BlockFluidClassic.class)
 public abstract class MixinBlockFluidClassicRadiation {
 
-    @Inject(method = {"updateTick" }, at = @At("TAIL"), require = 0)
-    private void eagleMixins$radiateSelectedFluids(World world, BlockPos pos, IBlockState state, Random rand, CallbackInfo ci) {
+    @Inject(method = {"updateTick"}, at = @At("TAIL"), require = 0)
+    private void eagleMixins$radiateConfiguredFluids(World world, BlockPos pos, IBlockState state, Random rand, CallbackInfo ci) {
         if (world.isRemote) return;
 
         Block self = (Block) (Object) this;
         if (!(self instanceof IFluidBlock)) return;
 
-        String id = String.valueOf(self.getRegistryName());
-        boolean target =
-                "contenttweaker:coolant_fluid".equals(id) ||
-                        "lycanitesmobs:acid".equals(id) ||
-                        "lycanitesmobs:sharacid".equals(id);
-        if (!target) return;
-
         Fluid fluid = ((IFluidBlock) self).getFluid();
-        String fluidName = fluid != null ? fluid.getName() : null;
+        String fluidName = (fluid != null ? fluid.getName() : null);
         if (fluidName == null) return;
 
-        double base = RadSources.FLUID_MAP.getDouble(fluidName);
-        if (base <= 0.0D) {
-            if (base <= 0.0D) return;
-        }
+        double basePerTick = RadSources.FLUID_MAP.getDouble(fluidName);
+        if (basePerTick <= 0.0D) return;
 
-        // Scale by quanta (how "full" the fluid block is)
         double scale = 1.0D;
         if (self instanceof BlockFluidBase) {
             scale = ((BlockFluidBase) self).getQuantaPercentage(world, pos);
         }
-        double radsPerTick = base * scale;
+        double radsPerTick = basePerTick * scale;
         if (radsPerTick <= 0.0D) return;
 
         Chunk chunk = world.getChunk(pos);
@@ -66,8 +55,5 @@ public abstract class MixinBlockFluidClassicRadiation {
 
         RadiationHelper.addToSourceRadiation(src, radsPerTick);
 
-        // Debug; trim later
-        EagleMixins.LOGGER.info("[EagleMixins] +{} rads/t from {} (fluid='{}', scale={}) @ {} (chunk {},{})",
-                radsPerTick, id, fluidName, scale, pos, chunk.x, chunk.z);
     }
 }
