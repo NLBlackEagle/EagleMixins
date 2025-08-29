@@ -71,13 +71,14 @@ public abstract class GuiIngameForgeMixin extends GuiIngame {
     @Unique
     private boolean eagleMixins$shouldRenderCustomHearts() {
         EntityPlayer player = (EntityPlayer)this.mc.getRenderViewEntity();
+        assert player != null;
         if (player.isPotionActive(MobEffects.POISON) || player.isPotionActive(MobEffects.WITHER)) {
             return false;
         }
         PotionEffect radiationSickness = player.getActivePotionEffect(PotionRadiationSickness.INSTANCE);
-        if (radiationSickness == null || radiationSickness.getAmplifier() < 3) {
+        if (radiationSickness == null || radiationSickness.getAmplifier() < 2) {
             return false;
-        } else if (radiationSickness.getAmplifier() > 3) {
+        } else if (radiationSickness.getAmplifier() > 2) {
             return true;
         }
         return player.getHealth() > 0.65f * player.getMaxHealth();

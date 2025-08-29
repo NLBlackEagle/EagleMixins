@@ -30,6 +30,8 @@ public class EagleMixins {
 
 	@Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        MinecraftForge.EVENT_BUS.register(FirstAidRadiationHandler.class);
+        MinecraftForge.EVENT_BUS.register(ItemRadCapAttacher.class);
         MinecraftForge.EVENT_BUS.register(BlockNoclipHandler.class);
         MinecraftForge.EVENT_BUS.register(NuclearCraftInteractions.class);
         MinecraftForge.EVENT_BUS.register(AbyssalRiftHandler.class);

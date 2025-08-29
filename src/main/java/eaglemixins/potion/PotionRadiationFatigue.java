@@ -4,20 +4,22 @@ package eaglemixins.potion;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.PotionEffect;
 
+import javax.annotation.Nonnull;
+
 public class PotionRadiationFatigue extends PotionBase {
 
     public static final PotionRadiationFatigue INSTANCE = new PotionRadiationFatigue();
-    public PotionRadiationFatigue() {super("radiation_fatigue", true, 0xF3F4F9);}
+    public PotionRadiationFatigue() {super("radiation_fatigue", true, 0x9BA132);}
 
     @Override
-    public boolean shouldRender(PotionEffect effect) { return false; }
+    public boolean shouldRender(@Nonnull PotionEffect effect) { return false; }
     @Override
-    public boolean shouldRenderHUD(PotionEffect effect) { return false; }
+    public boolean shouldRenderHUD(@Nonnull PotionEffect effect) { return false; }
     @Override
-    public boolean shouldRenderInvText(PotionEffect effect) { return false; }
+    public boolean shouldRenderInvText(@Nonnull PotionEffect effect) { return false; }
 
     @Override
-    public void performEffect(EntityLivingBase entity, int amplifier) {
+    public void performEffect(@Nonnull EntityLivingBase entity, int amplifier) {
         // No need to do anything here
     }
 

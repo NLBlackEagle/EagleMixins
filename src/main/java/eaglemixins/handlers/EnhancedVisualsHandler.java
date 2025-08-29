@@ -5,7 +5,6 @@ import eaglemixins.EagleMixins;
 import nc.capability.radiation.entity.IEntityRads;
 import nc.config.NCConfig;
 import nc.radiation.RadiationHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import team.creative.enhancedvisuals.api.Visual;
@@ -16,8 +15,6 @@ import team.creative.enhancedvisuals.client.VisualManager;
 import team.creative.enhancedvisuals.common.visual.VisualRegistry;
 
 import javax.annotation.Nullable;
-
-import static team.creative.enhancedvisuals.api.VisualCategory.overlay;
 
 public class EnhancedVisualsHandler {
 	
@@ -31,7 +28,7 @@ public class EnhancedVisualsHandler {
 		
 		//Radiation % to begin rendering low radiation
 		@CreativeConfig
-		public double renderThresholdLow = 0.2;
+		public double renderThresholdLow = 0.05;
 		//Radiation % to begin rendering medium radiation
 		@CreativeConfig
 		public double renderThresholdMedium = 0.5;
@@ -70,12 +67,6 @@ public class EnhancedVisualsHandler {
 		
 		@Override
 		public void tick(@Nullable EntityPlayer player) {
-
-			if (Minecraft.getMinecraft().isGamePaused()) {
-				VisualManager.visuals(overlay).clear();
-			}
-
-
 			if(radiationLowVisual == null) {
 				radiationLowVisual = new Visual(radiation_low, this, 0);
 				radiationLowVisual.setOpacityInternal(0);
@@ -94,11 +85,11 @@ public class EnhancedVisualsHandler {
 			double medOpac = 0.0D;
 			double highOpac = 0.0D;
 			
-			if(player != null && !(Minecraft.getMinecraft().isGamePaused())) {
+			if(player != null) {
 				double radPerc = 0.0D;
 				if(NCConfig.radiation_enabled_public) {
 					IEntityRads playerRads = RadiationHelper.getEntityRadiation(player);
-					if(playerRads != null && !playerRads.isImmune() ) {
+					if(playerRads != null && !playerRads.isImmune()) {
 						radPerc = playerRads.getRadsPercentage() / 100.0D;
 					}
 				}
