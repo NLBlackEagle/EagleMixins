@@ -65,6 +65,8 @@ public class EagleMixins {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
 
+        eaglemixins.handlers.SpawnInjector.inject();
+
         net.minecraftforge.common.config.ConfigManager.sync(
                 EagleMixins.MODID, net.minecraftforge.common.config.Config.Type.INSTANCE
         );
