@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "eaglemixins.mixin.xat",
+  "refmap": "mixins.eaglemixins.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "mixins": [
+    "EnderQueensCrownRandomTpCancel"
+  ],
+  "injectors": {
+    "maxShiftBy": 10
+  }
+}

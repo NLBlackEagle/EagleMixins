@@ -3,13 +3,14 @@ package eaglemixins.handlers;
 
 import eaglemixins.util.Ref;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityEnderPearl;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemChorusFruit;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.event.entity.living.EnderTeleportEvent;
+import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
@@ -23,7 +24,7 @@ import java.util.Arrays;
 public class RandomTpCancelHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
-    public static void OnLivingDamageEvent(LivingHurtEvent event) {
+    public static void onLivingHurt(LivingHurtEvent event) {
         EntityLivingBase entity = event.getEntityLiving();
         if(entity.world.isRemote) return;
         if (!(entity instanceof EntityPlayer)) return;
@@ -35,15 +36,16 @@ public class RandomTpCancelHandler {
 
     //when throwing enderpearl
     @SubscribeEvent
-    public static void onEnderPearl(EnderTeleportEvent event) {
-        EntityLivingBase entity = event.getEntityLiving();
-        if(entity.world.isRemote) return;
+    public static void onEnderPearlImpact(ProjectileImpactEvent.Throwable event) {
+        if(!(event.getThrowable() instanceof EntityEnderPearl)) return;
+        if(event.getThrowable().world.isRemote) return;
+        EntityLivingBase entity = event.getThrowable().getThrower();
         if (!(entity instanceof EntityPlayer)) return;
-        if (!Ref.entityIsInAbyssalRift(entity)) return;
-        if (!Ref.entityIsInAbyssalGate(entity)) return;
+        if (!Ref.entityIsInAbyssalRift(entity) && !Ref.entityIsInAbyssalGate(entity)) return;
 
         applyTpCooldownDebuffs((EntityPlayer) entity);
     }
+
     //When eating chorus fruit
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onItemUseFinish(LivingEntityUseItemEvent.Finish event) {

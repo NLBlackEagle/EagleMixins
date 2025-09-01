@@ -27,6 +27,8 @@ public class EagleMixinsPlugin implements IFMLLoadingPlugin {
 		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.dregorarl.json", () -> Loader.isModLoaded("dregorarl"));
 		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.otg.json", () -> Loader.isModLoaded("openterraingenerator"));
 		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.vc.json", () -> Loader.isModLoaded("variedcommodities"));
+		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.xat.json", () -> Loader.isModLoaded("xat"));
+
 	}
 
 	@Override
