@@ -1,6 +1,7 @@
 package eaglemixins.mixin.simpledifficulty;
 
 import com.charles445.simpledifficulty.api.thirst.ThirstEnum;
+import com.charles445.simpledifficulty.util.internal.ThirstUtilInternal;
 import eaglemixins.config.ForgeConfigHandler;
 import com.charles445.simpledifficulty.api.thirst.ThirstEnumBlockPos;
 import net.minecraft.block.Block;
@@ -17,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Locale;
 import java.util.Objects;
 
-@Mixin(targets = "com.charles445.simpledifficulty.util.internal.ThirstUtilInternal")
+@Mixin(ThirstUtilInternal.class)
 public class ThirstBlockMixin {
 
     @Inject(method = "traceWater", at = @At("RETURN"), cancellable = true, remap = false)

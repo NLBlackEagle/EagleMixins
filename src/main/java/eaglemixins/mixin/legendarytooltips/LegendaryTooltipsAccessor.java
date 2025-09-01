@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(LegendaryTooltips.class)
 public interface LegendaryTooltipsAccessor {
-    @Invoker("itemFrameColors")
+    @Invoker(value = "itemFrameColors", remap = false)
     static Integer[] callItemFrameColors(ItemStack stack, Integer[] defaults) {
         throw new AssertionError(); // Will be replaced by Mixin
     }
