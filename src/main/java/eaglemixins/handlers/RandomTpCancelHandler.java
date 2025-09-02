@@ -29,7 +29,18 @@ public class RandomTpCancelHandler {
         if(entity.world.isRemote) return;
         if (!(entity instanceof EntityPlayer)) return;
         if (event.getSource() != DamageSource.IN_WALL) return;
-        if (!Ref.entityIsInAbyssalGate(entity)) return;
+        if (!Ref.entityIsInAbyssalRift(entity) || !Ref.entityIsInAbyssalGate(entity)) return;
+
+        applyTpCooldownDebuffs((EntityPlayer) entity);
+    }
+
+    @SubscribeEvent
+    public static void onEnderTeleport(ProjectileImpactEvent.Throwable event) {
+        if(!(event.getThrowable() instanceof EntityEnderPearl)) return;
+        if(event.getThrowable().world.isRemote) return;
+        EntityLivingBase entity = event.getThrowable().getThrower();
+        if (!(entity instanceof EntityPlayer)) return;
+        if (!Ref.entityIsInAbyssalRift(entity) || !Ref.entityIsInAbyssalGate(entity)) return;
 
         applyTpCooldownDebuffs((EntityPlayer) entity);
     }
@@ -41,9 +52,19 @@ public class RandomTpCancelHandler {
         if(event.getThrowable().world.isRemote) return;
         EntityLivingBase entity = event.getThrowable().getThrower();
         if (!(entity instanceof EntityPlayer)) return;
-        if (!Ref.entityIsInAbyssalRift(entity) && !Ref.entityIsInAbyssalGate(entity)) return;
+        if (!Ref.entityIsInAbyssalRift(entity) || !Ref.entityIsInAbyssalGate(entity)) return;
 
         applyTpCooldownDebuffs((EntityPlayer) entity);
+    }
+
+    @SubscribeEvent
+    public static void onEnderTeleport(net.minecraftforge.event.entity.living.EnderTeleportEvent e) {
+        if (e.getEntityLiving() instanceof EntityPlayer) {
+            EntityPlayer p = (EntityPlayer)e.getEntityLiving();
+            if (!Ref.entityIsInAbyssalRift(p) || !Ref.entityIsInAbyssalGate(p)) return;
+
+            applyTpCooldownDebuffs(p);
+        }
     }
 
     //When eating chorus fruit
@@ -53,7 +74,7 @@ public class RandomTpCancelHandler {
         if(entity.world.isRemote) return;
         if (!(entity instanceof EntityPlayer)) return;
         if (!(event.getItem().getItem() instanceof ItemChorusFruit)) return;
-        if (!Ref.entityIsInAbyssalRift(entity)) return;
+        if (!Ref.entityIsInAbyssalRift(entity) || !Ref.entityIsInAbyssalGate(entity)) return;
 
         applyTpCooldownDebuffs((EntityPlayer) entity);
     }
@@ -64,7 +85,7 @@ public class RandomTpCancelHandler {
         EntityLivingBase entity = event.getEntityLiving();
         if(entity.world.isRemote) return;
         if (!(entity instanceof EntityPlayer)) return;
-        if (!Ref.entityIsInAbyssalRift(entity)) return;
+        if (!Ref.entityIsInAbyssalRift(entity) || !Ref.entityIsInAbyssalGate(entity)) return;
 
         if (isTpPotion(event.getPotionEffect().getPotion()))
             applyTpCooldownDebuffs((EntityPlayer) entity);
@@ -98,12 +119,18 @@ public class RandomTpCancelHandler {
 
     public static void applyTpCooldownDebuffs(EntityPlayer player) {
         if (!player.getEntityData().hasKey(tpCooldownKey)) {
+            // First time: start cooldown and exit
             player.getEntityData().setLong(tpCooldownKey, player.world.getTotalWorldTime());
+
         } else {
-            long oldCooldown = player.getEntityData().getLong(tpCooldownKey);
-            long currentTime = player.world.getWorldTime();
-            player.getEntityData().setLong(tpCooldownKey, currentTime);
-            if (currentTime > oldCooldown + 100) return;
+            final long now  = player.world.getTotalWorldTime();              // monotonic, never wraps
+            final long last = player.getEntityData().getLong(tpCooldownKey);
+
+            // Still on cooldown? bail
+            if (now < last + 100L) return;
+
+            // Cooldown elapsed: update timestamp and continue to apply effects
+            player.getEntityData().setLong(tpCooldownKey, now);
 
             if (tpCooldownPotions == null) {
                 tpCooldownPotions = new ArrayList<>();
@@ -116,13 +143,14 @@ public class RandomTpCancelHandler {
                 }
             }
 
-            //Potion Sickness
+            // Potion Sickness
             if (tpCooldownPotions.get(0) != null)
                 player.addPotionEffect(new PotionEffect(tpCooldownPotions.get(0), 200, 1));
 
-            //Surface Teleport
+            // Surface Teleport
             if (tpCooldownPotions.get(1) != null)
                 player.addPotionEffect(new PotionEffect(tpCooldownPotions.get(1), 5, 0));
+
         }
     }
 }
