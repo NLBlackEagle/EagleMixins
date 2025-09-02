@@ -128,7 +128,7 @@ public class RandomTpCancelHandler {
 
             // Surface Teleport
             if (tpCooldownPotions.get(1) != null)
-                player.addPotionEffect(new PotionEffect(tpCooldownPotions.get(1), 5, 0));
+                player.addPotionEffect(new PotionEffect(tpCooldownPotions.get(1), 1, 0));
 
         }
     }
