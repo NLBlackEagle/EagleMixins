@@ -34,17 +34,6 @@ public class RandomTpCancelHandler {
         applyTpCooldownDebuffs((EntityPlayer) entity);
     }
 
-    @SubscribeEvent
-    public static void onEnderTeleport(ProjectileImpactEvent.Throwable event) {
-        if(!(event.getThrowable() instanceof EntityEnderPearl)) return;
-        if(event.getThrowable().world.isRemote) return;
-        EntityLivingBase entity = event.getThrowable().getThrower();
-        if (!(entity instanceof EntityPlayer)) return;
-        if (!Ref.entityIsInAbyssalRift(entity) || !Ref.entityIsInAbyssalGate(entity)) return;
-
-        applyTpCooldownDebuffs((EntityPlayer) entity);
-    }
-
     //when throwing enderpearl
     @SubscribeEvent
     public static void onEnderPearlImpact(ProjectileImpactEvent.Throwable event) {
@@ -55,16 +44,6 @@ public class RandomTpCancelHandler {
         if (!Ref.entityIsInAbyssalRift(entity) || !Ref.entityIsInAbyssalGate(entity)) return;
 
         applyTpCooldownDebuffs((EntityPlayer) entity);
-    }
-
-    @SubscribeEvent
-    public static void onEnderTeleport(net.minecraftforge.event.entity.living.EnderTeleportEvent e) {
-        if (e.getEntityLiving() instanceof EntityPlayer) {
-            EntityPlayer p = (EntityPlayer)e.getEntityLiving();
-            if (!Ref.entityIsInAbyssalRift(p) || !Ref.entityIsInAbyssalGate(p)) return;
-
-            applyTpCooldownDebuffs(p);
-        }
     }
 
     //When eating chorus fruit
