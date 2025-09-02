@@ -29,7 +29,7 @@ public class RandomTpCancelHandler {
         if(entity.world.isRemote) return;
         if (!(entity instanceof EntityPlayer)) return;
         if (event.getSource() != DamageSource.IN_WALL) return;
-        if (!Ref.entityIsInAbyssalRift(entity) || !Ref.entityIsInAbyssalGate(entity)) return;
+        if (!Ref.entityIsInAbyssalRift(entity) && !Ref.entityIsInAbyssalGate(entity)) return;
 
         applyTpCooldownDebuffs((EntityPlayer) entity);
     }
@@ -41,7 +41,7 @@ public class RandomTpCancelHandler {
         if(event.getThrowable().world.isRemote) return;
         EntityLivingBase entity = event.getThrowable().getThrower();
         if (!(entity instanceof EntityPlayer)) return;
-        if (!Ref.entityIsInAbyssalRift(entity) || !Ref.entityIsInAbyssalGate(entity)) return;
+        if (!Ref.entityIsInAbyssalRift(entity) && !Ref.entityIsInAbyssalGate(entity)) return;
 
         applyTpCooldownDebuffs((EntityPlayer) entity);
     }
@@ -53,7 +53,7 @@ public class RandomTpCancelHandler {
         if(entity.world.isRemote) return;
         if (!(entity instanceof EntityPlayer)) return;
         if (!(event.getItem().getItem() instanceof ItemChorusFruit)) return;
-        if (!Ref.entityIsInAbyssalRift(entity) || !Ref.entityIsInAbyssalGate(entity)) return;
+        if (!Ref.entityIsInAbyssalRift(entity) && !Ref.entityIsInAbyssalGate(entity)) return;
 
         applyTpCooldownDebuffs((EntityPlayer) entity);
     }
@@ -64,7 +64,7 @@ public class RandomTpCancelHandler {
         EntityLivingBase entity = event.getEntityLiving();
         if(entity.world.isRemote) return;
         if (!(entity instanceof EntityPlayer)) return;
-        if (!Ref.entityIsInAbyssalRift(entity) || !Ref.entityIsInAbyssalGate(entity)) return;
+        if (!Ref.entityIsInAbyssalRift(entity) && !Ref.entityIsInAbyssalGate(entity)) return;
 
         if (isTpPotion(event.getPotionEffect().getPotion()))
             applyTpCooldownDebuffs((EntityPlayer) entity);
