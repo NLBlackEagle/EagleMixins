@@ -29,6 +29,8 @@ public class EagleMixinsPlugin implements IFMLLoadingPlugin {
 		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.vc.json", () -> Loader.isModLoaded("variedcommodities"));
 		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.xat.json", () -> Loader.isModLoaded("xat"));
 
+		// Temporary FUR 1.4.2 fixes because we are not using 1.5.0+
+		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.furold.json", () -> Loader.isModLoaded("mod_lavacow"));
 	}
 
 	@Override

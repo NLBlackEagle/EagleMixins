@@ -1,0 +1,22 @@
+{
+  "required": true,
+  "package": "eaglemixins.mixin.fishsundeadrising.temp",
+  "refmap": "mixins.eaglemixins.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "mixins": [
+    "EntityAquaMobMixin",
+    "EntitySkeletonKingMixin",
+    "EntityWendigoMixin",
+    "EntityZombieMushroomMixin",
+    "ItemHolyGrenadeMixin",
+    "ItemNetherStewMixin"
+  ],
+  "client": [
+    "ItemSkeletonKingCrownMixin"
+  ],
+  "injectors": {
+    "maxShiftBy": 10
+  }
+}
