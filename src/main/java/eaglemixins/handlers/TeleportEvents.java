@@ -14,7 +14,6 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -29,25 +28,21 @@ public class TeleportEvents {
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent e) {
-        EntityPlayer p = e.player;
-        if (p.world.isRemote || !(p instanceof EntityPlayerMP)) return;
-
-        NBTTagCompound tag = p.getEntityData().getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
-        if (p.dimension == TeleportUnderneath.GLITCH_DIM && tag.hasKey("glitchEndTime")) {
-            TeleportUnderneath.tryReturn(p);
-        }
-    }
-
-    @SubscribeEvent
-    public void onPlayerTeleport(PlayerEvent e) {
-        if (!(e.getEntityPlayer() instanceof EntityPlayerMP)) return;
-
-        EntityPlayerMP player = (EntityPlayerMP) e.getEntityPlayer();
+        if (e.side.isClient() || e.phase != TickEvent.Phase.END) return;
+        if (!(e.player instanceof EntityPlayerMP)) return;
+        EntityPlayerMP player = (EntityPlayerMP) e.player;
+        NBTTagCompound tag = player.getEntityData().getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
         World world = player.world;
         TeleportRegistry.ensureInit();
 
+        //If player is in Underneath and server time is later than counter time then return player to overworld
+        if (player.dimension == TeleportUnderneath.GLITCH_DIM && tag.hasKey("glitchEndTime")) {
+            TeleportUnderneath.tryReturn(player);
+        }
+
         if (player.getActivePotionEffect(PotionTeleportationSickness.INSTANCE) != null) return;
         if (!isOnEndPortal(world, player.getPosition().down())) return;
+
 
         for (Map.Entry<Integer, TeleportData> entry : TeleportRegistrySnapshot.view().entrySet()) {
             final int linkId = entry.getKey();

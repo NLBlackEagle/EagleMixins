@@ -51,6 +51,10 @@ public class ForgeConfigHandler {
 
 	public static class ServerConfig {
 
+		@Config.Comment("Chance of teleporting player to Underneath for exotic teleportation (through the concrete teleporters)")
+		@Config.Name("Teleportation Underneath chance 0 to 100")
+		public int teleportation_chance = 1;
+
 		@Config.Comment({
 				"Radiation resistance per entity.",
 				"Format: <entity_id>=<value>",

@@ -1,6 +1,7 @@
 package eaglemixins.teleport;
 
 import eaglemixins.EagleMixins;
+import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.network.PacketStopTeleportOverlay;
 import eaglemixins.potion.PotionTeleportationSickness;
 import net.minecraft.entity.player.EntityPlayer;
@@ -56,6 +57,6 @@ public final class TeleportService {
     }
 
     public static boolean onePercent(java.util.Random rand) {
-        return rand.nextInt(100) < 1;
+        return rand.nextInt(100) < ForgeConfigHandler.server.teleportation_chance;
     }
 }
