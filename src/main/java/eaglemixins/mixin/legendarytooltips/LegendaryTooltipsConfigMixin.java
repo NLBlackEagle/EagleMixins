@@ -98,7 +98,7 @@ public class LegendaryTooltipsConfigMixin extends Configuration {
     }
 
 
-    @Inject(method = "<init>", at = @At("RETURN"))
+    @Inject(method = "<init>", at = @At("RETURN"), remap = false)
     private void eaglemixins$expandConfig(File file, CallbackInfo ci) {
         int i;
         for (i = 16; i < 64; ++i) {
