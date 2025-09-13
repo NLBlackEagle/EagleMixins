@@ -30,6 +30,7 @@ public class EagleMixins {
 
 	@Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        MinecraftForge.EVENT_BUS.register(BiomeTagHandler.class);
         MinecraftForge.EVENT_BUS.register(FallDamageHandler.class);
         MinecraftForge.EVENT_BUS.register(FirstAidRadiationHandler.class);
         MinecraftForge.EVENT_BUS.register(ItemRadCapAttacher.class);
@@ -72,6 +73,7 @@ public class EagleMixins {
                 EagleMixins.MODID, net.minecraftforge.common.config.Config.Type.INSTANCE
         );
 
+        BiomeTagHandler.init();
         RadiationResistanceRegistry.reloadFromConfig();
         EnhancedVisualsHandler.init();
         EntitySpawnListener.init();
