@@ -35,7 +35,7 @@ public abstract class MixinRadShielding {
         if (!armor.isEmpty() && !shielding.isEmpty()) {
             double newResistance;
             switch (shielding.getMetadata()) {
-                case 2: newResistance = 1000.0; break;
+                case 2: newResistance = 100.0; break;
                 case 1: newResistance = 0.1; break;
                 default: newResistance = 0.01; break;
             }

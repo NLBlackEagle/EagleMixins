@@ -2,6 +2,7 @@ package eaglemixins.mixin.simpledifficulty;
 
 import com.charles445.simpledifficulty.api.thirst.ThirstEnum;
 import com.charles445.simpledifficulty.util.internal.ThirstUtilInternal;
+import eaglemixins.EagleMixins;
 import eaglemixins.config.ForgeConfigHandler;
 import com.charles445.simpledifficulty.api.thirst.ThirstEnumBlockPos;
 import net.minecraft.block.Block;
@@ -10,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import org.apache.logging.log4j.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -33,14 +35,19 @@ public class ThirstBlockMixin {
         Vec3d targetvec = eyevec.add(lookvec.x * reach, lookvec.y * reach, lookvec.z * reach);
         RayTraceResult trace = player.world.rayTraceBlocks(eyevec, targetvec, true);
 
+        EagleMixins.LOGGER.log(Level.INFO, "[EagleMixins] tracewater");
+
         if (trace != null && trace.typeOfHit == RayTraceResult.Type.BLOCK) {
             BlockPos pos = trace.getBlockPos();
             IBlockState state = player.world.getBlockState(pos);
             Block block = state.getBlock();
 
+            EagleMixins.LOGGER.log(Level.INFO, "[EagleMixins] hits block");
+
             // Check against config list
             String name = Objects.requireNonNull(block.getRegistryName()).toString();
             if (ForgeConfigHandler.cachedDrinkableBlocks.contains(name.toLowerCase(Locale.ROOT))) {
+                EagleMixins.LOGGER.log(Level.INFO, "[EagleMixins] returns saturation");
                 cir.setReturnValue(new ThirstEnumBlockPos(ThirstEnum.NORMAL, pos));
             }
         }

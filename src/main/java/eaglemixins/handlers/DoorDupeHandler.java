@@ -47,6 +47,9 @@ public class DoorDupeHandler {
         // Cancel original break event
         event.setCanceled(true);
 
+        // Removes
+        if (block instanceof NCBlockDoor) return;
+
         // Play break sound
         world.playSound(null, pos,
                 block.getSoundType(state, world, pos, player).getBreakSound(),
