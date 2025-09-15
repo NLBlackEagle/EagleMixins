@@ -1,5 +1,6 @@
 package eaglemixins.handlers;
 
+import nc.block.NCBlockDoor;
 import biomesoplenty.common.block.BlockBOPDoor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
@@ -27,7 +28,7 @@ public class DoorDupeHandler {
         Block block = state.getBlock();
 
         // Only Biomes O Plenty doors
-        if (!(block instanceof BlockBOPDoor)) return;
+        if (!((block instanceof BlockBOPDoor) || (block instanceof NCBlockDoor))) return;
 
         // Only act on lower part of door
         if (state.getValue(BlockDoor.HALF) != BlockDoor.EnumDoorHalf.LOWER) return;
