@@ -28,13 +28,13 @@ public class EnhancedVisualsHandler {
 		
 		//Radiation % to begin rendering low radiation
 		@CreativeConfig
-		public double renderThresholdLow = 0.05;
+		public double renderThresholdLow = 0.001;
 		//Radiation % to begin rendering medium radiation
 		@CreativeConfig
-		public double renderThresholdMedium = 0.5;
+		public double renderThresholdMedium = 0.05;
 		//Radiation % to begin rendering high radiation
 		@CreativeConfig
-		public double renderThresholdHigh = 0.8;
+		public double renderThresholdHigh = 0.25;
 		
 		//Max rendering opacity of low radiation
 		@CreativeConfig
@@ -90,7 +90,7 @@ public class EnhancedVisualsHandler {
 				if(NCConfig.radiation_enabled_public) {
 					IEntityRads playerRads = RadiationHelper.getEntityRadiation(player);
 					if(playerRads != null && !playerRads.isImmune()) {
-						radPerc = playerRads.getRadsPercentage() / 100.0D;
+						radPerc = playerRads.getRadiationLevel();
 					}
 				}
 				

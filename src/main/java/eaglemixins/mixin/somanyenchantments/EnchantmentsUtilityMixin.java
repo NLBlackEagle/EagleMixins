@@ -15,7 +15,7 @@ public class EnchantmentsUtilityMixin {
             method = "onLivingAttackEvent",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityLivingBase;entityDropItem(Lnet/minecraft/item/ItemStack;F)Lnet/minecraft/entity/item/EntityItem;")
     )
-    private static ItemStack stopDisarmingGoodStuff(ItemStack stack, @Local(argsOnly = true) LivingAttackEvent event) {
+    private ItemStack stopDisarmingGoodStuff(ItemStack stack, @Local(argsOnly = true) LivingAttackEvent event) {
         if (!DisarmingUtility.isAllowedToDisarm(stack, event.getEntityLiving()))
             return ItemStack.EMPTY;
         else
