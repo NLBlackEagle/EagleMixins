@@ -6,8 +6,6 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.entity.player.EntityPlayer;
 import eaglemixins.potion.PotionRadiationFatigue;
 
-@net.minecraftforge.fml.common.Mod.EventBusSubscriber
-
 public class BlockBreakSlowHandler {
 
     @SubscribeEvent

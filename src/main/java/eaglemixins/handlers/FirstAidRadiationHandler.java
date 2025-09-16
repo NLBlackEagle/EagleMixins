@@ -1,7 +1,6 @@
 // src/main/java/eaglemixins/handlers/FirstAidRadiationRouter.java
 package eaglemixins.handlers;
 
-import eaglemixins.EagleMixins;
 import eaglemixins.util.RadiationDamageSource;
 import ichttt.mods.firstaid.api.damagesystem.AbstractDamageablePart;
 import ichttt.mods.firstaid.api.damagesystem.AbstractPlayerDamageModel;
@@ -10,11 +9,9 @@ import ichttt.mods.firstaid.api.event.FirstAidLivingDamageEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod.EventBusSubscriber(modid = EagleMixins.MODID)
 public final class FirstAidRadiationHandler {
 
     private static final boolean DEBUG = false;

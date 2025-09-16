@@ -11,7 +11,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Items;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -21,7 +20,6 @@ import java.util.UUID;
 
 import static eaglemixins.handlers.util.AbyssalRiftSpawn.isAbyssalRiftSpawn;
 
-@Mod.EventBusSubscriber
 public class AbyssalRiftHandler {
     private static final UUID atkUUID = UUID.fromString("b1880265-48be-4681-84b2-bf99bc3e16e1");
     private static final UUID hpUUID = UUID.fromString("0629ce1b-fdcf-4432-a9c0-1f51c588c615");

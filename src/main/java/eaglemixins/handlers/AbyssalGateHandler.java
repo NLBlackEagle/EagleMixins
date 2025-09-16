@@ -7,7 +7,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.item.ItemStack;
@@ -15,7 +14,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-@Mod.EventBusSubscriber
 public class AbyssalGateHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)

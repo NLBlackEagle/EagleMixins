@@ -6,7 +6,6 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-@Mod.EventBusSubscriber
 public class BiomeTagHandler {
 
     public static void init() {

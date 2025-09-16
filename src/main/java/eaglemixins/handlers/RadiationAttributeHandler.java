@@ -1,6 +1,5 @@
 package eaglemixins.handlers;
 
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -9,7 +8,6 @@ import eaglemixins.potion.PotionRadiationWeakness;
 
 import java.util.UUID;
 
-@Mod.EventBusSubscriber
 public class RadiationAttributeHandler {
 
     private static final UUID WEAKNESS_MODIFIER_UUID = UUID.fromString("3c3a8cd3-2bc2-4ad9-9a9a-3d25b7b2a5f3");

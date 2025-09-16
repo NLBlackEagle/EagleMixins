@@ -11,11 +11,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import eaglemixins.config.ForgeConfigHandler;
 
-@Mod.EventBusSubscriber
 public class DoorDupeHandler {
 
     @SubscribeEvent
