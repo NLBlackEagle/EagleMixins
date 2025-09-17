@@ -6,10 +6,15 @@
   "target": "@env(DEFAULT)",
   "minVersion": "0.8",
   "mixins": [
-    "MixinRadShielding",
-    "MixinBlockFluidClassicRadiation"
+    "MixinBlockFluidClassicRadiation",
+    "MixinRadiationHelper",
+    "MixinRadShielding"
   ],
   "injectors": {
     "maxShiftBy": 10
-  }
+  },
+  "client": [
+    "MixinRadGeiger",
+    "MixinRadTooltip"
+  ]
 }

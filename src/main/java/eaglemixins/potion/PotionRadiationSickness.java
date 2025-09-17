@@ -64,6 +64,7 @@ public class PotionRadiationSickness extends PotionBase {
             case 3:
                 entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationWeakness.INSTANCE, 40, amplifier - 1));
                 entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationFatigue.INSTANCE, 40, amplifier - 1));
+                ((EntityPlayer) entityLivingBase).addExhaustion(0.05F * (float) (amplifier + 1));
 
                 if (currentHealth > 0.5f * maxHealth) {
                     entityLivingBase.attackEntityFrom(RadiationDamageSource.RADIATION, 1.0F);
@@ -75,7 +76,7 @@ public class PotionRadiationSickness extends PotionBase {
                 if (amplifier >= 4) {
                     entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationWeakness.INSTANCE, 40, amplifier - 1));
                     entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationFatigue.INSTANCE, 40, amplifier - 1));
-
+                    ((EntityPlayer) entityLivingBase).addExhaustion(0.05F * (float) (amplifier + 1));
                     entityLivingBase.attackEntityFrom(RadiationDamageSource.RADIATION, 1.0F);
 
                 }

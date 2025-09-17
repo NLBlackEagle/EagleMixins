@@ -31,6 +31,7 @@ public class EagleMixins {
 
 	@Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        MinecraftForge.EVENT_BUS.register(new AttributeHandler());
         registerIfModsPresent(new String[]{"firstaid"}, FirstAidRadiationHandler.class);
         registerIfModsPresent(new String[]{"nuclearcraft"}, ItemRadCapAttacher.class);
         MinecraftForge.EVENT_BUS.register(BlockNoclipHandler.class);
