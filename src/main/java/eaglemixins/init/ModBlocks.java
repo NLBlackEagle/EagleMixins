@@ -1,4 +1,4 @@
-package eaglemixins.registry;
+package eaglemixins.init;
 
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;

@@ -1,4 +1,4 @@
-package eaglemixins.registry;
+package eaglemixins.init;
 
 import eaglemixins.EagleMixins;
 import eaglemixins.config.ForgeConfigHandler;

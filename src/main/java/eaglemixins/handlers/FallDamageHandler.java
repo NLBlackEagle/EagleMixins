@@ -14,7 +14,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public final class FallDamageHandler {
+public class FallDamageHandler {
 
     private static final long GRACE_TICKS = 200L;      // 10s @ 20 TPS
     private static final float MIN_HEALTH_AFTER = 1.0F; // 0.5 hearts

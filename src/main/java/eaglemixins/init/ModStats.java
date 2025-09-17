@@ -1,4 +1,4 @@
-package eaglemixins.handlers;
+package eaglemixins.init;
 
 import net.minecraft.stats.StatBase;
 import net.minecraft.util.text.TextComponentTranslation;

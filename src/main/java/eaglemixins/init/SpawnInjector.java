@@ -1,5 +1,5 @@
 // SpawnInjector.java
-package eaglemixins.handlers;
+package eaglemixins.init;
 
 import eaglemixins.EagleMixins;
 import net.minecraft.entity.EntityLiving;

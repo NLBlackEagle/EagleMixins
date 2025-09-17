@@ -9,7 +9,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-public final class RadiationResistanceApplier {
+public class RadiationResistanceApplier {
 
     @SubscribeEvent
     public static void onEntityJoinWorld(EntityJoinWorldEvent event) {
@@ -20,7 +20,7 @@ public final class RadiationResistanceApplier {
         ResourceLocation id = EntityList.getKey(living);
         if (id == null) return;
 
-        double resistance = eaglemixins.registry.RadiationResistanceRegistry.get(id);
+        double resistance = eaglemixins.init.RadiationResistanceRegistry.get(id);
         if (resistance <= 0.0D) return;
 
         IEntityRads rads = RadiationHelper.getEntityRadiation(living);

@@ -2,9 +2,11 @@ package eaglemixins;
 
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.handlers.*;
+import eaglemixins.init.SpawnInjector;
 import eaglemixins.network.PacketStartTeleportOverlay;
 import eaglemixins.network.PacketStopTeleportOverlay;
-import eaglemixins.registry.RadiationResistanceRegistry;
+import eaglemixins.init.ModStats;
+import eaglemixins.init.RadiationResistanceRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
@@ -78,7 +80,7 @@ public class EagleMixins {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
 
-        eaglemixins.handlers.SpawnInjector.inject();
+        SpawnInjector.inject();
 
         net.minecraftforge.common.config.ConfigManager.sync(
                 EagleMixins.MODID, net.minecraftforge.common.config.Config.Type.INSTANCE

@@ -12,7 +12,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-public final class FirstAidRadiationHandler {
+public class FirstAidRadiationHandler {
 
     private static final boolean DEBUG = false;
 
