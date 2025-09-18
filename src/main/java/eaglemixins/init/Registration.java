@@ -1,4 +1,4 @@
-package eaglemixins.registry;
+package eaglemixins.init;
 
 import eaglemixins.blocks.BlockDeepslate;
 import net.minecraft.block.Block;
