@@ -1,4 +1,4 @@
-package eaglemixins.client;
+package eaglemixins.client.sounds;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -17,11 +17,12 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(modid = "eaglemixins", value = Side.CLIENT)
-public final class DeepslateSoundTuner {
+public class DeepslateSoundTuner {
 
     private static final ResourceLocation TARGET_BLOCK_ID = new ResourceLocation("eaglemixins", "deepslate");
     private static Block TARGET; // lazy init
@@ -40,7 +41,7 @@ public final class DeepslateSoundTuner {
         if (s.getCategory() != SoundCategory.BLOCKS) return;
 
         Minecraft mc = Minecraft.getMinecraft();
-        if (mc == null || mc.world == null) return;
+        if (mc.world == null) return;
 
         BlockPos pos = new BlockPos(
                 MathHelper.floor(s.getXPosF()),
@@ -55,29 +56,33 @@ public final class DeepslateSoundTuner {
             if (at != target()) return;
         }
 
-        event.setResultSound(wrapWithPitch(s, 0.85f));
+        event.setResultSound(wrapWithPitch(s));
     }
 
-    private static ISound wrapWithPitch(final ISound original, final float factor) {
+    private static ISound wrapWithPitch(final ISound original) {
         return new ISound() {
+            @Nonnull
             @Override public ResourceLocation getSoundLocation() { return original.getSoundLocation(); }
-            @Nullable @Override public SoundEventAccessor createAccessor(SoundHandler handler) { return original.createAccessor(handler); }
+            @Nullable @Override public SoundEventAccessor createAccessor(@Nonnull SoundHandler handler) { return original.createAccessor(handler); }
+            @Nonnull
             @Override public Sound getSound() { return original.getSound(); }
+            @Nonnull
             @Override public SoundCategory getCategory() { return original.getCategory(); }
             @Override public boolean canRepeat() { return original.canRepeat(); }
             @Override public int getRepeatDelay() { return original.getRepeatDelay(); }
             @Override public float getVolume() { return original.getVolume(); }
             @Override public float getPitch() {
                 try {
-                    float out = original.getPitch() * factor;
+                    float out = original.getPitch() * (float) 0.85;
                     return MathHelper.clamp(out, 0.5f, 2.0f);
                 } catch (Throwable t) {
-                    return MathHelper.clamp(factor, 0.5f, 2.0f);
+                    return MathHelper.clamp((float) 0.85, 0.5f, 2.0f);
                 }
             }
             @Override public float getXPosF() { return original.getXPosF(); }
             @Override public float getYPosF() { return original.getYPosF(); }
             @Override public float getZPosF() { return original.getZPosF(); }
+            @Nonnull
             @Override public AttenuationType getAttenuationType() { return original.getAttenuationType(); }
         };
     }

@@ -1,4 +1,4 @@
-package eaglemixins.client;
+package eaglemixins.client.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -56,7 +56,7 @@ public class TeleportOverlayHandler {
         GlStateManager.color(0F, 0F, 0F, 1F);
 
         if (!glitchActive) {
-            drawRect(0, 0, width, height, 0xFF000000);
+            drawRect(width, height);
         }
 
         // 🔥 FIX: Re-enable texture2D so font rendering works
@@ -68,8 +68,8 @@ public class TeleportOverlayHandler {
                 : I18n.format("overlay.teleport.normal");
         mc.fontRenderer.drawStringWithShadow(
                 msg,
-                width / 2 - mc.fontRenderer.getStringWidth(msg) / 2,
-                height / 2,
+                (float) width / 2 - (float) mc.fontRenderer.getStringWidth(msg) / 2,
+                (float) height / 2,
                 0xFFFFFF
         );
 
@@ -106,20 +106,20 @@ public class TeleportOverlayHandler {
         MinecraftForge.EVENT_BUS.unregister(INSTANCE);
     }
 
-    private void drawRect(int left, int top, int right, int bottom, int color) {
-        int a = (color >> 24) & 255;
-        int r = (color >> 16) & 255;
-        int g = (color >> 8) & 255;
-        int b = color & 255;
+    private void drawRect(int right, int bottom) {
+        int a = (-16777216 >> 24) & 255;
+        int r = (-16777216 >> 16) & 255;
+        int g = (-16777216 >> 8) & 255;
+        int b = -16777216 & 255;
 
         net.minecraft.client.renderer.Tessellator tessellator = net.minecraft.client.renderer.Tessellator.getInstance();
         net.minecraft.client.renderer.BufferBuilder buffer = tessellator.getBuffer();
 
         buffer.begin(7, net.minecraft.client.renderer.vertex.DefaultVertexFormats.POSITION_COLOR);
-        buffer.pos(left, bottom, 0).color(r, g, b, a).endVertex();
+        buffer.pos(0, bottom, 0).color(r, g, b, a).endVertex();
         buffer.pos(right, bottom, 0).color(r, g, b, a).endVertex();
-        buffer.pos(right, top, 0).color(r, g, b, a).endVertex();
-        buffer.pos(left, top, 0).color(r, g, b, a).endVertex();
+        buffer.pos(right, 0, 0).color(r, g, b, a).endVertex();
+        buffer.pos(0, 0, 0).color(r, g, b, a).endVertex();
         tessellator.draw();
     }
 

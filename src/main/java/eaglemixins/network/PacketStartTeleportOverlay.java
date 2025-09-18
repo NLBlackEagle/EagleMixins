@@ -1,5 +1,6 @@
 package eaglemixins.network;
 
+import eaglemixins.client.gui.TeleportOverlayHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -30,7 +31,7 @@ public class PacketStartTeleportOverlay implements IMessage {
         @Override
         public IMessage onMessage(PacketStartTeleportOverlay message, MessageContext ctx) {
             Minecraft.getMinecraft().addScheduledTask(() ->
-                    eaglemixins.client.TeleportOverlayHandler.trigger(message.isGlitch)
+                    TeleportOverlayHandler.trigger(message.isGlitch)
             );
             return null;
         }

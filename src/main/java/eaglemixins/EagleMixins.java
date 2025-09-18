@@ -4,6 +4,7 @@ import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.handlers.*;
 import eaglemixins.network.PacketStartTeleportOverlay;
 import eaglemixins.network.PacketStopTeleportOverlay;
+import eaglemixins.registry.ModStats;
 import eaglemixins.registry.RadiationResistanceRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
@@ -15,6 +16,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import static eaglemixins.config.ForgeConfigHandler.installFromConfig;
 
 
 @Mod(modid = EagleMixins.MODID, version = EagleMixins.VERSION, name = EagleMixins.NAME, dependencies = "required-after:fermiumbooter")
@@ -90,6 +93,9 @@ public class EagleMixins {
         EntitySpawnListener.init();
         ModStats.init();
 
+        if (event.getSide().isClient()) {
+            installFromConfig();
+        }
 
         NETWORK.registerMessage(
                 PacketStartTeleportOverlay.Handler.class,

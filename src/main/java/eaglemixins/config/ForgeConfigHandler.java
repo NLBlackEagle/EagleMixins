@@ -1,5 +1,8 @@
 package eaglemixins.config;
 
+import eaglemixins.client.particles.ParticleRule;
+import eaglemixins.client.particles.ParticlesClientRunner;
+import eaglemixins.client.particles.ParticlesRuleParser;
 import eaglemixins.config.folders.*;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
@@ -145,6 +148,21 @@ public class ForgeConfigHandler {
 		@Config.Comment("Whether there should be only one loadingscreen picture displayed per loading, no cycling during load. Will always display first picture in list if random order config is off")
 		@Config.Name("LoadingScreens: Don't Cycle")
 		public boolean disableCycling = false;
+
+        @Config.Comment({
+                "Adds Particles to biomes",
+                "Syntax: <dimension>,<biomeid>,[<blockid>|SOLID|<another block id>|<leave empty for all blocks>],[<particle>@color|<particle additional>@color|<randomly selected>],<ticksbetweenruns>,<maxperrun>,<chance>,<yoffset>,<add random y block>,<rise>,<range>,<canseesky|true|false>,<miny>,<maxy>,[thunder|rain|clear|leave empty for all],<optional biomedictionarytag overrules biomeid>",
+                "Particles accept optional color via '@': REDSTONE@#RRGGBB, SPELL_MOB@r,g,b (0..1 or 0..255), NOTE@hue(0..1).",
+                "Example: all, all, [], [SPELL_MOB@121,189,101], 3, 8, 1.0, 0.0, 0.01, 20, true, 0, 256, [], NUCLEAR",
+                "Example: 0, minecraft:plains, [minecraft:grass|minecraft:tallgrass], [VILLAGER_HAPPY@121,189,101|TOWN_AURA@121,189,101], 3, 8, 1.0, 0.0, 0.01, 20, true, 0, 256, [], NUCLEAR",
+                "Particle List: use /particle"
+
+        })
+        @Config.Name("Particle Spawn System")
+        public String[] ambientparticlespawnlist = {
+                "0, all, [], [SPELL_MOB], 3, 8, 1.0, 0.0, 0.01, 20, true, 0, 256, [], NUCLEAR",
+                "0, minecraft:plains, [minecraft:grass|minecraft:tallgrass], [VILLAGER_HAPPY|TOWN_AURA], 3, 8, 1.0, 0.0, 0.01, 20, true, 0, 256, [thunder|rain|clear], NUCLEAR"
+        };
 	}
 
 	public static void refreshDrinkableBlockCache() {
@@ -170,7 +188,18 @@ public class ForgeConfigHandler {
 				irradiated.reset();
 				srparasites.reset();
 				ForgeConfigHandler.refreshDrinkableBlockCache();
+                if (net.minecraftforge.fml.common.FMLCommonHandler.instance().getSide().isClient()) {
+                    installFromConfig();
+                }
 			}
 		}
 	}
+
+    public static void installFromConfig() {
+        String[] lines = eaglemixins.config.ForgeConfigHandler.client.ambientparticlespawnlist;
+        java.util.List<ParticleRule> rules = ParticlesRuleParser.parse(lines);
+        ParticlesClientRunner.install(rules);
+        net.minecraftforge.fml.common.FMLLog.log.info("[EagleMixins][Particles] Installed {} rules", rules.size());
+    }
+
 }
