@@ -4,7 +4,7 @@ import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.handlers.*;
 import eaglemixins.network.PacketStartTeleportOverlay;
 import eaglemixins.network.PacketStopTeleportOverlay;
-import eaglemixins.registry.ModStats;
+import eaglemixins.init.ModStats;
 import eaglemixins.init.RadiationResistanceRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;

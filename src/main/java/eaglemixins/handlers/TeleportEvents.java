@@ -4,7 +4,6 @@ import eaglemixins.EagleMixins;
 import eaglemixins.init.ModStats;
 import eaglemixins.network.PacketStartTeleportOverlay;
 import eaglemixins.potion.PotionTeleportationSickness;
-import eaglemixins.registry.ModStats;
 import eaglemixins.teleport.*;
 import eaglemixins.teleport.TeleportUnderneath;
 import net.minecraft.block.Block;
