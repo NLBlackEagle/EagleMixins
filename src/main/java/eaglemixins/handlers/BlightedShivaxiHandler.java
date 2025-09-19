@@ -78,6 +78,8 @@ public class BlightedShivaxiHandler {
         toSpawn.setCustomNameTag(blightedShivaxiName);
         toSpawn.enablePersistence();
         toSpawn.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(new AttributeModifier("LoweredHealth", ForgeConfigHandler.server.blightedShivaxiHealthModifier, 1));
+        toSpawn.getEntityAttribute(SharedMonsterAttributes.ARMOR).applyModifier(new AttributeModifier("RaisedArmor", ForgeConfigHandler.server.blightedShivaxiArmorModifier, 1));
+        toSpawn.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).applyModifier(new AttributeModifier("RaisedAttackDamage", ForgeConfigHandler.server.blightedShivaxiDamageModifier, 1));
         entity.world.spawnEntity(toSpawn);
     }
 

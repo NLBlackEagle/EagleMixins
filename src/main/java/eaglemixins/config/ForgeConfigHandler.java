@@ -112,6 +112,14 @@ public class ForgeConfigHandler {
 		@Config.Name("Blighted Shivaxi Health Multiplier")
 		public float blightedShivaxiHealthModifier = 0.5F;
 
+        @Config.Comment("Armor multiplier for Blighted Shivaxi")
+        @Config.Name("Blighted Shivaxi Armor Multiplier")
+        public float blightedShivaxiArmorModifier = 1.0F;
+
+        @Config.Comment("Damage multiplier for Blighted Shivaxi")
+        @Config.Name("Blighted Shivaxi Damage Multiplier")
+        public float blightedShivaxiDamageModifier = 3.0F;
+
 		@Config.Comment("Chance of an underground un-looted chest becoming a mimic")
 		@Config.Name("Underground Mimic Chance")
 		@Config.RangeDouble(min = 0D, max = 1D)
