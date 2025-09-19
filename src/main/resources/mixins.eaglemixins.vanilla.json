@@ -7,14 +7,14 @@
   "minVersion": "0.8",
   "mixins": [
     "vanilla.BlockObserverMixin",
-    "vanilla.ItemStackMixin",
-    "vanilla.RandomValueRangeMixin",
     "vanilla.EntityAreaEffectCloudMixin",
     "vanilla.EntityPotionMixin",
-    "vanilla.ItemPotionMixin",
     "vanilla.GuiIngameForgeMixin",
-    "vanilla.TrapdoorLadderMixin",
-    "vanilla.PlayerBreathMixin"
+    "vanilla.ItemPotionMixin",
+    "vanilla.ItemStackMixin",
+    "vanilla.PlayerBreathMixin",
+    "vanilla.RandomValueRangeMixin",
+    "vanilla.TrapdoorLadderMixin"
   ],
   "injectors": {
     "defaultRequire": 1,

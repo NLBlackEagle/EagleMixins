@@ -35,7 +35,10 @@ public class EagleMixins {
 	@Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(new AttributeHandler());
+
+
         registerIfModsPresent(new String[]{"firstaid"}, FirstAidRadiationHandler.class);
+        registerIfModsPresent(new String[]{"nuclearcraft"}, ContainerNBTRadHandler.class);
         registerIfModsPresent(new String[]{"nuclearcraft"}, ItemRadCapAttacher.class);
         MinecraftForge.EVENT_BUS.register(BlockNoclipHandler.class);
         MinecraftForge.EVENT_BUS.register(NuclearCraftInteractions.class);
@@ -95,7 +98,9 @@ public class EagleMixins {
 
         if (event.getSide().isClient()) {
             installFromConfig();
+            registerIfModsPresent(new String[]{"nuclearcraft"}, ContainerNBTRadHandler.Tooltip.class);
         }
+
 
         NETWORK.registerMessage(
                 PacketStartTeleportOverlay.Handler.class,

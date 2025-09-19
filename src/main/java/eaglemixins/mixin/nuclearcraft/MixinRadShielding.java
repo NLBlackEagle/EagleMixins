@@ -1,5 +1,6 @@
 package eaglemixins.mixin.nuclearcraft;
 
+import nc.config.NCConfig;
 import nc.recipe.vanilla.recipe.ShapelessArmorRadShieldingRecipe;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
@@ -8,12 +9,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+
 @Mixin(ShapelessArmorRadShieldingRecipe.class)
 public abstract class MixinRadShielding {
+
+    @Unique
+    double[] eagleMixins$levels = NCConfig.radiation_shielding_level;
 
     @Inject(method = "matches", at = @At("HEAD"), cancellable = true)
     public void eagle$allowDamagedArmorUpgradeOnly(InventoryCrafting inv, World worldIn, CallbackInfoReturnable<Boolean> cir) {
@@ -35,9 +41,9 @@ public abstract class MixinRadShielding {
         if (!armor.isEmpty() && !shielding.isEmpty()) {
             double newResistance;
             switch (shielding.getMetadata()) {
-                case 2: newResistance = 100.0; break;
-                case 1: newResistance = 0.1; break;
-                default: newResistance = 0.01; break;
+                case 2: newResistance = eagleMixins$levels[2]; break;
+                case 1: newResistance = eagleMixins$levels[1]; break;
+                default: newResistance = eagleMixins$levels[0]; break;
             }
 
             double currentResistance = 0.0;
@@ -77,13 +83,13 @@ public abstract class MixinRadShielding {
             double resistance;
             switch (shielding.getMetadata()) {
                 case 2:
-                    resistance = 1000.0;
+                    resistance = eagleMixins$levels[2];
                     break;
                 case 1:
-                    resistance = 0.1;
+                    resistance = eagleMixins$levels[1];
                     break;
                 default:
-                    resistance = 0.01;
+                    resistance = eagleMixins$levels[0];
                     break;
             }
 
