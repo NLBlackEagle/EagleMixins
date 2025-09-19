@@ -6,9 +6,9 @@
   "target": "@env(DEFAULT)",
   "minVersion": "0.8",
   "mixins": [
-    "LegendaryTooltipsMixin",
-    "LegendaryTooltipsConfigMixin",
     "LegendaryTooltipsAccessor",
+    "LegendaryTooltipsConfigMixin",
+    "LegendaryTooltipsMixin",
     "TooltipDecorMixin"
   ],
   "injectors": {

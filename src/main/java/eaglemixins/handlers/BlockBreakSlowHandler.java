@@ -1,10 +1,10 @@
 package eaglemixins.handlers;
 
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.entity.player.EntityPlayer;
 import eaglemixins.potion.PotionRadiationFatigue;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.potion.PotionEffect;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class BlockBreakSlowHandler {
 

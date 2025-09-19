@@ -1,5 +1,6 @@
 package eaglemixins.config;
 
+import eaglemixins.EagleMixins;
 import eaglemixins.client.particles.ParticleRule;
 import eaglemixins.client.particles.ParticlesClientRunner;
 import eaglemixins.client.particles.ParticlesRuleParser;
@@ -9,7 +10,7 @@ import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import eaglemixins.EagleMixins;
+
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;

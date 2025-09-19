@@ -9,10 +9,10 @@
     "GuiHandlerMixin"
   ],
   "client": [
-    "OTGGuiWorldSelectionMixin",
-    "OTGGuiPresetListMixin",
+    "OTGGuiDimensionListMixin",
     "OTGGuiDimensionSettingsListMixin",
-    "OTGGuiDimensionListMixin"
+    "OTGGuiPresetListMixin",
+    "OTGGuiWorldSelectionMixin"
   ],
   "injectors": {
     "maxShiftBy": 10

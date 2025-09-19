@@ -1,9 +1,9 @@
 package eaglemixins.handlers;
 
 import eaglemixins.attribute.ModAttributes;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraft.entity.player.EntityPlayer;
 
 public class AttributeHandler {
     @SubscribeEvent

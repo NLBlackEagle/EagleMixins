@@ -1,7 +1,8 @@
 package eaglemixins.handlers;
 
-import nc.block.NCBlockDoor;
 import biomesoplenty.common.block.BlockBOPDoor;
+import eaglemixins.config.ForgeConfigHandler;
+import nc.block.NCBlockDoor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.state.IBlockState;
@@ -12,7 +13,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import eaglemixins.config.ForgeConfigHandler;
 
 public class DoorDupeHandler {
 

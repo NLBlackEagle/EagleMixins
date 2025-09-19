@@ -1,10 +1,10 @@
 package eaglemixins.handlers;
 
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import eaglemixins.potion.PotionRadiationWeakness;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import eaglemixins.potion.PotionRadiationWeakness;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.UUID;
 

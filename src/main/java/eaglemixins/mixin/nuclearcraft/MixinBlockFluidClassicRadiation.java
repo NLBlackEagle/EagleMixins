@@ -1,8 +1,8 @@
 package eaglemixins.mixin.nuclearcraft;
 
 import nc.capability.radiation.source.IRadiationSource;
-import nc.radiation.RadiationHelper;
 import nc.radiation.RadSources;
+import nc.radiation.RadiationHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;

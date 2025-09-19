@@ -1,10 +1,10 @@
 package eaglemixins.mixin.simpledifficulty;
 
 import com.charles445.simpledifficulty.api.thirst.ThirstEnum;
+import com.charles445.simpledifficulty.api.thirst.ThirstEnumBlockPos;
 import com.charles445.simpledifficulty.util.internal.ThirstUtilInternal;
 import eaglemixins.EagleMixins;
 import eaglemixins.config.ForgeConfigHandler;
-import com.charles445.simpledifficulty.api.thirst.ThirstEnumBlockPos;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;

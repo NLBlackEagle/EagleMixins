@@ -1,6 +1,7 @@
 package eaglemixins.client.particles;
 
 import net.minecraft.block.Block;
+
 import java.util.*;
 
 public final class ParticlesFactories {

@@ -2,10 +2,10 @@ package eaglemixins;
 
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.handlers.*;
-import eaglemixins.network.PacketStartTeleportOverlay;
-import eaglemixins.network.PacketStopTeleportOverlay;
 import eaglemixins.init.ModStats;
 import eaglemixins.init.RadiationResistanceRegistry;
+import eaglemixins.network.PacketStartTeleportOverlay;
+import eaglemixins.network.PacketStopTeleportOverlay;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
