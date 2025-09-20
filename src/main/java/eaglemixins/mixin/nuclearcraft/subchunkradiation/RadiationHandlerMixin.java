@@ -18,6 +18,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ClassInheritanceMultiMap;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -83,9 +84,12 @@ public abstract class RadiationHandlerMixin {
             ChunkRadiationSource chunkRadSource = (ChunkRadiationSource) chunkSource;
 
             for (int subchunk = 0; subchunk < chunk.getEntityLists().length; subchunk++) {
+                ClassInheritanceMultiMap<Entity> entitySubset = chunk.getEntityLists()[subchunk];
+                Entity[] entityArray = entitySubset.toArray(new Entity[0]);
+
                 chunkRadSource.setSubchunk(subchunk);
 
-                for (Entity entity : chunk.getEntityLists()[subchunk]) {
+                for (Entity entity : entityArray) {
                     if (entity instanceof EntityPlayer) {
                         RadiationHelper.transferRadsFromInventoryToChunkBuffer(((EntityPlayer)entity).inventory, chunkSource);
                     }
@@ -141,8 +145,9 @@ public abstract class RadiationHandlerMixin {
             }
 
             Collection<TileEntity> tileCollection = chunk.getTileEntityMap().values();
+            TileEntity[] tileArray = tileCollection.toArray(new TileEntity[0]);
 
-            for (TileEntity tile : tileCollection) {
+            for (TileEntity tile : tileArray) {
                 chunkRadSource.setSubchunk(tile.getPos());
                 RadiationHelper.transferRadiationFromProviderToChunkBuffer(tile, tile_side, chunkSource);
             }
