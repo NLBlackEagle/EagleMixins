@@ -37,13 +37,14 @@ public abstract class MixinBlockFluidClassicRadiation {
         String fluidName = (fluid != null ? fluid.getName() : null);
         if (fluidName == null) return;
 
-        double basePerTick = RadSources.FLUID_MAP.getDouble(fluidName);
+        double basePerTick = RadSources.FLUID_MAP.getDouble(fluidName) / RadSources.FLUID;
         if (basePerTick <= 0.0D) return;
 
         double scale = 1.0D;
         if (self instanceof BlockFluidBase) {
-            scale = ((BlockFluidBase) self).getQuantaPercentage(world, pos);
+            scale = ((BlockFluidBase) self).getQuantaValue(world, pos);
         }
+
         double radsPerTick = basePerTick * scale;
         if (radsPerTick <= 0.0D) return;
 
