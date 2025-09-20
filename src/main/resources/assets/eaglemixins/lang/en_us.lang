@@ -37,3 +37,5 @@ eaglemixins.message.block_break_denied=The ground seems hardened here, you fail 
 
 tile.eaglemixins.deepslate.name=Deepslate
 block.eaglemixins.deepslate.name=Deepslate
+
+attribute.name.eaglemixins.radiationResistance=Rads/t Resistance
