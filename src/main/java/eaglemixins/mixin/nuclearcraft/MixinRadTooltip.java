@@ -3,6 +3,7 @@ package eaglemixins.mixin.nuclearcraft;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import nc.capability.radiation.source.IRadiationSource;
 import nc.config.NCConfig;
+import nc.handler.TooltipHandler;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -11,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.List;
 
-@Mixin(nc.handler.TooltipHandler.class)
+@Mixin(TooltipHandler.class)
 public class MixinRadTooltip {
 
     @ModifyExpressionValue(method = "addRadiationTooltip", at = @At(value = "INVOKE", target="Lnc/radiation/RadiationHelper;getRadiationSource(Lnet/minecraftforge/common/capabilities/ICapabilityProvider;)Lnc/capability/radiation/source/IRadiationSource;"), remap = false)

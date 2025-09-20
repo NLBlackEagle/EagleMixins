@@ -23,7 +23,7 @@ import java.util.Random;
  * Corium-style radiation for any fluid whose FLUID_MAP entry (from S:radiation_fluids)
  * is > 0. No hardcoded block IDs; we key off the fluid's registry *name*.
  */
-@Mixin(value = BlockFluidClassic.class)
+@Mixin(BlockFluidClassic.class)
 public abstract class MixinBlockFluidClassicRadiation {
 
     @Inject(method = {"updateTick"}, at = @At("TAIL"), require = 0)

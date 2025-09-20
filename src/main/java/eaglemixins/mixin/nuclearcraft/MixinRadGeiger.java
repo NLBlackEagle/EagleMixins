@@ -1,11 +1,12 @@
 package eaglemixins.mixin.nuclearcraft;
 
+import nc.radiation.RadiationRenders;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(nc.radiation.RadiationRenders.class)
+@Mixin(RadiationRenders.class)
 public class MixinRadGeiger {
 
     @Redirect(method = "addRadiationInfo", at = @At(value = "INVOKE", target = "Lnc/radiation/RadiationHelper;radsPrefix(DZ)Ljava/lang/String;"), remap = false)
