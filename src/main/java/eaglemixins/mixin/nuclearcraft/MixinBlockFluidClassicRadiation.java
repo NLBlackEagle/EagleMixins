@@ -1,5 +1,6 @@
 package eaglemixins.mixin.nuclearcraft;
 
+import eaglemixins.capability.ChunkRadiationSource;
 import nc.capability.radiation.source.IRadiationSource;
 import nc.radiation.RadSources;
 import nc.radiation.RadiationHelper;
@@ -52,9 +53,11 @@ public abstract class MixinBlockFluidClassicRadiation {
         if (chunk == null || !chunk.isLoaded()) return;
 
         IRadiationSource src = RadiationHelper.getRadiationSource(chunk);
-        if (src == null) return;
+        if (!(src instanceof ChunkRadiationSource)) return;
+        ChunkRadiationSource chunkRadSource = (ChunkRadiationSource) src;
 
+        chunkRadSource.setSubchunk(pos);
         RadiationHelper.addToSourceRadiation(src, radsPerTick);
-
+        chunkRadSource.resetSubchunk();
     }
 }

@@ -8,7 +8,15 @@
   "mixins": [
     "MixinBlockFluidClassicRadiation",
     "MixinRadiationHelper",
-    "MixinRadShielding"
+    "MixinRadShielding",
+    "subchunkradiation.BlockFluidCoriumMixin",
+    "subchunkradiation.InitSubchunkRadiationSource",
+    "subchunkradiation.RadiationHandlerMixin",
+    "subchunkradiation.RadiationHelperMixin",
+    "subchunkradiation.TileFissionControllerMixin",
+    "subchunkradiation.TileGeigerCounterMixin",
+    "subchunkradiation.TileRadiationScrubberMixin",
+    "subchunkradiation.TileSaltFissionVesselMixin"
   ],
   "injectors": {
     "maxShiftBy": 10
