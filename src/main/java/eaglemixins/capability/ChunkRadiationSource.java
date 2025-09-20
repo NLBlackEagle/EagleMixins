@@ -183,19 +183,19 @@ public class ChunkRadiationSource extends RadiationSource {
 
     @Override
     public void readNBT(IRadiationSource instance, EnumFacing side, NBTTagCompound nbt) {
-        readFromList(nbt, "subchunkRadiationLevel", this::setSubchunkRadiationLevel);
-        readFromList(nbt, "subchunkRadiationBuffer", this::setSubchunkRadiationBuffer);
-        readFromList(nbt, "subchunkScrubbingFraction", this::setSubchunkScrubbingFraction);
-        readFromList(nbt, "subchunkEffectiveScrubberCount", this::setSubchunkEffectiveScrubberCount);
+        readFromList(nbt, "subchunkRadiationLevel", this.subchunkRadiationLevel);
+        readFromList(nbt, "subchunkRadiationBuffer", this.subchunkRadiationBuffer);
+        readFromList(nbt, "subchunkScrubbingFraction", this.subchunkScrubbingFraction);
+        readFromList(nbt, "subchunkEffectiveScrubberCount", this.subchunkEffectiveScrubberCount);
 
         isDuringReadWrite = true;
         super.readNBT(instance, side, nbt);
         isDuringReadWrite = false;
     }
 
-    private static void readFromList(NBTTagCompound nbt, String key, BiConsumer<Integer, Float> setter){
+    private static void readFromList(NBTTagCompound nbt, String key, float[] setter){
         if(!nbt.hasKey(key, Constants.NBT.TAG_BYTE_ARRAY)) return;
         ByteBuffer buffer = ByteBuffer.wrap(nbt.getByteArray(key));
-        for(int idx = 0; idx < 16; idx++) setter.accept(idx, buffer.getFloat());
+        for(int idx = 0; idx < 16; idx++) setter[idx] = buffer.getFloat();
     }
 }
