@@ -21,7 +21,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
@@ -61,9 +60,6 @@ public abstract class RadiationHandlerMixin {
         if (event.phase != TickEvent.Phase.START || event.side == Side.CLIENT || !(event.world instanceof WorldServer)) return;
         WorldServer world = (WorldServer)event.world;
 
-        ChunkRadiationSource sourceWithPlayer = null;
-        int subChunkPlayer = -1;
-
         ChunkProviderServer chunkProvider = world.getChunkProvider();
         Collection<Chunk> loadedChunks = chunkProvider.getLoadedChunks();
         int chunkArrSize = loadedChunks.size();
@@ -91,8 +87,6 @@ public abstract class RadiationHandlerMixin {
 
                 for (Entity entity : chunk.getEntityLists()[subchunk]) {
                     if (entity instanceof EntityPlayer) {
-                        subChunkPlayer = subchunk;
-                        sourceWithPlayer = chunkRadSource;
                         RadiationHelper.transferRadsFromInventoryToChunkBuffer(((EntityPlayer)entity).inventory, chunkSource);
                     }
                     else if (NCConfig.radiation_dropped_items && entity instanceof EntityItem) {
@@ -141,10 +135,10 @@ public abstract class RadiationHandlerMixin {
             }
             chunkRadSource.resetSubchunk();
 
-            chunkRadSource.setAffectsAllSubchunks();
-            chunkSource.setScrubbingFraction(0D);
-            chunkSource.setEffectiveScrubberCount(0D);
-            chunkRadSource.resetSubchunk();
+            for(int subchunk = 0; subchunk < 16; subchunk++) {
+                chunkRadSource.setSubchunkScrubbingFraction(subchunk,0D);
+                chunkRadSource.setSubchunkEffectiveScrubberCount(subchunk, 0D);
+            }
 
             Collection<TileEntity> tileCollection = chunk.getTileEntityMap().values();
 
@@ -154,16 +148,20 @@ public abstract class RadiationHandlerMixin {
             }
             chunkRadSource.resetSubchunk();
 
-            chunkRadSource.setAffectsAllSubchunks();
             if (RadWorlds.RAD_MAP.containsKey(dimension)) {
-                RadiationHelper.addToSourceBuffer(chunkSource, RadWorlds.RAD_MAP.get(dimension));
+                for(int subchunk = 0; subchunk < 16; subchunk++) {
+                    chunkRadSource.setSubchunk(subchunk);
+                    RadiationHelper.addToSourceBuffer(chunkSource, RadWorlds.RAD_MAP.get(dimension));
+                }
             }
             chunkRadSource.resetSubchunk();
 
-            chunkRadSource.setAffectsAllSubchunks();
             if (!RadBiomes.DIM_BLACKLIST.contains(dimension)) {
                 Double biomeRadiation = RadBiomes.RAD_MAP.get(biomeAtOffset);
-                if (biomeRadiation != null) RadiationHelper.addToSourceBuffer(chunkSource, biomeRadiation);
+                if (biomeRadiation != null) for(int subchunk = 0; subchunk < 16; subchunk++) {
+                    chunkRadSource.setSubchunk(subchunk);
+                    RadiationHelper.addToSourceBuffer(chunkSource, biomeRadiation);
+                }
             }
             chunkRadSource.resetSubchunk();
 
@@ -225,18 +223,6 @@ public abstract class RadiationHandlerMixin {
 
                 chunkRadSource.resetSubchunk();
             }
-        }
-
-        if(subChunkPlayer != -1 && sourceWithPlayer != null){
-            ChunkRadiationSource finalSourceWithPlayer = sourceWithPlayer;
-            int finalSubChunkPlayer = subChunkPlayer;
-            world.playerEntities.forEach(p -> p.sendMessage(new TextComponentString(
-                        finalSubChunkPlayer+
-                            " " + finalSourceWithPlayer.getSubchunkRadiationLevel(finalSubChunkPlayer)+
-                            " "+finalSourceWithPlayer.getSubchunkRadiationBuffer(finalSubChunkPlayer)+
-                            " "+finalSourceWithPlayer.getSubchunkScrubbingFraction(finalSubChunkPlayer)+
-                            " "+finalSourceWithPlayer.getSubchunkEffectiveScrubberCount(finalSubChunkPlayer)
-            )));
         }
 
         if (chunkArrSize > 0) for (int i = chunkStart; i < chunkStart + chunksPerTick; i++) {

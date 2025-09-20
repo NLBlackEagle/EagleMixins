@@ -29,20 +29,15 @@ public class ChunkRadiationSource extends RadiationSource {
     }
 
     private static final int NOT_SET = -1;
-    private static final int ALL = 16;
     private int currentSubchunk = NOT_SET;
     public void resetSubchunk(){
         this.currentSubchunk = NOT_SET;
-    };
-    public int getSubchunk(){ return this.currentSubchunk; }
+    }
     public void setSubchunk(int idx){
         this.currentSubchunk = idx;
     }
     public void setSubchunk(BlockPos pos){
         this.currentSubchunk = MathHelper.clamp(pos.getY() >> 4, 0, 15);
-    }
-    public void setAffectsAllSubchunks(){
-        this.currentSubchunk = ALL;
     }
     public boolean subchunkIsReset(){
         return this.currentSubchunk == NOT_SET;
@@ -115,19 +110,12 @@ public class ChunkRadiationSource extends RadiationSource {
     @Override
     public void setRadiationLevel(double newRads) {
         if (!isDuringReadWrite) {
-            if(currentSubchunk != NOT_SET && currentSubchunk != ALL){
+            if(currentSubchunk != NOT_SET){
                 this.setSubchunkRadiationLevel(this.currentSubchunk, newRads);
                 return;
             }
             Arrays.fill(this.subchunkRadiationLevel, Math.max(newRads, 0));
-            if(currentSubchunk != ALL) {
-                EagleMixins.LOGGER.warn("EagleMixins: Writing radiation to the whole chunk! This shouldn't happen as all methods should write to subchunk instead");
-                try {
-                    throw new Exception("breh");
-                } catch (Exception e) {
-                    e.printStackTrace(System.out);
-                }
-            }
+            EagleMixins.LOGGER.warn("EagleMixins: Writing radiation to the whole chunk! This shouldn't happen as all methods should write to subchunk instead");
         }
         super.setRadiationLevel(newRads);
     }
@@ -135,13 +123,12 @@ public class ChunkRadiationSource extends RadiationSource {
     @Override
     public void setRadiationBuffer(double newBuffer) {
         if (!isDuringReadWrite) {
-            if(currentSubchunk != NOT_SET && currentSubchunk != ALL){
+            if(currentSubchunk != NOT_SET){
                 this.setSubchunkRadiationBuffer(this.currentSubchunk, newBuffer);
                 return;
             }
             Arrays.fill(this.subchunkRadiationBuffer, Math.max(newBuffer, 0));
-            if(currentSubchunk != ALL)
-                EagleMixins.LOGGER.warn("EagleMixins: Writing radiation buffer to the whole chunk! This shouldn't happen as all methods should write to subchunk instead");
+            EagleMixins.LOGGER.warn("EagleMixins: Writing radiation buffer to the whole chunk! This shouldn't happen as all methods should write to subchunk instead");
         }
         super.setRadiationLevel(newBuffer);
     }
@@ -149,13 +136,12 @@ public class ChunkRadiationSource extends RadiationSource {
     @Override
     public void setScrubbingFraction(double newFraction) {
         if (!isDuringReadWrite) {
-            if(currentSubchunk != NOT_SET && currentSubchunk != ALL){
+            if(currentSubchunk != NOT_SET){
                 this.setSubchunkScrubbingFraction(this.currentSubchunk, newFraction);
                 return;
             }
             Arrays.fill(this.subchunkScrubbingFraction, MathHelper.clamp(newFraction, 0, 1));
-            if(currentSubchunk != ALL)
-                EagleMixins.LOGGER.warn("EagleMixins: Writing scrubbing fraction to the whole chunk! This shouldn't happen as all methods should write to subchunk instead");
+            EagleMixins.LOGGER.warn("EagleMixins: Writing scrubbing fraction to the whole chunk! This shouldn't happen as all methods should write to subchunk instead");
         }
         super.setScrubbingFraction(newFraction);
     }
@@ -163,13 +149,12 @@ public class ChunkRadiationSource extends RadiationSource {
     @Override
     public void setEffectiveScrubberCount(double newScrubberCount) {
         if (!isDuringReadWrite) {
-            if(currentSubchunk != NOT_SET && currentSubchunk != ALL){
+            if(currentSubchunk != NOT_SET){
                 this.setSubchunkEffectiveScrubberCount(this.currentSubchunk, newScrubberCount);
                 return;
             }
             Arrays.fill(this.subchunkEffectiveScrubberCount, Math.max(0, newScrubberCount));
-            if(currentSubchunk != ALL)
-                EagleMixins.LOGGER.warn("EagleMixins: Writing scrubber count to the whole chunk! This shouldn't happen as all methods should write to subchunk instead");
+            EagleMixins.LOGGER.warn("EagleMixins: Writing scrubber count to the whole chunk! This shouldn't happen as all methods should write to subchunk instead");
         }
         super.setEffectiveScrubberCount(newScrubberCount);
     }
