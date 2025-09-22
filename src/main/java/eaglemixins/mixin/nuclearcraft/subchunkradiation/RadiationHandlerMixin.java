@@ -140,8 +140,8 @@ public abstract class RadiationHandlerMixin {
             chunkRadSource.resetSubchunk();
 
             for(int subchunk = 0; subchunk < 16; subchunk++) {
-                chunkRadSource.setSubchunkScrubbingFraction(subchunk,0D);
-                chunkRadSource.setSubchunkEffectiveScrubberCount(subchunk, 0D);
+                chunkRadSource.setSubchunkScrubbingFraction(subchunk,0);
+                chunkRadSource.setSubchunkEffectiveScrubberCount(subchunk, 0);
             }
 
             Collection<TileEntity> tileCollection = chunk.getTileEntityMap().values();
@@ -249,21 +249,21 @@ public abstract class RadiationHandlerMixin {
         if (!(chunkSource instanceof ChunkRadiationSource)) return;
         ChunkRadiationSource chunkRadSource = (ChunkRadiationSource) chunkSource;
 
-        double[] dRad = new double[16];
+        float[] dRad = new float[16];
         Arrays.fill(dRad, 0);
 
         for (int subchunk = 0; subchunk < 16; subchunk++) {
             chunkRadSource.setSubchunk(subchunk);
             if (chunkSource.isRadiationNegligible()) continue;
-            double radLvlCurr = chunkRadSource.getSubchunkRadiationLevel(subchunk);
+            float radLvlCurr = chunkRadSource.getSubchunkRadiationLevel(subchunk);
 
             for (int dSubchunk = -1; dSubchunk <= 1; dSubchunk += 2) {
                 int nextsubchunk = subchunk + dSubchunk;
                 if (nextsubchunk < 0 || nextsubchunk > 15) continue;
 
-                double radLvlNext = chunkRadSource.getSubchunkRadiationLevel(nextsubchunk);
+                float radLvlNext = chunkRadSource.getSubchunkRadiationLevel(nextsubchunk);
                 if (radLvlNext == 0 || radLvlCurr / radLvlNext > 1 + NCConfig.radiation_spread_gradient) {
-                    double radiationSpread = (radLvlCurr - radLvlNext) * NCConfig.radiation_spread_rate;
+                    float radiationSpread = (radLvlCurr - radLvlNext) * (float) NCConfig.radiation_spread_rate;
                     dRad[subchunk] -= radiationSpread; //current reduces from spreading
                     dRad[nextsubchunk] += radiationSpread * (1 - chunkRadSource.getSubchunkScrubbingFraction(nextsubchunk)); //nearby increases from spreading
                 }

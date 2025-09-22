@@ -3,26 +3,25 @@ package eaglemixins.capability;
 import eaglemixins.EagleMixins;
 import nc.capability.radiation.source.IRadiationSource;
 import nc.capability.radiation.source.RadiationSource;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagDouble;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.*;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.common.util.Constants;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 
 public class ChunkRadiationSource extends RadiationSource {
-    private final double[] subchunkRadiationLevel = new double[16];
-    private final double[] subchunkRadiationBuffer = new double[16];
-    private final double[] subchunkScrubbingFraction = new double[16];
-    private final double[] subchunkEffectiveScrubberCount = new double[16];
+    private final float[] subchunkRadiationLevel = new float[16];
+    private final float[] subchunkRadiationBuffer = new float[16];
+    private final float[] subchunkScrubbingFraction = new float[16];
+    private final float[] subchunkEffectiveScrubberCount = new float[16];
 
     public ChunkRadiationSource(double startRadiation) {
         super(startRadiation);
-        Arrays.fill(subchunkRadiationLevel, 0);
+        Arrays.fill(subchunkRadiationLevel, (float) startRadiation);
         Arrays.fill(subchunkRadiationBuffer, 0);
         Arrays.fill(subchunkScrubbingFraction, 0);
         Arrays.fill(subchunkEffectiveScrubberCount, 0);
@@ -43,35 +42,35 @@ public class ChunkRadiationSource extends RadiationSource {
         return this.currentSubchunk == NOT_SET;
     }
 
-    public double getSubchunkRadiationLevel(int subChunk) {
+    public float getSubchunkRadiationLevel(int subChunk) {
         return subchunkRadiationLevel[subChunk];
     }
 
-    public double getSubchunkRadiationBuffer(int subChunk) {
+    public float getSubchunkRadiationBuffer(int subChunk) {
         return subchunkRadiationBuffer[subChunk];
     }
 
-    public double getSubchunkScrubbingFraction(int subChunk) {
+    public float getSubchunkScrubbingFraction(int subChunk) {
         return subchunkScrubbingFraction[subChunk];
     }
 
-    public double getSubchunkEffectiveScrubberCount(int subChunk) {
+    public float getSubchunkEffectiveScrubberCount(int subChunk) {
         return subchunkEffectiveScrubberCount[subChunk];
     }
 
-    public void setSubchunkRadiationLevel(int subChunk, double subchunkRadiation) {
+    public void setSubchunkRadiationLevel(int subChunk, float subchunkRadiation) {
         this.subchunkRadiationLevel[subChunk] = subchunkRadiation;
     }
 
-    public void setSubchunkRadiationBuffer(int subChunk, double subchunkRadiationBuffer) {
+    public void setSubchunkRadiationBuffer(int subChunk, float subchunkRadiationBuffer) {
         this.subchunkRadiationBuffer[subChunk] = subchunkRadiationBuffer;
     }
 
-    public void setSubchunkScrubbingFraction(int subChunk, double subchunkScrubbingFraction) {
+    public void setSubchunkScrubbingFraction(int subChunk, float subchunkScrubbingFraction) {
         this.subchunkScrubbingFraction[subChunk] = subchunkScrubbingFraction;
     }
 
-    public void setSubchunkEffectiveScrubberCount(int subChunk, double subchunkScrubberCount) {
+    public void setSubchunkEffectiveScrubberCount(int subChunk, float subchunkScrubberCount) {
         this.subchunkEffectiveScrubberCount[subChunk] = subchunkScrubberCount;
     }
 
@@ -80,7 +79,7 @@ public class ChunkRadiationSource extends RadiationSource {
         if(this.currentSubchunk != NOT_SET)
             return this.getSubchunkRadiationLevel(currentSubchunk);
         if(!isDuringReadWrite) EagleMixins.LOGGER.error("EagleMixins getting radiation level from chunk radiation source without setting subchunk index! Notfiy nischhelm!");
-        return super.getRadiationLevel();
+        return (float) super.getRadiationLevel();
     }
 
     @Override
@@ -111,10 +110,10 @@ public class ChunkRadiationSource extends RadiationSource {
     public void setRadiationLevel(double newRads) {
         if (!isDuringReadWrite) {
             if(currentSubchunk != NOT_SET){
-                this.setSubchunkRadiationLevel(this.currentSubchunk, newRads);
+                this.setSubchunkRadiationLevel(this.currentSubchunk, (float) newRads);
                 return;
             }
-            Arrays.fill(this.subchunkRadiationLevel, Math.max(newRads, 0));
+            Arrays.fill(this.subchunkRadiationLevel, (float) Math.max(newRads, 0));
             EagleMixins.LOGGER.warn("EagleMixins: Writing radiation to the whole chunk! This shouldn't happen as all methods should write to subchunk instead");
         }
         super.setRadiationLevel(newRads);
@@ -124,10 +123,10 @@ public class ChunkRadiationSource extends RadiationSource {
     public void setRadiationBuffer(double newBuffer) {
         if (!isDuringReadWrite) {
             if(currentSubchunk != NOT_SET){
-                this.setSubchunkRadiationBuffer(this.currentSubchunk, newBuffer);
+                this.setSubchunkRadiationBuffer(this.currentSubchunk, (float) newBuffer);
                 return;
             }
-            Arrays.fill(this.subchunkRadiationBuffer, Math.max(newBuffer, 0));
+            Arrays.fill(this.subchunkRadiationBuffer, (float) Math.max(newBuffer, 0));
             EagleMixins.LOGGER.warn("EagleMixins: Writing radiation buffer to the whole chunk! This shouldn't happen as all methods should write to subchunk instead");
         }
         super.setRadiationLevel(newBuffer);
@@ -137,10 +136,10 @@ public class ChunkRadiationSource extends RadiationSource {
     public void setScrubbingFraction(double newFraction) {
         if (!isDuringReadWrite) {
             if(currentSubchunk != NOT_SET){
-                this.setSubchunkScrubbingFraction(this.currentSubchunk, newFraction);
+                this.setSubchunkScrubbingFraction(this.currentSubchunk, (float) newFraction);
                 return;
             }
-            Arrays.fill(this.subchunkScrubbingFraction, MathHelper.clamp(newFraction, 0, 1));
+            Arrays.fill(this.subchunkScrubbingFraction, (float) MathHelper.clamp(newFraction, 0, 1));
             EagleMixins.LOGGER.warn("EagleMixins: Writing scrubbing fraction to the whole chunk! This shouldn't happen as all methods should write to subchunk instead");
         }
         super.setScrubbingFraction(newFraction);
@@ -150,10 +149,10 @@ public class ChunkRadiationSource extends RadiationSource {
     public void setEffectiveScrubberCount(double newScrubberCount) {
         if (!isDuringReadWrite) {
             if(currentSubchunk != NOT_SET){
-                this.setSubchunkEffectiveScrubberCount(this.currentSubchunk, newScrubberCount);
+                this.setSubchunkEffectiveScrubberCount(this.currentSubchunk, (float) newScrubberCount);
                 return;
             }
-            Arrays.fill(this.subchunkEffectiveScrubberCount, Math.max(0, newScrubberCount));
+            Arrays.fill(this.subchunkEffectiveScrubberCount, (float) Math.max(0, newScrubberCount));
             EagleMixins.LOGGER.warn("EagleMixins: Writing scrubber count to the whole chunk! This shouldn't happen as all methods should write to subchunk instead");
         }
         super.setEffectiveScrubberCount(newScrubberCount);
@@ -173,30 +172,30 @@ public class ChunkRadiationSource extends RadiationSource {
         return nbt;
     }
 
-    private static NBTTagList writeListToNBT(double[] values){
-        NBTTagList list = new NBTTagList();
-        for(double value : values) list.appendTag(new NBTTagDouble(value));
-        return list;
+    private static NBTTagByteArray writeListToNBT(float[] values){
+        byte[] data = new byte[values.length * 4];
+        ByteBuffer buffer = ByteBuffer.wrap(data);
+        for (float value : values) buffer.putFloat(value);
+        return new NBTTagByteArray(data);
     }
 
     private boolean isDuringReadWrite = false;
 
     @Override
     public void readNBT(IRadiationSource instance, EnumFacing side, NBTTagCompound nbt) {
-        readFromList(nbt, "subchunkRadiationLevel", this::setSubchunkRadiationLevel);
-        readFromList(nbt, "subchunkRadiationBuffer", this::setSubchunkRadiationBuffer);
-        readFromList(nbt, "subchunkScrubbingFraction", this::setSubchunkScrubbingFraction);
-        readFromList(nbt, "subchunkEffectiveScrubberCount", this::setSubchunkEffectiveScrubberCount);
+        readFromList(nbt, "subchunkRadiationLevel", this.subchunkRadiationLevel);
+        readFromList(nbt, "subchunkRadiationBuffer", this.subchunkRadiationBuffer);
+        readFromList(nbt, "subchunkScrubbingFraction", this.subchunkScrubbingFraction);
+        readFromList(nbt, "subchunkEffectiveScrubberCount", this.subchunkEffectiveScrubberCount);
 
-        isDuringReadWrite = true;//!nbt.hasKey("subchunkRadiationLevel"); //compat for old chunks without subchunk data -> fill subchunk arrays
+        isDuringReadWrite = true;
         super.readNBT(instance, side, nbt);
         isDuringReadWrite = false;
     }
 
-    private static void readFromList(NBTTagCompound nbt, String key, BiConsumer<Integer, Double> setter){
-        if(!nbt.hasKey(key)) return;
-        NBTTagList list = nbt.getTagList(key, 6);
-        int idx = 0;
-        for(NBTBase tag : list) setter.accept(idx++, ((NBTTagDouble) tag).getDouble());
+    private static void readFromList(NBTTagCompound nbt, String key, float[] setter){
+        if(!nbt.hasKey(key, Constants.NBT.TAG_BYTE_ARRAY)) return;
+        ByteBuffer buffer = ByteBuffer.wrap(nbt.getByteArray(key));
+        for(int idx = 0; idx < 16; idx++) setter[idx] = buffer.getFloat();
     }
 }
