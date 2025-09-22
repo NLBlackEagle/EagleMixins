@@ -11,7 +11,6 @@ import net.minecraftforge.common.util.Constants;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-import java.util.function.BiConsumer;
 
 public class ChunkRadiationSource extends RadiationSource {
     private final float[] subchunkRadiationLevel = new float[16];

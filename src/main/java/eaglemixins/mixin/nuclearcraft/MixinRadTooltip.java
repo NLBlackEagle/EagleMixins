@@ -32,16 +32,11 @@ public class MixinRadTooltip {
 
     @Unique
     private static String eagleMixins$formatRads(double v, int n) {
-        if (v == 0.0) {
-            StringBuilder z = new StringBuilder("0.");
-            for (int i = 0; i < n; i++) z.append('0');
-            return z.toString();
-        }
-        double abs = Math.abs(v);
-        if (abs < 1.0) {
+        double absV = Math.abs(v);
+        if (absV < 1.0) {
             return String.format(java.util.Locale.ROOT, "%." + n + "f", v); // exactly n decimals
         }
-        int intDigits = (int) Math.floor(Math.log10(abs)) + 1;      // digits before decimal
+        int intDigits = (int) Math.ceil(Math.log10(absV));           // digits before decimal
         int decimals  = Math.max(0, n - intDigits);                 // keep total sig-digits = n
         return String.format(java.util.Locale.ROOT, "%." + decimals + "f", v);
     }
