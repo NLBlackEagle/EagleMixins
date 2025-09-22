@@ -101,17 +101,19 @@ public class EagleMixins {
         }
 
 
+        // start at 1 so unregistered messages (ID 0) throw a more obvious exception when received
+        int messageId = 1;
+
         NETWORK.registerMessage(
                 PacketStartTeleportOverlay.Handler.class,
                 PacketStartTeleportOverlay.class,
-                0,
+                messageId++,
                 Side.CLIENT
         );
-
         NETWORK.registerMessage(
                 PacketStopTeleportOverlay.Handler.class,
                 PacketStopTeleportOverlay.class,
-                1, // Next available ID (0 is already used)
+                messageId++,
                 Side.CLIENT
         );
     }
