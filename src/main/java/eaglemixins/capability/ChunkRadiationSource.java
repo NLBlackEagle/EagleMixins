@@ -8,6 +8,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -17,6 +19,8 @@ public class ChunkRadiationSource extends RadiationSource {
     private final float[] subchunkRadiationBuffer = new float[16];
     private final float[] subchunkScrubbingFraction = new float[16];
     private final float[] subchunkEffectiveScrubberCount = new float[16];
+    @SideOnly(Side.CLIENT)
+    private short highRadiation;
 
     public ChunkRadiationSource(double startRadiation) {
         super(startRadiation);
@@ -71,6 +75,16 @@ public class ChunkRadiationSource extends RadiationSource {
 
     public void setSubchunkEffectiveScrubberCount(int subChunk, float subchunkScrubberCount) {
         this.subchunkEffectiveScrubberCount[subChunk] = subchunkScrubberCount;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void setHighRadiation(short highRadiation) {
+        this.highRadiation = highRadiation;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public boolean hasHighRadiation(int subChunk) {
+        return (this.highRadiation & (1 << subChunk)) != 0;
     }
 
     @Override

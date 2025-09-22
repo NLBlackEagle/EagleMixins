@@ -1,6 +1,8 @@
 package eaglemixins.mixin.nuclearcraft.subchunkradiation;
 
+import eaglemixins.EagleMixins;
 import eaglemixins.capability.ChunkRadiationSource;
+import eaglemixins.network.PacketSyncHighRadiation;
 import nc.ModCheck;
 import nc.capability.radiation.entity.IEntityRads;
 import nc.capability.radiation.source.IRadiationSource;
@@ -17,6 +19,7 @@ import net.minecraft.entity.INpc;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ClassInheritanceMultiMap;
 import net.minecraft.util.EnumFacing;
@@ -240,6 +243,13 @@ public abstract class RadiationHandlerMixin {
         }
 
         tile_side = EnumFacing.byIndex(tile_side.getIndex() + 1);
+
+        // sync high radiation levels
+        for (EntityPlayer player : world.playerEntities) {
+            if (player.ticksExisted % 60 == 0) {
+                EagleMixins.NETWORK.sendTo(new PacketSyncHighRadiation(player), (EntityPlayerMP) player);
+            }
+        }
     }
 
     @Unique

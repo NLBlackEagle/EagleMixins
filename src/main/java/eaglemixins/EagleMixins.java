@@ -6,6 +6,7 @@ import eaglemixins.init.ModStats;
 import eaglemixins.init.RadiationResistanceRegistry;
 import eaglemixins.network.PacketStartTeleportOverlay;
 import eaglemixins.network.PacketStopTeleportOverlay;
+import eaglemixins.network.PacketSyncHighRadiation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
@@ -113,6 +114,12 @@ public class EagleMixins {
         NETWORK.registerMessage(
                 PacketStopTeleportOverlay.Handler.class,
                 PacketStopTeleportOverlay.class,
+                messageId++,
+                Side.CLIENT
+        );
+        NETWORK.registerMessage(
+                PacketSyncHighRadiation.Handler.class,
+                PacketSyncHighRadiation.class,
                 messageId++,
                 Side.CLIENT
         );
