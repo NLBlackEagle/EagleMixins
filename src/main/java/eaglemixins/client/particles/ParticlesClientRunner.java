@@ -44,6 +44,10 @@ public class ParticlesClientRunner {
             if (r.canSeeSky == ParticleRule.Tri.TRUE && !sky) continue;
             if (r.canSeeSky == ParticleRule.Tri.FALSE && sky) continue;
 
+            // if <current chunk radiation> >= <r.radthreshold then continue;
+            //todo: add chunk radiation threshold, if it's below <r.radthreshold> then do not display particles
+
+
             // weather set (empty == ALL)
             if (!r.weather.isEmpty()) {
                 boolean ok = r.weather.contains(ParticleRule.Weather.THUNDER) && isThundering;
@@ -51,6 +55,7 @@ public class ParticlesClientRunner {
                 if (r.weather.contains(ParticleRule.Weather.CLEAR) && !isRaining && !isThundering) ok = true;
                 if (!ok) continue;
             }
+
 
             // biome/tag
             if (r.biomeTag != null) {
