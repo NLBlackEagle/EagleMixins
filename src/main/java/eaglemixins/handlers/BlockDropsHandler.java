@@ -57,6 +57,13 @@ public class BlockDropsHandler {
             return;
         }
 
+        if (blockId.equals("biomesoplenty:gem_ore:0")) {
+            if(event.isSilkTouching()) return;
+            event.getDrops().clear();
+            addDrop(event.getDrops(), harvesterRNG, "iceandfire:amethyst_gem", 1.0F);
+            return;
+        }
+
         if (blockId.equals("contentcreator:iron_slab_reinforced")) {
             event.getDrops().clear();
             addDrop(event.getDrops(), harvesterRNG, "contentcreator:iron_slab_reinforced", 1.0F);
