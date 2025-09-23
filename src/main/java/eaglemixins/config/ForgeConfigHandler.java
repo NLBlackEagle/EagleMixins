@@ -59,6 +59,10 @@ public class ForgeConfigHandler {
         @Config.Name("Radiation Particle Threshold")
         public double rad_particle_threshold = 0.001;
 
+		@Config.Comment("The radiation in the current subchunk needs to be at least a factor of (this + 1) times higher than the subchunk above/below to spread to that subchunk.")
+		@Config.Name("Vertical Radiation Spread Gradient")
+		public float radiation_spread_gradient_vertical = 0.8F;
+
 		@Config.Comment("Chance of teleporting player to Underneath for exotic teleportation (through the concrete teleporters)")
 		@Config.Name("Teleportation Underneath chance 0 to 100")
 		public int teleportation_chance = 1;

@@ -1,7 +1,10 @@
 package eaglemixins.mixin.nuclearcraft.subchunkradiation;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import eaglemixins.EagleMixins;
 import eaglemixins.capability.ChunkRadiationSource;
+import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.network.PacketSyncHighRadiation;
 import nc.ModCheck;
 import nc.capability.radiation.entity.IEntityRads;
@@ -35,6 +38,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.injection.At;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -166,14 +170,19 @@ public abstract class RadiationHandlerMixin {
 
             if (!RadBiomes.DIM_BLACKLIST.contains(dimension)) {
                 Double biomeRadiation = RadBiomes.RAD_MAP.get(biomeAtOffset);
-                if (biomeRadiation != null) for(int subchunk = 0; subchunk < 16; subchunk++) {
-                    chunkRadSource.setSubchunk(subchunk);
-                    RadiationHelper.addToSourceBuffer(chunkSource, biomeRadiation);
+                if (biomeRadiation != null) {
+                    for (int subchunk = 0; subchunk < 16; subchunk++) {
+                        if (!chunk.getBlockStorageArray()[subchunk].isEmpty()) {
+                            chunkRadSource.setSubchunk(subchunk);
+                            RadiationHelper.addToSourceBuffer(chunkSource, biomeRadiation);
+                        }
+                    }
                 }
             }
             chunkRadSource.resetSubchunk();
 
             BlockPos randomChunkPos = newRandomPosInChunk(chunk);
+            eaglemixins$currSubchunk = randomChunkPos.getY() >> 4; //only for mutateTerrain
             chunkRadSource.setSubchunk(randomChunkPos);
 
             if (randomStructure != null && StructureHelper.CACHE.isInStructure(world, randomStructure, randomChunkPos)) {
@@ -220,14 +229,19 @@ public abstract class RadiationHandlerMixin {
                     newLevel = Math.min(newLevel, NCConfig.radiation_chunk_limit);
                 }
                 if (!RadBiomes.LIMIT_MAP.isEmpty() && RadBiomes.LIMIT_MAP.containsKey(biomeAtOffset)) {
-                    newLevel = Math.min(newLevel, RadBiomes.LIMIT_MAP.get(biomeAtOffset));
+                    if(!chunk.getBlockStorageArray()[subchunk].isEmpty())
+                        newLevel = Math.min(newLevel, RadBiomes.LIMIT_MAP.get(biomeAtOffset));
                 }
                 if (!RadWorlds.LIMIT_MAP.isEmpty() && RadWorlds.LIMIT_MAP.containsKey(dimension)) {
                     newLevel = Math.min(newLevel, RadWorlds.LIMIT_MAP.get(dimension));
                 }
 
                 chunkSource.setRadiationLevel(newLevel);
-                mutateTerrain(world, chunk, newLevel);
+
+                if(eaglemixins$currSubchunk == subchunk ) {
+                    //and only for one subchunk per chunk depending on what random pos was rolled in randomChunkPos
+                    mutateTerrain(world, chunk, newLevel);
+                }
 
                 chunkRadSource.resetSubchunk();
             }
@@ -272,7 +286,7 @@ public abstract class RadiationHandlerMixin {
                 if (nextsubchunk < 0 || nextsubchunk > 15) continue;
 
                 float radLvlNext = chunkRadSource.getSubchunkRadiationLevel(nextsubchunk);
-                if (radLvlNext == 0 || radLvlCurr / radLvlNext > 1 + NCConfig.radiation_spread_gradient) {
+                if (radLvlNext == 0 || radLvlCurr / radLvlNext > 1 + ForgeConfigHandler.server.radiation_spread_gradient_vertical) {
                     float radiationSpread = (radLvlCurr - radLvlNext) * (float) NCConfig.radiation_spread_rate;
                     dRad[subchunk] -= radiationSpread; //current reduces from spreading
                     dRad[nextsubchunk] += radiationSpread * (1 - chunkRadSource.getSubchunkScrubbingFraction(nextsubchunk)); //nearby increases from spreading
@@ -285,5 +299,20 @@ public abstract class RadiationHandlerMixin {
             chunkRadSource.setSubchunkRadiationLevel(subchunk, chunkRadSource.getSubchunkRadiationLevel(subchunk) + dRad[subchunk]);
 
         chunkRadSource.resetSubchunk();
+    }
+
+    @Unique private static BlockPos eaglemixins$newRandomPosInSubChunk(Chunk chunk, int subchunk) {
+        return chunk.getPos().getBlock(RAND.nextInt(16), subchunk * 16 + RAND.nextInt(16), RAND.nextInt(16));
+    }
+
+    @Unique private static int eaglemixins$currSubchunk = 0;
+
+    @WrapOperation(
+            method = "mutateTerrain",
+            at = @At(value = "INVOKE", target = "Lnc/radiation/RadiationHandler;newRandomPosInChunk(Lnet/minecraft/world/chunk/Chunk;)Lnet/minecraft/util/math/BlockPos;"),
+            remap = false
+    )
+    private static BlockPos eaglemixins_setRandomPosInChunk(Chunk chunk, Operation<BlockPos> original){
+        return eaglemixins$newRandomPosInSubChunk(chunk, eaglemixins$currSubchunk);
     }
 }
