@@ -74,19 +74,25 @@ public class PacketSyncHighRadiation implements IMessage {
         @Override
         public IMessage onMessage(PacketSyncHighRadiation message, MessageContext ctx) {
             if (ctx.side.isClient()) {
-                FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
-                    World world = Minecraft.getMinecraft().world;
-                    for (Long2ShortMap.Entry e : message.data.long2ShortEntrySet()) {
-                        Chunk chunk = world.getChunk((int) e.getLongKey(), (int) (e.getLongKey() >> 32));
-                        IRadiationSource radiation = chunk.getCapability(IRadiationSource.CAPABILITY_RADIATION_SOURCE, null);
-                        if (!(radiation instanceof ChunkRadiationSource)) {
-                            return;
-                        }
-                        ((ChunkRadiationSource) radiation).setHighRadiation(e.getShortValue());
-                    }
-                });
+                FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> PacketProcessor.onMessage(message));
             }
             return null;
+        }
+
+        private static class PacketProcessor {
+
+            public static void onMessage(PacketSyncHighRadiation message) {
+                World world = Minecraft.getMinecraft().world;
+                for (Long2ShortMap.Entry e : message.data.long2ShortEntrySet()) {
+                    Chunk chunk = world.getChunk((int) e.getLongKey(), (int) (e.getLongKey() >> 32));
+                    IRadiationSource radiation = chunk.getCapability(IRadiationSource.CAPABILITY_RADIATION_SOURCE, null);
+                    if (!(radiation instanceof ChunkRadiationSource)) {
+                        return;
+                    }
+                    ((ChunkRadiationSource) radiation).setHighRadiation(e.getShortValue());
+                }
+            }
+
         }
 
     }
