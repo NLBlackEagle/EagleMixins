@@ -55,6 +55,10 @@ public class ForgeConfigHandler {
 
 	public static class ServerConfig {
 
+        @Config.Comment("Threshold at which point radiation becomes visible through particles configured under client config section.")
+        @Config.Name("Radiation Particle Threshold")
+        public double rad_particle_threshold = 0.001;
+
 		@Config.Comment("Chance of teleporting player to Underneath for exotic teleportation (through the concrete teleporters)")
 		@Config.Name("Teleportation Underneath chance 0 to 100")
 		public int teleportation_chance = 1;
@@ -167,6 +171,7 @@ public class ForgeConfigHandler {
                 "Particle List: use /particle"
 
         })
+
         @Config.Name("Particle Spawn System")
         public String[] ambientparticlespawnlist = {
                 "0, all, [], [SPELL_MOB], 3, 8, 1.0, 0.0, 0.01, 20, true, 0, 256, [], NUCLEAR",

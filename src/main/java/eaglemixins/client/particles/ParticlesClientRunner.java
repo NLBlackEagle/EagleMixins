@@ -1,34 +1,59 @@
 package eaglemixins.client.particles;
 
+import eaglemixins.capability.ChunkRadiationSource;
+import nc.capability.radiation.source.IRadiationSource;
+import nc.radiation.RadiationHelper;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.GuiIngameMenu;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 // ParticlesClientRunner.java
-@net.minecraftforge.fml.common.Mod.EventBusSubscriber(value = net.minecraftforge.fml.relauncher.Side.CLIENT)
+@Mod.EventBusSubscriber(value = Side.CLIENT)
 public class ParticlesClientRunner {
-    private static final java.util.Random RNG = new java.util.Random();
-    private static java.util.List<ParticleRule> RULES = java.util.Collections.emptyList();
+    private static final Random RNG = new Random();
+    private static List<ParticleRule> RULES = Collections.emptyList();
 
-    public static void install(java.util.List<ParticleRule> rules) { RULES = rules; }
+    public static void install(List<ParticleRule> rules) { RULES = rules; }
 
-    @net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-    public static void onClientTick(net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent e) {
-        if (e.phase != net.minecraftforge.fml.common.gameevent.TickEvent.Phase.END) return;
+    @SubscribeEvent
+    public static void onClientTick(TickEvent.ClientTickEvent e) {
+        if (e.phase != TickEvent.Phase.END) return;
 
-        net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getMinecraft();
+        Minecraft mc = Minecraft.getMinecraft();
         if (mc.world == null || mc.player == null) return;
 
         // Pause screen? bail early (don’t return inside the per-rule loop)
-        if (mc.currentScreen instanceof net.minecraft.client.gui.GuiIngameMenu) return;
+        if (mc.currentScreen instanceof GuiIngameMenu) return;
 
-        final net.minecraft.world.World w = mc.world;
-        final net.minecraft.client.entity.EntityPlayerSP p = mc.player;
-        final net.minecraft.util.math.BlockPos pos = new net.minecraft.util.math.BlockPos(p.posX, p.posY, p.posZ);
-        final int yPlayer = pos.getY();
-        final int dim = w.provider.getDimension();
-        final boolean isRaining = w.isRaining();
-        final boolean isThundering = w.isThundering();
-        final boolean sky = w.canSeeSky(pos);
-        final net.minecraft.world.biome.Biome biome = w.getBiome(pos);
+        final World w = mc.world;
+        final EntityPlayerSP p = mc.player;
+        final BlockPos pos = new BlockPos(p.posX, p.posY, p.posZ);
+        int yPlayer = pos.getY();
+        int dim = w.provider.getDimension();
+        boolean isRaining = w.isRaining();
+        boolean isThundering = w.isThundering();
+        boolean sky = w.canSeeSky(pos);
+        final Biome biome = w.getBiome(pos);
+        Chunk chunk = w.getChunk(pos);
+        IRadiationSource chunkSource = RadiationHelper.getRadiationSource(chunk);
 
         for (ParticleRule r : RULES) {
             // tick gate
@@ -44,9 +69,10 @@ public class ParticlesClientRunner {
             if (r.canSeeSky == ParticleRule.Tri.TRUE && !sky) continue;
             if (r.canSeeSky == ParticleRule.Tri.FALSE && sky) continue;
 
-            // if <current chunk radiation> >= <r.radthreshold then continue;
-            //todo: add chunk radiation threshold, if it's below <r.radthreshold> then do not display particles
-
+            if (chunkSource instanceof ChunkRadiationSource) {
+                boolean rad_chunk = ((ChunkRadiationSource)chunkSource).hasHighRadiation(yPlayer / 16);
+                if (!rad_chunk) continue;
+            }
 
             // weather set (empty == ALL)
             if (!r.weather.isEmpty()) {
@@ -59,7 +85,7 @@ public class ParticlesClientRunner {
 
             // biome/tag
             if (r.biomeTag != null) {
-                if (!net.minecraftforge.common.BiomeDictionary.hasType(biome, r.biomeTag)) continue;
+                if (!BiomeDictionary.hasType(biome, r.biomeTag)) continue;
             } else if (r.biomeSet != null && !r.biomeSet.contains(biome)) continue;
 
             int emitted = 0;
@@ -75,10 +101,10 @@ public class ParticlesClientRunner {
             }
 
             // Block scan within range – switch to sampling for large ranges
-            final int R = r.range;
-            final int vHalf = Math.min(2, Math.max(1, R / 10)); // thin vertical band for perf
-            final int side = 2 * R + 1;
-            final int volume = side * side * (2 * vHalf + 1);
+            int R = r.range;
+            int vHalf = Math.min(2, Math.max(1, R / 10)); // thin vertical band for perf
+            int side = 2 * R + 1;
+            int volume = side * side * (2 * vHalf + 1);
 
             if (volume <= 4096) {
                 // small cube: iterate
@@ -89,11 +115,11 @@ public class ParticlesClientRunner {
                             if (emitted >= r.maxPerRun) break outer;
                             if (RNG.nextFloat() > r.chance) continue;
 
-                            net.minecraft.util.math.BlockPos bp = pos.add(dx, dy, dz);
+                            BlockPos bp = pos.add(dx, dy, dz);
                             if (!w.isBlockLoaded(bp, false)) continue;
 
-                            net.minecraft.block.state.IBlockState s = w.getBlockState(bp);
-                            net.minecraft.block.Block b = s.getBlock();
+                            IBlockState s = w.getBlockState(bp);
+                            Block b = s.getBlock();
 
                             if (!r.blocksAll && matchesBlockFilter(r, s, b)) continue;
 
@@ -117,11 +143,11 @@ public class ParticlesClientRunner {
                     int dz = RNG.nextInt(side) - R;
                     int dy = RNG.nextInt(2 * vHalf + 1) - vHalf;
 
-                    net.minecraft.util.math.BlockPos bp = pos.add(dx, dy, dz);
+                    BlockPos bp = pos.add(dx, dy, dz);
                     if (!w.isBlockLoaded(bp, false)) continue;
 
-                    net.minecraft.block.state.IBlockState s = w.getBlockState(bp);
-                    net.minecraft.block.Block b = s.getBlock();
+                    IBlockState s = w.getBlockState(bp);
+                    Block b = s.getBlock();
 
                     if (!r.blocksAll && matchesBlockFilter(r, s, b)) continue;
 
@@ -137,9 +163,10 @@ public class ParticlesClientRunner {
         }
     }
 
+
     private static boolean matchesBlockFilter(ParticleRule r,
-                                              net.minecraft.block.state.IBlockState s,
-                                              net.minecraft.block.Block b) {
+                                              IBlockState s,
+                                              Block b) {
         boolean ok = false;
 
         // "SOLID" wildcard (set by parser)
@@ -154,15 +181,15 @@ public class ParticlesClientRunner {
         return !ok;
     }
 
-    private static void spawnAroundPlayer(net.minecraft.world.World w, net.minecraft.entity.player.EntityPlayer p, ParticleRule r) {
+    private static void spawnAroundPlayer(World w, EntityPlayer p, ParticleRule r) {
         double x = p.posX + (RNG.nextDouble() - 0.5) * (r.range * 2.0);
         double y = p.posY + r.yOffset + (r.yRandom > 0 ? RNG.nextDouble() * r.yRandom : 0.0);
         double z = p.posZ + (RNG.nextDouble() - 0.5) * (r.range * 2.0);
         spawnOneAt(w, null, x, y, z, r);
     }
 
-    private static void spawnOneAt(net.minecraft.world.World w,
-                                   @javax.annotation.Nullable net.minecraft.block.state.IBlockState s,
+    private static void spawnOneAt(World w,
+                                   @Nullable IBlockState s,
                                    double x, double y, double z, ParticleRule r) {
 
         ParticleRule.ParticleSpec spec = r.particles[RNG.nextInt(r.particles.length)];
@@ -175,9 +202,9 @@ public class ParticlesClientRunner {
             case BLOCK_DUST:
             case BLOCK_CRACK: {
                 int id = (s != null)
-                        ? net.minecraft.block.Block.getStateId(s)
-                        : net.minecraft.block.Block.getStateId(
-                        w.getBlockState(new net.minecraft.util.math.BlockPos(x, y - Math.max(0.0, r.yOffset), z)));
+                        ? Block.getStateId(s)
+                        : Block.getStateId(
+                        w.getBlockState(new BlockPos(x, y - Math.max(0.0, r.yOffset), z)));
                 w.spawnParticle(type, x, y, z, 0.0, r.rise, 0.0, id);
                 break;
             }

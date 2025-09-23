@@ -1,6 +1,7 @@
 package eaglemixins.network;
 
 import eaglemixins.capability.ChunkRadiationSource;
+import eaglemixins.config.ForgeConfigHandler;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.longs.Long2ShortMap;
 import it.unimi.dsi.fastutil.longs.Long2ShortOpenHashMap;
@@ -43,7 +44,7 @@ public class PacketSyncHighRadiation implements IMessage {
                 }
                 short highRadiation = 0;
                 for (int y = 0; y < 16; y++) {
-                    if (((ChunkRadiationSource) radiation).getSubchunkRadiationLevel(y) > 0.001F) {
+                    if (((ChunkRadiationSource) radiation).getSubchunkRadiationLevel(y) > ForgeConfigHandler.server.rad_particle_threshold) {
                         highRadiation |= 1 << y;
                     }
                 }

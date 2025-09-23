@@ -1,7 +1,7 @@
 package eaglemixins.handlers;
 
 import eaglemixins.EagleMixins;
-import eaglemixins.radiation.NbtStackRadiation;
+import eaglemixins.capability.NbtStackRadiation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.AttachCapabilitiesEvent;

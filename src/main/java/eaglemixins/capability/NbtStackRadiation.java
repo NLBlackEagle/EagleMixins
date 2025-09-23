@@ -1,4 +1,4 @@
-package eaglemixins.radiation;
+package eaglemixins.capability;
 
 import nc.capability.radiation.source.IRadiationSource;
 import net.minecraft.item.ItemStack;
