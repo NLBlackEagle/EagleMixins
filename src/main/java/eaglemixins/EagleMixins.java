@@ -96,33 +96,32 @@ public class EagleMixins {
         EntitySpawnListener.init();
         ModStats.init();
 
-        if (event.getSide().isClient()) {
-            installFromConfig();
-            registerIfModsPresent(new String[]{"nuclearcraft"}, ContainerNBTRadHandler.Tooltip.class);
-        }
-
-
         // start at 1 so unregistered messages (ID 0) throw a more obvious exception when received
         int messageId = 1;
 
-        NETWORK.registerMessage(
-                PacketStartTeleportOverlay.Handler.class,
-                PacketStartTeleportOverlay.class,
-                messageId++,
-                Side.CLIENT
-        );
-        NETWORK.registerMessage(
-                PacketStopTeleportOverlay.Handler.class,
-                PacketStopTeleportOverlay.class,
-                messageId++,
-                Side.CLIENT
-        );
-        NETWORK.registerMessage(
-                PacketSyncHighRadiation.Handler.class,
-                PacketSyncHighRadiation.class,
-                messageId++,
-                Side.CLIENT
-        );
+        if (event.getSide().isClient()) {
+            installFromConfig();
+            registerIfModsPresent(new String[]{"nuclearcraft"}, ContainerNBTRadHandler.Tooltip.class);
+
+            NETWORK.registerMessage(
+                    PacketStartTeleportOverlay.Handler.class,
+                    PacketStartTeleportOverlay.class,
+                    messageId++,
+                    Side.CLIENT
+            );
+            NETWORK.registerMessage(
+                    PacketStopTeleportOverlay.Handler.class,
+                    PacketStopTeleportOverlay.class,
+                    messageId++,
+                    Side.CLIENT
+            );
+            NETWORK.registerMessage(
+                    PacketSyncHighRadiation.Handler.class,
+                    PacketSyncHighRadiation.class,
+                    messageId++,
+                    Side.CLIENT
+            );
+        }
     }
 }
 
