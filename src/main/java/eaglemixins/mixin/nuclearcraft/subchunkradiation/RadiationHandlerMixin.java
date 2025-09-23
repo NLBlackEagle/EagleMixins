@@ -33,6 +33,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -172,7 +173,8 @@ public abstract class RadiationHandlerMixin {
                 Double biomeRadiation = RadBiomes.RAD_MAP.get(biomeAtOffset);
                 if (biomeRadiation != null) {
                     for (int subchunk = 0; subchunk < 16; subchunk++) {
-                        if (!chunk.getBlockStorageArray()[subchunk].isEmpty()) {
+                        ExtendedBlockStorage storage = chunk.getBlockStorageArray()[subchunk];
+                        if (storage != null && !storage.isEmpty()) {
                             chunkRadSource.setSubchunk(subchunk);
                             RadiationHelper.addToSourceBuffer(chunkSource, biomeRadiation);
                         }
@@ -229,7 +231,8 @@ public abstract class RadiationHandlerMixin {
                     newLevel = Math.min(newLevel, NCConfig.radiation_chunk_limit);
                 }
                 if (!RadBiomes.LIMIT_MAP.isEmpty() && RadBiomes.LIMIT_MAP.containsKey(biomeAtOffset)) {
-                    if(!chunk.getBlockStorageArray()[subchunk].isEmpty())
+                    ExtendedBlockStorage storage = chunk.getBlockStorageArray()[subchunk];
+                    if (storage != null && !storage.isEmpty())
                         newLevel = Math.min(newLevel, RadBiomes.LIMIT_MAP.get(biomeAtOffset));
                 }
                 if (!RadWorlds.LIMIT_MAP.isEmpty() && RadWorlds.LIMIT_MAP.containsKey(dimension)) {
@@ -302,7 +305,7 @@ public abstract class RadiationHandlerMixin {
     }
 
     @Unique private static BlockPos eaglemixins$newRandomPosInSubChunk(Chunk chunk, int subchunk) {
-        return chunk.getPos().getBlock(RAND.nextInt(16), subchunk * 16 + RAND.nextInt(16), RAND.nextInt(16));
+        return chunk.getPos().getBlock(RAND.nextInt(16), (subchunk << 4) + RAND.nextInt(16), RAND.nextInt(16));
     }
 
     @Unique private static int eaglemixins$currSubchunk = 0;
