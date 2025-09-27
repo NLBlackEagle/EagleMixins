@@ -21,9 +21,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(TileCounter.class)
 @Implements({
         @Interface(iface = ILootContainer.class, prefix = "lootContainer$"),
-        @Interface(iface = IWorldNameable.class, prefix = "worldNameable$")
+        @Interface(iface = IWorldNameable.class, prefix = "worldNameable$"),
 })
-public abstract class TileCounterMixin extends TileEntity {
+public abstract class TileCounterMixin extends TileEntity implements eaglemixins.util.LootTableSetter {
 
     @Unique
     protected ResourceLocation eagleMixins$lootTable;
@@ -31,10 +31,15 @@ public abstract class TileCounterMixin extends TileEntity {
     @Unique
     protected String eagleMixins$customName;
 
+
     public ResourceLocation lootContainer$getLootTable() {
         ResourceLocation lootTable = this.eagleMixins$lootTable;
-        this.eagleMixins$lootTable = null;
         return lootTable;
+    }
+
+    @Override
+    public void eaglemixins$setLootTable(@javax.annotation.Nullable ResourceLocation rl) {
+        this.eagleMixins$lootTable = rl;
     }
 
     public String worldNameable$getName() {

@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.loot.ILootContainer;
@@ -22,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class TileCounterHandler {
+public class TileCounterHandler  {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onRightClick(PlayerInteractEvent.RightClickBlock event) {
@@ -73,13 +74,17 @@ public class TileCounterHandler {
             List<Integer> emptySlots = getEmptySlotsRandomized(counter, random);
             for (ItemStack stack : stacks) {
                 if (emptySlots.isEmpty()) {
-                    return;
+                    break;
                 } else if (stack.isEmpty()) {
                     counter.getItemHandler().insertItem(emptySlots.remove(emptySlots.size() - 1), ItemStack.EMPTY, false);
                 } else {
                     counter.getItemHandler().insertItem(emptySlots.remove(emptySlots.size() - 1), stack, false);
                 }
             }
+            ((eaglemixins.util.LootTableSetter) counter).eaglemixins$setLootTable(null);
+            counter.markDirty();
+            BlockPos p = counter.getPos();
+            world.notifyBlockUpdate(p, world.getBlockState(p), world.getBlockState(p), 3);
         }
     }
 
