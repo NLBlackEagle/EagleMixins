@@ -9,26 +9,27 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-
 @Mixin(ShapelessArmorRadShieldingRecipe.class)
 public abstract class MixinRadShielding {
 
-    @Unique
-    double[] eagleMixins$levels = NCConfig.radiation_shielding_level;
-
     @Inject(method = "matches", at = @At("HEAD"), cancellable = true)
-    public void eagle$allowDamagedArmorUpgradeOnly(InventoryCrafting inv, World worldIn, CallbackInfoReturnable<Boolean> cir) {
+    public void eaglemixins_allowDamagedArmorUpgradeOnly(InventoryCrafting inv, World worldIn, CallbackInfoReturnable<Boolean> cir) {
         ItemStack armor = ItemStack.EMPTY;
         ItemStack shielding = ItemStack.EMPTY;
 
+        int nonEmptyCount = 0;
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack.isEmpty()) continue;
+            nonEmptyCount++;
+            if(nonEmptyCount > 2) {
+                cir.setReturnValue(false);
+                return;
+            }
 
             Item item = stack.getItem();
             if (item instanceof ItemArmor) {
@@ -39,31 +40,19 @@ public abstract class MixinRadShielding {
         }
 
         if (!armor.isEmpty() && !shielding.isEmpty()) {
-            double newResistance;
-            switch (shielding.getMetadata()) {
-                case 2: newResistance = eagleMixins$levels[2]; break;
-                case 1: newResistance = eagleMixins$levels[1]; break;
-                default: newResistance = eagleMixins$levels[0]; break;
-            }
+            double newResistance = NCConfig.radiation_shielding_level[shielding.getMetadata() > 2 ? 0 : shielding.getMetadata()];
 
             double currentResistance = 0.0;
-            if (armor.hasTagCompound()) {
-                assert armor.getTagCompound() != null;
-                if (armor.getTagCompound().hasKey("ncRadiationResistance")) {
-                    currentResistance = armor.getTagCompound().getDouble("ncRadiationResistance");
-                }
-            }
+            NBTTagCompound tags = armor.getTagCompound();
+            if (tags != null)
+                currentResistance = tags.getDouble("ncRadiationResistance"); //0 if not existing
 
-            if (newResistance > currentResistance) {
-                cir.setReturnValue(true); // upgrade is valid
-            } else {
-                cir.setReturnValue(false); // same or downgrade, deny
-            }
+            cir.setReturnValue(newResistance > currentResistance); // upgrade is valid if resistance is increasing
         }
     }
 
     @Inject(method = "getCraftingResult", at = @At("HEAD"), cancellable = true)
-    public void eagle$preserveNBT(InventoryCrafting inv, CallbackInfoReturnable<ItemStack> cir) {
+    public void eaglemixins_preserveNBT(InventoryCrafting inv, CallbackInfoReturnable<ItemStack> cir) {
         ItemStack armor = ItemStack.EMPTY;
         ItemStack shielding = ItemStack.EMPTY;
 
@@ -80,18 +69,7 @@ public abstract class MixinRadShielding {
         }
 
         if (!armor.isEmpty() && !shielding.isEmpty()) {
-            double resistance;
-            switch (shielding.getMetadata()) {
-                case 2:
-                    resistance = eagleMixins$levels[2];
-                    break;
-                case 1:
-                    resistance = eagleMixins$levels[1];
-                    break;
-                default:
-                    resistance = eagleMixins$levels[0];
-                    break;
-            }
+            double resistance = NCConfig.radiation_shielding_level[shielding.getMetadata() > 2 ? 0 : shielding.getMetadata()];
 
             ItemStack result = armor.copy();
             result.setCount(1);
@@ -99,7 +77,6 @@ public abstract class MixinRadShielding {
 
             NBTTagCompound tag;
             if (result.hasTagCompound()) {
-                assert result.getTagCompound() != null;
                 tag = result.getTagCompound().copy();
             } else {
                 tag = new NBTTagCompound();
