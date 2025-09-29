@@ -5,6 +5,7 @@ import nc.capability.radiation.source.IRadiationSource;
 import nc.config.NCConfig;
 import nc.handler.TooltipHandler;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,13 +32,10 @@ public class MixinRadTooltip {
     }
 
     @Unique
-    private static String eagleMixins$formatRads(double v, int n) {
-        double absV = Math.abs(v);
-        if (absV < 1.0) {
-            return String.format(java.util.Locale.ROOT, "%." + n + "f", v); // exactly n decimals
-        }
-        int intDigits = (int) Math.ceil(Math.log10(absV));           // digits before decimal
-        int decimals  = Math.max(0, n - intDigits);                 // keep total sig-digits = n
-        return String.format(java.util.Locale.ROOT, "%." + decimals + "f", v);
+    private static String eagleMixins$formatRads(double rads, int precision) {
+        int orderOfMagnitude = (int) Math.floor(Math.log10(Math.abs(rads))) + 1;
+        int digitsToUse = MathHelper.clamp(precision - orderOfMagnitude, 0 , precision);
+        //use format xx.xx for numbers above 1 and 0.xxxx for numbers below 1 (if n=4)
+        return String.format(java.util.Locale.ROOT, "%." + digitsToUse + "f", rads);
     }
 }
