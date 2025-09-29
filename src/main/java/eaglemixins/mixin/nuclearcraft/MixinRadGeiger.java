@@ -1,36 +1,27 @@
 package eaglemixins.mixin.nuclearcraft;
 
 import nc.radiation.RadiationRenders;
+import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(RadiationRenders.class)
-public class MixinRadGeiger {
+public abstract class MixinRadGeiger {
 
     @Redirect(method = "addRadiationInfo", at = @At(value = "INVOKE", target = "Lnc/radiation/RadiationHelper;radsPrefix(DZ)Ljava/lang/String;"), remap = false)
-    private static String eaglemixins$radsPrefix(double rads, boolean rate) {
+    private String eaglemixins$radsPrefix(double rads, boolean rate) {
         final int n = Math.max(1, nc.config.NCConfig.radiation_unit_prefixes);
         final String num = eagleMixins$formatRads(rads, n);
         return num + " " + (rate ? "Rads/t" : "Rads");
     }
 
     @Unique
-    private static String eagleMixins$formatRads(double v, int n) {
-        if (v == 0.0) {
-            StringBuilder z = new StringBuilder("0.");
-            for (int i = 0; i < n; i++) z.append('0');
-            return z.toString();
-        }
-
-        double abs = Math.abs(v);
-        if (abs < 1.0) {
-            return String.format(java.util.Locale.ROOT, "%." + n + "f", v);
-        }
-
-        int intDigits = (int) Math.floor(Math.log10(abs)) + 1;
-        int decimals = Math.max(0, n - intDigits);
-        return String.format(java.util.Locale.ROOT, "%." + decimals + "f", v);
+    private static String eagleMixins$formatRads(double rads, int precision) {
+        int orderOfMagnitude = (int) Math.ceil(Math.log10(Math.abs(rads)));
+        int digitsToUse = MathHelper.clamp(precision - orderOfMagnitude, 0 , precision);
+        //use format xx.xx for numbers above 1 and 0.xxxx for numbers below 1 (if n=4)
+        return String.format(java.util.Locale.ROOT, "%." + digitsToUse + "f", rads);
     }
 }
