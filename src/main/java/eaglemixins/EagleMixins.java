@@ -41,7 +41,7 @@ public class EagleMixins {
         registerIfModsPresent(new String[]{"firstaid"}, FirstAidRadiationHandler.class);
         registerIfModsPresent(new String[]{"nuclearcraft"}, ContainerNBTRadHandler.class);
         registerIfModsPresent(new String[]{"nuclearcraft"}, ItemRadCapAttacher.class);
-        MinecraftForge.EVENT_BUS.register(BlockNoclipHandler.class);
+        //MinecraftForge.EVENT_BUS.register(BlockNoclipHandler.class); //let ppl suffocate
         MinecraftForge.EVENT_BUS.register(NuclearCraftInteractions.class);
         registerIfModsPresent(new String[]{"srparasites", "playerbosses"}, AbyssalRiftHandler.class);
         MinecraftForge.EVENT_BUS.register(BarrierBlockHandler.class);
