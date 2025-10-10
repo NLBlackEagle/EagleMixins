@@ -62,7 +62,7 @@ public class SRParasitesHandler {
     public static void onLivingUpdate(LivingEvent.LivingUpdateEvent event) {
         EntityLivingBase entity = event.getEntityLiving();
         World world = entity.world;
-        if (world.getTotalWorldTime() % 50 != 23) return;
+        if (world.isRemote || world.getTotalWorldTime() % 50 != 23) return;
         if (entity.dimension != 0 && entity.dimension != 3) return;
 
         if (!(entity instanceof EntityParasiteBase)) return;
