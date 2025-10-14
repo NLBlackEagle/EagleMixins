@@ -2,18 +2,14 @@ package eaglemixins.handlers;
 
 import eaglemixins.attribute.ModAttributes;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class AttributeHandler {
     @SubscribeEvent
-    public void onEntityJoin(EntityJoinWorldEvent event) {
-        if (event.getEntity() instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) event.getEntity();
-            if (player.world.isRemote) return;
-            if (player.getEntityAttribute(ModAttributes.RADIATION_RESISTANCE) == null) {
-                player.getAttributeMap().registerAttribute(ModAttributes.RADIATION_RESISTANCE);
-            }
-        }
+    public static void onEntityConstruction(EntityEvent.EntityConstructing event) {
+        if (event.getEntity().world.isRemote) return;
+        if(event.getEntity() instanceof EntityPlayer)
+            ((EntityPlayer) event.getEntity()).getAttributeMap().registerAttribute(ModAttributes.RADIATION_RESISTANCE);
     }
 }
