@@ -11,7 +11,7 @@ public abstract class ItemGeigerCounterMixin {
 
     @Redirect(
             method = "onItemRightClick",
-            at = @At(value = "INVOKE", target = "Lnc/radiation/RadiationHelper;radsPrefix(DZ)Ljava/lang/String;")
+            at = @At(value = "INVOKE", target = "Lnc/radiation/RadiationHelper;radsPrefix(DZ)Ljava/lang/String;", remap = false)
     )
     private String eaglemixins$radsPrefix(double rads, boolean rate) {
         final int n = Math.max(1, nc.config.NCConfig.radiation_unit_prefixes);
