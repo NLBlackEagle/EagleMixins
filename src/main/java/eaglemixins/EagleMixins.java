@@ -4,12 +4,15 @@ import eaglemixins.client.particles.ParticlesClientRunner;
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.debug.BO3_ChunkGen_Debug;
 import eaglemixins.handlers.*;
+import eaglemixins.init.SpawnInjector;
 import eaglemixins.init.ModStats;
 import eaglemixins.init.RadiationResistanceRegistry;
 import eaglemixins.network.PacketStartTeleportOverlay;
 import eaglemixins.network.PacketStopTeleportOverlay;
 import eaglemixins.network.PacketSyncHighRadiation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -19,9 +22,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import static eaglemixins.config.ForgeConfigHandler.installFromConfig;
-
 
 @Mod(modid = EagleMixins.MODID, version = EagleMixins.VERSION, name = EagleMixins.NAME, dependencies = "required-after:fermiumbooter")
 public class EagleMixins {
@@ -92,11 +92,9 @@ public class EagleMixins {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
 
-        eaglemixins.init.SpawnInjector.inject();
+        SpawnInjector.inject();
 
-        net.minecraftforge.common.config.ConfigManager.sync(
-                EagleMixins.MODID, net.minecraftforge.common.config.Config.Type.INSTANCE
-        );
+        ConfigManager.sync(EagleMixins.MODID, Config.Type.INSTANCE);
 
         BiomeTagHandler.init();
         RadiationResistanceRegistry.reloadFromConfig();
@@ -105,7 +103,7 @@ public class EagleMixins {
         ModStats.init();
 
         if (event.getSide().isClient()) {
-            installFromConfig();
+            ForgeConfigHandler.installFromConfig();
             registerIfModsPresent(new String[]{"nuclearcraft"}, ContainerNBTRadHandler.Tooltip.class);
         }
 

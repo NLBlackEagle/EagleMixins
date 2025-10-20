@@ -1,4 +1,3 @@
-// SpawnInjector.java
 package eaglemixins.init;
 
 import eaglemixins.EagleMixins;
@@ -43,6 +42,4 @@ public final class SpawnInjector {
         biome.getSpawnableList(EnumCreatureType.MONSTER)
                 .add(new Biome.SpawnListEntry((Class<? extends EntityLiving>) cls, weight, min, max));
     }
-
-    private SpawnInjector() {}
 }
