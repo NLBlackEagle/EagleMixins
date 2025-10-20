@@ -36,13 +36,13 @@ public class EagleMixins {
 
 	@Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        MinecraftForge.EVENT_BUS.register(new AttributeHandler());
 
         if(event.getSide() == Side.CLIENT) registerIfModsPresent(new String[]{"nuclearcraft"}, ParticlesClientRunner.class);
 
         registerIfModsPresent(new String[]{"firstaid"}, FirstAidRadiationHandler.class);
         registerIfModsPresent(new String[]{"nuclearcraft"}, ContainerNBTRadHandler.class);
         registerIfModsPresent(new String[]{"nuclearcraft"}, ItemRadCapAttacher.class);
+        registerIfModsPresent(new String[]{"nuclearcraft"}, AttributeHandler.class);
         //MinecraftForge.EVENT_BUS.register(BlockNoclipHandler.class); //let ppl suffocate
         MinecraftForge.EVENT_BUS.register(NuclearCraftInteractions.class);
         registerIfModsPresent(new String[]{"srparasites", "playerbosses"}, AbyssalRiftHandler.class);
