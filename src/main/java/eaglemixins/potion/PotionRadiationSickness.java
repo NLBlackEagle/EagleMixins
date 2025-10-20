@@ -1,13 +1,11 @@
 package eaglemixins.potion;
 
-
 import eaglemixins.util.RadiationDamageSource;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.PotionEffect;
 
 import javax.annotation.Nonnull;
-
 
 public class PotionRadiationSickness extends PotionBase {
 
@@ -38,49 +36,22 @@ public class PotionRadiationSickness extends PotionBase {
     public void performEffect(EntityLivingBase entityLivingBase, int amplifier) {
         if (entityLivingBase.world.isRemote) return;
         if (!(entityLivingBase instanceof EntityPlayer)) { return;}
+        EntityPlayer player = (EntityPlayer) entityLivingBase;
 
-        float currentHealth = entityLivingBase.getHealth();
-        float maxHealth = entityLivingBase.getMaxHealth();
+        if(player.world.getWorldTime() % 20 == 0) {
+            player.addPotionEffect(new PotionEffect(PotionRadiationWeakness.INSTANCE, 40, Math.max(0, amplifier - 1)));
+            if(amplifier > 0) player.addPotionEffect(new PotionEffect(PotionRadiationFatigue.INSTANCE, 40, amplifier - 1));
+        }
+        if(amplifier > 1)
+            player.addExhaustion(0.05F * (float) (amplifier + 1));
+
+        float healthPerc = player.getHealth() / player.getMaxHealth();
 
         switch (amplifier) {
-
-            case 0:
-                entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationWeakness.INSTANCE, 40, 0));
-                break;
-            case 1:
-                entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationWeakness.INSTANCE, 40, 0));
-                entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationFatigue.INSTANCE, 40, 0));
-                break;
-            case 2:
-                entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationWeakness.INSTANCE, 40, amplifier - 1));
-                entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationFatigue.INSTANCE, 40, amplifier - 1));
-                ((EntityPlayer) entityLivingBase).addExhaustion(0.05F * (float) (amplifier + 1));
-
-                if (currentHealth > 0.75f * maxHealth) {
-                    entityLivingBase.attackEntityFrom(RadiationDamageSource.RADIATION, 1.0F);
-                }
-
-                break;
-            case 3:
-                entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationWeakness.INSTANCE, 40, amplifier - 1));
-                entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationFatigue.INSTANCE, 40, amplifier - 1));
-                ((EntityPlayer) entityLivingBase).addExhaustion(0.05F * (float) (amplifier + 1));
-
-                if (currentHealth > 0.5f * maxHealth) {
-                    entityLivingBase.attackEntityFrom(RadiationDamageSource.RADIATION, 1.0F);
-                }
-
-                break;
-
-            default:
-                if (amplifier >= 4) {
-                    entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationWeakness.INSTANCE, 40, amplifier - 1));
-                    entityLivingBase.addPotionEffect(new PotionEffect(PotionRadiationFatigue.INSTANCE, 40, amplifier - 1));
-                    ((EntityPlayer) entityLivingBase).addExhaustion(0.05F * (float) (amplifier + 1));
-                    entityLivingBase.attackEntityFrom(RadiationDamageSource.RADIATION, 1.0F);
-
-                }
-                break;
+            case 0: case 1: break;
+            case 2: if (healthPerc > 0.75F) player.attackEntityFrom(RadiationDamageSource.RADIATION, 1.0F); break;
+            case 3: if (healthPerc > 0.5F) player.attackEntityFrom(RadiationDamageSource.RADIATION, 1.0F); break;
+            default: player.attackEntityFrom(RadiationDamageSource.RADIATION, 1.0F); break;
         }
     }
 }

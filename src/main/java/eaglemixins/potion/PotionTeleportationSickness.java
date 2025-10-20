@@ -1,6 +1,5 @@
 package eaglemixins.potion;
 
-
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
@@ -14,15 +13,14 @@ public class PotionTeleportationSickness extends PotionBase {
     @Override
     public void performEffect(EntityLivingBase entityLivingBase, int amplifier) {
         if (entityLivingBase.world.isRemote) return;
+        if (entityLivingBase.isPotionActive(MobEffects.NAUSEA)) return;
 
         PotionEffect thisEffect = entityLivingBase.getActivePotionEffect(this);
         if (thisEffect != null) {
             int duration = thisEffect.getDuration();
             entityLivingBase.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, duration, amplifier));
-            entityLivingBase.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, duration, amplifier));
         }
     }
-
 
     @Override
     public boolean shouldRender(PotionEffect effect) {
@@ -41,7 +39,6 @@ public class PotionTeleportationSickness extends PotionBase {
 
     @Override
     public boolean isReady(int duration, int amplifier) {
-        return false; // Don't tick — handled in event instead
+        return true;
     }
-
 }
