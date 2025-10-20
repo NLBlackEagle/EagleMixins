@@ -1,6 +1,6 @@
 package eaglemixins.handlers;
 
-import eaglemixins.EagleMixins;
+import eaglemixins.init.RadiationResistanceRegistry;
 import nc.capability.radiation.entity.IEntityRads;
 import nc.radiation.RadiationHelper;
 import net.minecraft.entity.EntityList;
@@ -20,30 +20,15 @@ public class RadiationResistanceApplier {
         ResourceLocation id = EntityList.getKey(living);
         if (id == null) return;
 
-        double resistance = eaglemixins.init.RadiationResistanceRegistry.get(id);
+        double resistance = RadiationResistanceRegistry.get(id);
         if (resistance <= 0.0D) return;
 
         IEntityRads rads = RadiationHelper.getEntityRadiation(living);
         if (rads == null) return;
 
-        // Try common setter names across NC 1.12.2 variants.
-        boolean applied = trySet(rads, "setRadiationResistance", resistance)
-                || trySet(rads, "setInternalRadiationResistance", resistance)
-                || trySet(rads, "setExternalRadiationResistance", resistance);
-
-        if (applied) {
-            EagleMixins.LOGGER.debug("[EagleMixins] Applied resistance {} to {}", resistance, id);
-        } else {
-            EagleMixins.LOGGER.warn("[EagleMixins] RadRes No compatible setter on IEntityRads for {} (tried setRadiationResistance/internal/external)", id);
-        }
-    }
-
-    private static boolean trySet(IEntityRads rads, String method, double value) {
-        try {
-            rads.getClass().getMethod(method, double.class).invoke(rads, value);
-            return true;
-        } catch (ReflectiveOperationException ignored) {
-            return false;
-        }
+        //we're technically overwriting existing internal rad res here
+        // but this system by default is only used by players consuming rad resistant stuff
+        // and this code wouldn't run for players anyway (returns at EntityList.getKey)
+        rads.setInternalRadiationResistance(resistance);
     }
 }

@@ -11,8 +11,6 @@ public final class RadiationResistanceRegistry {
 
     private static final Map<ResourceLocation, Double> MAP = new HashMap<>();
 
-    private RadiationResistanceRegistry() {}
-
     public static void reloadFromConfig() {
         MAP.clear();
 
