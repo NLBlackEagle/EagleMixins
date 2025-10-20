@@ -4,6 +4,7 @@ import eaglemixins.config.ForgeConfigHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
@@ -100,5 +101,17 @@ public class BerianHandler {
             potion.affectEntity(berian, berian, player, 1, 1.0D);
         else
             player.addPotionEffect(new PotionEffect(potion, 200, 1));
+    }
+
+    public static void copyBerianTags(Entity from, Entity to){
+        NBTTagCompound oldData = from.getEntityData();
+        if(oldData.isEmpty() || !oldData.hasKey("BerianCheck")) return;
+        NBTTagCompound newData = to.getEntityData();
+
+        newData.setBoolean("BerianCheck", oldData.getBoolean("BerianCheck"));
+
+        if(oldData.hasKey("Sussyberian")) newData.setBoolean("Sussyberian", oldData.getBoolean("Sussyberian"));
+        else if(oldData.hasKey("Mentalberian")) newData.setBoolean("Mentalberian", oldData.getBoolean("Mentalberian"));
+
     }
 }

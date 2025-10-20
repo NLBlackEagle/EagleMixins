@@ -14,7 +14,9 @@
     "vanilla.ItemStackMixin",
     "vanilla.PlayerBreathMixin",
     "vanilla.RandomValueRangeMixin",
-    "vanilla.TrapdoorLadderMixin"
+    "vanilla.TrapdoorLadderMixin",
+    "vanilla.CureZombieBerians",
+    "vanilla.ZombifyBerians"
   ],
   "injectors": {
     "defaultRequire": 1,
