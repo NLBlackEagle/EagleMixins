@@ -1,6 +1,6 @@
 package eaglemixins.teleport;
 
-import eaglemixins.EagleMixins;
+import eaglemixins.network.PacketHandler;
 import eaglemixins.network.PacketStartTeleportOverlay;
 import eaglemixins.network.PacketStopTeleportOverlay;
 import eaglemixins.potion.PotionTeleportationSickness;
@@ -52,7 +52,7 @@ public final class TeleportUnderneath {
 
         if (!player.world.isRemote && player instanceof EntityPlayerMP) {
             EntityPlayerMP mp = (EntityPlayerMP) player;
-            EagleMixins.NETWORK.sendTo(new PacketStartTeleportOverlay(true), mp);
+            PacketHandler.sendTo(new PacketStartTeleportOverlay(true), mp);
 
             Objects.requireNonNull(mp.getServer()).getPlayerList().transferPlayerToDimension(mp, GLITCH_DIM, new NullPortalTeleporter(glitchWorld));
 
@@ -92,7 +92,7 @@ public final class TeleportUnderneath {
         mp.capabilities.disableDamage = false;
         mp.sendPlayerAbilities();
 
-        EagleMixins.NETWORK.sendTo(new PacketStartTeleportOverlay(true), mp);
+        PacketHandler.sendTo(new PacketStartTeleportOverlay(true), mp);
 
         Objects.requireNonNull(mp.getServer()).getPlayerList().transferPlayerToDimension(mp, originDim, new NullPortalTeleporter(target));
         MinecraftServer server = mp.getServer();
@@ -103,7 +103,7 @@ public final class TeleportUnderneath {
             });
         }
 
-        EagleMixins.NETWORK.sendTo(new PacketStopTeleportOverlay(), mp);
+        PacketHandler.sendTo(new PacketStopTeleportOverlay(), mp);
 
         p.removeTag("glitchEndTime");
         p.removeTag("glitchOriginDim");

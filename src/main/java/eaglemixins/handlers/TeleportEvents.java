@@ -1,8 +1,8 @@
 package eaglemixins.handlers;
 
-import eaglemixins.EagleMixins;
 import eaglemixins.init.ModStats;
 import eaglemixins.network.PacketStartTeleportOverlay;
+import eaglemixins.network.PacketHandler;
 import eaglemixins.potion.PotionTeleportationSickness;
 import eaglemixins.teleport.TeleportData;
 import eaglemixins.teleport.TeleportRegistry;
@@ -57,7 +57,7 @@ public class TeleportEvents {
 
                 if (TeleportService.onePercent(world.rand) && data.receiver != null) {
                     rememberGlitchReturn(player, returnPos);
-                    EagleMixins.NETWORK.sendTo(new PacketStartTeleportOverlay(true), player);
+                    PacketHandler.sendTo(new PacketStartTeleportOverlay(true), player);
                     player.addStat(ModStats.GLITCH_COUNT);
                     TeleportUnderneath.triggerGlitch(player);
                     return;
@@ -70,7 +70,7 @@ public class TeleportEvents {
                             data.receiver.getZ() + 3.5,
                             true);
                 } else if (data.tempReceiver != null) {
-                    EagleMixins.NETWORK.sendTo(new PacketStartTeleportOverlay(false), player);
+                    PacketHandler.sendTo(new PacketStartTeleportOverlay(false), player);
                     BlockPos safe = world.getTopSolidOrLiquidBlock(new BlockPos(data.tempReceiver.getX(), 0, data.tempReceiver.getZ()));
                     teleportLater(player, safe.getX() + 0.5, safe.getY(), safe.getZ() + 0.5, false);
                 } else {
@@ -87,7 +87,7 @@ public class TeleportEvents {
 
                 if (TeleportService.onePercent(world.rand) && data.sender != null) {
                     rememberGlitchReturn(player, returnPos);
-                    EagleMixins.NETWORK.sendTo(new PacketStartTeleportOverlay(true), player);
+                    PacketHandler.sendTo(new PacketStartTeleportOverlay(true), player);
                     player.addStat(ModStats.GLITCH_COUNT);
                     TeleportUnderneath.triggerGlitch(player);
                     return;
@@ -100,7 +100,7 @@ public class TeleportEvents {
                             data.sender.getZ() + 3.5,
                             true);
                 } else {
-                    EagleMixins.NETWORK.sendTo(new PacketStartTeleportOverlay(false), player);
+                    PacketHandler.sendTo(new PacketStartTeleportOverlay(false), player);
                     BlockPos approx = TeleportData.senderApprox(linkId);
                     BlockPos safe = world.getTopSolidOrLiquidBlock(new BlockPos(approx.getX(), 0, approx.getZ()));
                     teleportLater(player, safe.getX() + 0.5, safe.getY() + 0.5, safe.getZ() + 0.5, false);

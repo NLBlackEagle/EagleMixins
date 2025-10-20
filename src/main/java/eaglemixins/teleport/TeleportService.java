@@ -1,7 +1,7 @@
 package eaglemixins.teleport;
 
-import eaglemixins.EagleMixins;
 import eaglemixins.config.ForgeConfigHandler;
+import eaglemixins.network.PacketHandler;
 import eaglemixins.network.PacketStopTeleportOverlay;
 import eaglemixins.potion.PotionTeleportationSickness;
 import net.minecraft.entity.player.EntityPlayer;
@@ -47,7 +47,7 @@ public final class TeleportService {
             }
 
             if (player instanceof EntityPlayerMP) {
-                EagleMixins.NETWORK.sendTo(new PacketStopTeleportOverlay(), (EntityPlayerMP) player);
+                PacketHandler.sendTo(new PacketStopTeleportOverlay(), (EntityPlayerMP) player);
             }
 
             tag.removeTag("justTeleported");

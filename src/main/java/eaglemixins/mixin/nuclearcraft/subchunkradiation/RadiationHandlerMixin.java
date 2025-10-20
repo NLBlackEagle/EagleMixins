@@ -2,9 +2,9 @@ package eaglemixins.mixin.nuclearcraft.subchunkradiation;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import eaglemixins.EagleMixins;
 import eaglemixins.capability.ChunkRadiationSource;
 import eaglemixins.config.ForgeConfigHandler;
+import eaglemixins.network.PacketHandler;
 import eaglemixins.network.PacketSyncHighRadiation;
 import nc.ModCheck;
 import nc.capability.radiation.entity.IEntityRads;
@@ -266,7 +266,7 @@ public abstract class RadiationHandlerMixin {
         // sync high radiation levels
         for (EntityPlayer player : world.playerEntities) {
             if (player.ticksExisted % 60 == 0) {
-                EagleMixins.NETWORK.sendTo(new PacketSyncHighRadiation(player), (EntityPlayerMP) player);
+                PacketHandler.sendTo(new PacketSyncHighRadiation(player), (EntityPlayerMP) player);
             }
         }
     }

@@ -7,9 +7,7 @@ import eaglemixins.handlers.*;
 import eaglemixins.init.SpawnInjector;
 import eaglemixins.init.ModStats;
 import eaglemixins.init.RadiationResistanceRegistry;
-import eaglemixins.network.PacketStartTeleportOverlay;
-import eaglemixins.network.PacketStopTeleportOverlay;
-import eaglemixins.network.PacketSyncHighRadiation;
+import eaglemixins.network.PacketHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
@@ -17,8 +15,6 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,7 +26,6 @@ public class EagleMixins {
     public static final String VERSION = "1.1.6";
     public static final String NAME = "EagleMixins";
     public static final Logger LOGGER = LogManager.getLogger(NAME);
-    public static final SimpleNetworkWrapper NETWORK = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
     public static final boolean debugEnabled = false;
 
     @Mod.Instance(value = MODID)
@@ -107,28 +102,7 @@ public class EagleMixins {
             registerIfModsPresent(new String[]{"nuclearcraft"}, ContainerNBTRadHandler.Tooltip.class);
         }
 
-
-        // start at 1 so unregistered messages (ID 0) throw a more obvious exception when received
-        int messageId = 1;
-
-        NETWORK.registerMessage(
-                PacketStartTeleportOverlay.Handler.class,
-                PacketStartTeleportOverlay.class,
-                messageId++,
-                Side.CLIENT
-        );
-        NETWORK.registerMessage(
-                PacketStopTeleportOverlay.Handler.class,
-                PacketStopTeleportOverlay.class,
-                messageId++,
-                Side.CLIENT
-        );
-        NETWORK.registerMessage(
-                PacketSyncHighRadiation.Handler.class,
-                PacketSyncHighRadiation.class,
-                messageId++,
-                Side.CLIENT
-        );
+        PacketHandler.init();
     }
 }
 
