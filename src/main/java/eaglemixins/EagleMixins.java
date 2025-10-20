@@ -2,6 +2,7 @@ package eaglemixins;
 
 import eaglemixins.client.particles.ParticlesClientRunner;
 import eaglemixins.config.ForgeConfigHandler;
+import eaglemixins.debug.BO3_ChunkGen_Debug;
 import eaglemixins.handlers.*;
 import eaglemixins.init.ModStats;
 import eaglemixins.init.RadiationResistanceRegistry;
@@ -30,6 +31,7 @@ public class EagleMixins {
     public static final String NAME = "EagleMixins";
     public static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final SimpleNetworkWrapper NETWORK = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
+    public static final boolean debugEnabled = false;
 
     @Mod.Instance(value = MODID)
     public static EagleMixins INSTANCE;
@@ -75,6 +77,10 @@ public class EagleMixins {
         registerIfModsPresent(new String[]{"cookingforblockheads"}, TileCounterHandler.class);
         MinecraftForge.EVENT_BUS.register(new TeleportEvents());
         ForgeConfigHandler.refreshDrinkableBlockCache();
+
+        if(debugEnabled) {
+            registerIfModsPresent(new String[]{"openterraingenerator"}, BO3_ChunkGen_Debug.class);
+        }
     }
 
     private static void registerIfModsPresent(String[] dependencies, Class<?> classToRegister){

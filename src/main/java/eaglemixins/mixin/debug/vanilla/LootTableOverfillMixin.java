@@ -1,4 +1,4 @@
-package eaglemixins.mixin.vanilla;
+package eaglemixins.mixin.debug.vanilla;
 
 import eaglemixins.debug.LootDebug;
 import net.minecraft.inventory.IInventory;

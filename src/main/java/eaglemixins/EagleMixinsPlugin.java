@@ -33,6 +33,10 @@ public class EagleMixinsPlugin implements IFMLLoadingPlugin {
 
 		// Temporary FUR 1.4.2 fixes because we are not using 1.5.0+
 		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.furold.json", () -> Loader.isModLoaded("mod_lavacow") && Loader.instance().getIndexedModList().get("mod_lavacow").getVersion().equals("1.4.2"));
+
+		//Debug stuff
+		FermiumRegistryAPI.enqueueMixin(false, "mixins.eaglemixins.debug.vanilla.json", EagleMixins.debugEnabled);
+		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.debug.otg.json", () -> EagleMixins.debugEnabled && Loader.isModLoaded("openterraingenerator"));
 	}
 
 	@Override

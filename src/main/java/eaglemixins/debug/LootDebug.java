@@ -8,5 +8,4 @@ import java.util.WeakHashMap;
 
 public final class LootDebug {
     public static final Map<LootTable, ResourceLocation> LT_IDS = new WeakHashMap<>();
-    private LootDebug() {}
 }
