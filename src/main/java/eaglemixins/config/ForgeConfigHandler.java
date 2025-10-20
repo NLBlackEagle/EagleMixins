@@ -8,10 +8,12 @@ import eaglemixins.config.folders.*;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -205,19 +207,19 @@ public class ForgeConfigHandler {
 				conductivity.reset();
 				irradiated.reset();
 				srparasites.reset();
-				ForgeConfigHandler.refreshDrinkableBlockCache();
-                if (net.minecraftforge.fml.common.FMLCommonHandler.instance().getSide().isClient()) {
-                    installFromConfig();
+				refreshDrinkableBlockCache();
+                if (FMLCommonHandler.instance().getSide().isClient()) {
+                    loadParticleRulesFromConfig();
                 }
 			}
 		}
 	}
 
-    public static void installFromConfig() {
-        String[] lines = eaglemixins.config.ForgeConfigHandler.client.ambientparticlespawnlist;
-        java.util.List<ParticleRule> rules = ParticlesRuleParser.parse(lines);
+    public static void loadParticleRulesFromConfig() {
+        String[] lines = client.ambientparticlespawnlist;
+        List<ParticleRule> rules = ParticlesRuleParser.parse(lines);
         ParticlesClientRunner.install(rules);
-        net.minecraftforge.fml.common.FMLLog.log.info("[EagleMixins][Particles] Installed {} rules", rules.size());
+        EagleMixins.LOGGER.info("[Particles] Installed {} rules", rules.size());
     }
 
 }

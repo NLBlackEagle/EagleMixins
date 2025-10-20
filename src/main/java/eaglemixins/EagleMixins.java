@@ -89,7 +89,7 @@ public class EagleMixins {
 
         SpawnInjector.inject();
 
-        ConfigManager.sync(EagleMixins.MODID, Config.Type.INSTANCE);
+        ConfigManager.sync(EagleMixins.MODID, Config.Type.INSTANCE); //TODO: why? are we writing smth into the config?
 
         BiomeTagHandler.init();
         RadiationResistanceRegistry.reloadFromConfig();
@@ -98,7 +98,7 @@ public class EagleMixins {
         ModStats.init();
 
         if (event.getSide().isClient()) {
-            ForgeConfigHandler.installFromConfig();
+            ForgeConfigHandler.loadParticleRulesFromConfig();
             registerIfModsPresent(new String[]{"nuclearcraft"}, ContainerNBTRadHandler.Tooltip.class);
         }
 
