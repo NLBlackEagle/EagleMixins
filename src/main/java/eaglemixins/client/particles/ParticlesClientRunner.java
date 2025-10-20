@@ -15,18 +15,14 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.relauncher.Side;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-// ParticlesClientRunner.java
-@Mod.EventBusSubscriber(value = Side.CLIENT)
 public class ParticlesClientRunner {
     private static final Random RNG = new Random();
     private static List<ParticleRule> RULES = Collections.emptyList();

@@ -1,5 +1,6 @@
 package eaglemixins;
 
+import eaglemixins.client.particles.ParticlesClientRunner;
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.handlers.*;
 import eaglemixins.init.ModStats;
@@ -37,6 +38,7 @@ public class EagleMixins {
     public void preInit(FMLPreInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(new AttributeHandler());
 
+        if(event.getSide() == Side.CLIENT) registerIfModsPresent(new String[]{"nuclearcraft"}, ParticlesClientRunner.class);
 
         registerIfModsPresent(new String[]{"firstaid"}, FirstAidRadiationHandler.class);
         registerIfModsPresent(new String[]{"nuclearcraft"}, ContainerNBTRadHandler.class);
