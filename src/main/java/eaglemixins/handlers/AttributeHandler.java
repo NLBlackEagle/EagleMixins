@@ -8,8 +8,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class AttributeHandler {
     @SubscribeEvent
     public static void onEntityConstruction(EntityEvent.EntityConstructing event) {
+        if(!(event.getEntity() instanceof EntityPlayer)) return;
+        if (event.getEntity().world == null) return;
         if (event.getEntity().world.isRemote) return;
-        if(event.getEntity() instanceof EntityPlayer)
-            ((EntityPlayer) event.getEntity()).getAttributeMap().registerAttribute(ModAttributes.RADIATION_RESISTANCE);
+        ((EntityPlayer) event.getEntity()).getAttributeMap().registerAttribute(ModAttributes.RADIATION_RESISTANCE);
     }
 }
