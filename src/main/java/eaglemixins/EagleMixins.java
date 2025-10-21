@@ -4,7 +4,6 @@ import eaglemixins.client.particles.ParticlesClientRunner;
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.debug.BO3_ChunkGen_Debug;
 import eaglemixins.handlers.*;
-import eaglemixins.init.SpawnInjector;
 import eaglemixins.init.ModStats;
 import eaglemixins.init.RadiationResistanceRegistry;
 import eaglemixins.network.PacketHandler;
@@ -23,7 +22,7 @@ import org.apache.logging.log4j.Logger;
 public class EagleMixins {
 
     public static final String MODID = "eaglemixins";
-    public static final String VERSION = "1.1.6";
+    public static final String VERSION = "1.1.8";
     public static final String NAME = "EagleMixins";
     public static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final boolean debugEnabled = false;
@@ -86,8 +85,6 @@ public class EagleMixins {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-
-        SpawnInjector.inject();
 
         ConfigManager.sync(EagleMixins.MODID, Config.Type.INSTANCE); //TODO: why? are we writing smth into the config?
 
