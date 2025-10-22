@@ -6,6 +6,7 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -39,20 +40,17 @@ public class IrradiatedParasitesHandler {
         if(entityRadiation == null) return;
         double radsPercent = entityRadiation.getRadsPercentage();
 
-        if (entity.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH) == null) { return;}
-        if (entity.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE) == null) { return;}
-        if (entity.getEntityAttribute(SharedMonsterAttributes.ARMOR) == null) { return;}
+        applyModifier(entity, radsPercent, SharedMonsterAttributes.MAX_HEALTH, HP_UUID, ForgeConfigHandler.irradiated.hpMultiplier, ForgeConfigHandler.irradiated.hpUpperLimit);
+        applyModifier(entity, radsPercent, SharedMonsterAttributes.ATTACK_DAMAGE, DMG_UUID, ForgeConfigHandler.irradiated.dmgMultiplier, ForgeConfigHandler.irradiated.dmgUpperLimit);
+        applyModifier(entity, radsPercent, SharedMonsterAttributes.ARMOR, ARMOR_UUID, ForgeConfigHandler.irradiated.armorMultiplier, ForgeConfigHandler.irradiated.armorUpperLimit);
+    }
 
-        entity.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).removeModifier(HP_UUID);
-        entity.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).removeModifier(DMG_UUID);
-        entity.getEntityAttribute(SharedMonsterAttributes.ARMOR).removeModifier(ARMOR_UUID);
-
-        double hpMod = - Math.min(radsPercent * ForgeConfigHandler.irradiated.hpMultiplier, ForgeConfigHandler.irradiated.hpUpperLimit);
-        double dmgMod = - Math.min(radsPercent * ForgeConfigHandler.irradiated.dmgMultiplier, ForgeConfigHandler.irradiated.dmgUpperLimit);
-        double armorMod = - Math.min(radsPercent * ForgeConfigHandler.irradiated.armorMultiplier, ForgeConfigHandler.irradiated.armorUpperLimit);
-
-        entity.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(new AttributeModifier(HP_UUID, "irradiated hp", hpMod, 2));
-        entity.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).applyModifier(new AttributeModifier(DMG_UUID, "irradiated dmg", dmgMod, 2));
-        entity.getEntityAttribute(SharedMonsterAttributes.ARMOR).applyModifier(new AttributeModifier(ARMOR_UUID, "irradiated armor", armorMod, 2));
+    private static void applyModifier(EntityLivingBase entity, double radsPercent, IAttribute attribute, UUID uuid, double multi, double cap){
+        if (entity.getEntityAttribute(attribute) == null)
+            return;
+        entity.getEntityAttribute(attribute).removeModifier(uuid);
+        double modifierAmount = - Math.min(radsPercent * multi, cap);
+        if(Math.abs(modifierAmount) > 1e-3)
+            entity.getEntityAttribute(attribute).applyModifier(new AttributeModifier(uuid, "irradiated", modifierAmount, 2));
     }
 }
