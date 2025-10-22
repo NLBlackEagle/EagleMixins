@@ -12,6 +12,7 @@
     "MixinBlockFluidClassicRadiation",
     "MixinRadiationHelper",
     "MixinRadShielding",
+    "MixinRadPotionEffects",
     "subchunkradiation.BlockFluidCoriumMixin",
     "subchunkradiation.InitSubchunkRadiationSource",
     "subchunkradiation.RadiationHandlerMixin",
