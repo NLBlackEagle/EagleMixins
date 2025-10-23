@@ -8,6 +8,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.loot.LootContext;
@@ -22,10 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-
-
 public class BlockDropsHandler {
-
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onHarvestDrops(BlockEvent.HarvestDropsEvent event) {
@@ -188,8 +186,8 @@ public class BlockDropsHandler {
                 addDrop(event.getDrops(), harvesterRNG, "notreepunching:rock/stone", 0.3F);
                 addDrop(event.getDrops(), harvesterRNG, "notreepunching:rock/basalt", 0.5F);
                 addDrop(event.getDrops(), harvesterRNG, "notreepunching:rock/basalt", 0.3F);
-                addDrop(event.getDrops(), harvesterRNG, BOPItems.crystal_shard.getDefaultInstance(), 0.3F);
-                addDrop(event.getDrops(), harvesterRNG, BOPItems.crystal_shard.getDefaultInstance(), 0.3F);
+                addDrop(event.getDrops(), harvesterRNG, new ItemStack(BOPItems.crystal_shard), 0.3F);
+                addDrop(event.getDrops(), harvesterRNG, new ItemStack(BOPItems.crystal_shard), 0.3F);
                 addDrop(event.getDrops(), harvesterRNG, "defiledlands:defilement_powder", 0.3F);
                 addDrop(event.getDrops(), harvesterRNG, "defiledlands:defilement_powder", 0.3F);
                 addDrop(event.getDrops(), harvesterRNG, "contenttweaker:steel_nugget", 0.1F);
@@ -221,7 +219,7 @@ public class BlockDropsHandler {
         if (harvestedBlock.equals(BOPBlocks.biome_block)) {
             if(event.isSilkTouching()) return;
             event.getDrops().clear();
-            addDrop(event.getDrops(), harvesterRNG, BOPItems.biome_essence.getDefaultInstance(), 1F);
+            addDrop(event.getDrops(), harvesterRNG, new ItemStack(BOPItems.biome_essence), 1F);
         }
 
         //Deepslate Blocks
@@ -332,7 +330,7 @@ public class BlockDropsHandler {
     private static void addDrop(List<ItemStack> drops, Random rng, ItemStack newDrop, float chance, int min, int max) {
         if (chance >= 1.0F || rng.nextFloat() < chance) {
             if (newDrop != null) {
-                int amount = min + rng.nextInt(max - min + 1); // inclusive
+                int amount = MathHelper.getInt(rng, min, max);
                 ItemStack stack = newDrop.copy();
                 stack.setCount(amount);
                 drops.add(stack);
