@@ -20,6 +20,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import srpmixins.capability.adaptation.CapabilityAdaptationHandler;
+import srpmixins.capability.adaptation.ICapabilityAdaptation;
+import srpmixins.config.SRPMixinsConfigHandler;
 import svenhjol.charm.world.entity.EntityChargedEmerald;
 
 import java.util.ArrayList;
@@ -105,6 +108,13 @@ public class SentientWeaponEvolutionHandler {
                     if (newItem == null) continue;
                     ItemStack newStack = new ItemStack(newItem);
                     newStack.setTagCompound(savedTags);
+                    //Keep adaptation in SRPMixins overhauled system
+                    if(isArmor && SRPMixinsConfigHandler.adaptation.overhaulAdaptation) {
+                        ICapabilityAdaptation adaCap = stack.getCapability(CapabilityAdaptationHandler.CAP_ADAPTATION, null);
+                        ICapabilityAdaptation adaCapNew = newStack.getCapability(CapabilityAdaptationHandler.CAP_ADAPTATION, null);
+                        if (adaCap != null && adaCapNew != null) adaCapNew.copyAdaptationsFrom(adaCap);
+                    }
+
                     if (!isMeleeWeapon)
                         newStack.getTagCompound().getCompoundTag("display").removeTag("LocLore");
 
