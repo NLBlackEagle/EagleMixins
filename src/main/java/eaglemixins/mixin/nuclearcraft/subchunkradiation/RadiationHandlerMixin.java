@@ -157,7 +157,6 @@ public abstract class RadiationHandlerMixin {
             TileEntity[] tileArray = tileCollection.toArray(new TileEntity[0]);
 
             for (TileEntity tile : tileArray) {
-                if(tile instanceof ILootContainer && ((ILootContainer) tile).getLootTable() != null) continue;
                 chunkRadSource.setSubchunk(tile.getPos());
                 RadiationHelper.transferRadiationFromProviderToChunkBuffer(tile, tile_side, chunkSource);
             }

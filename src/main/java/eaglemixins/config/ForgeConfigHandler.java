@@ -148,6 +148,12 @@ public class ForgeConfigHandler {
 		@Config.Name("Fix Biomes O Plenty Door Duplication")
 		@Config.Comment("Prevents Biomes O Plenty doors from dropping twice when broken")
 		public static boolean fixBOPDoorDupe = true;
+
+		@Config.Name("Unopened containers with the given loot tables will radiate the given amount of radiation into their subchunk")
+		@Config.Comment("Radiating Loot Tables")
+		public Map<String, Double> lootTableRadiation = new HashMap<String, Double>(){{
+			put("dregora:ruins/nuclear", 0.1); //value is average of such a loot table
+		}};
 	}
 
 	public static class ClientConfig {
