@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "eaglemixins.mixin.cookingforblockheads",
+  "refmap": "mixins.eaglemixins.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "mixins": [
+    "TileCounterMixin_CustomName"
+  ],
+  "injectors": {
+    "maxShiftBy": 10
+  },
+  "client": [
+    "GuiCounterMixin"
+  ]
+}

@@ -6,17 +6,9 @@
   "target": "@env(DEFAULT)",
   "minVersion": "0.8",
   "mixins": [
-    "vanilla.BlockObserverMixin",
     "vanilla.EntityAreaEffectCloudMixin",
     "vanilla.EntityPotionMixin",
-    "vanilla.GuiIngameForgeMixin",
-    "vanilla.ItemPotionMixin",
-    "vanilla.ItemStackMixin",
-    "vanilla.PlayerBreathMixin",
-    "vanilla.RandomValueRangeMixin",
-    "vanilla.TrapdoorLadderMixin",
-    "vanilla.CureZombieBerians",
-    "vanilla.ZombifyBerians"
+    "vanilla.ItemPotionMixin"
   ],
   "injectors": {
     "defaultRequire": 1,

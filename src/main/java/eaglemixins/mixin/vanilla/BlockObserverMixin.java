@@ -1,6 +1,5 @@
 package eaglemixins.mixin.vanilla;
 
-import eaglemixins.config.ForgeConfigHandler;
 import net.minecraft.block.BlockObserver;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
@@ -25,7 +24,6 @@ public abstract class BlockObserverMixin {
 			cancellable = true
 	)
 	private void eagleMixins_vanillaBlockObserver_onBlockAdded(World world, BlockPos pos, IBlockState state, CallbackInfo ci) {
-		if(!ForgeConfigHandler.server.patchObserversTickingOnWorldGen) return;
 		if(!world.isRemote) {
 			if(state.getValue(BlockObserver.POWERED) && !world.isUpdateScheduled(pos, ((BlockObserver)(Object)this))) {
 				IBlockState unpowered = state.withProperty(BlockObserver.POWERED, false);

@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "eaglemixins.mixin.reskillable",
+  "refmap": "mixins.eaglemixins.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "mixins": [
+    "LevelLockHandlerMixin"
+  ],
+  "injectors": {
+    "maxShiftBy": 10
+  }
+}

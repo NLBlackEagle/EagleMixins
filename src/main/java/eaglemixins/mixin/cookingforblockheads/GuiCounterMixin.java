@@ -1,36 +1,23 @@
 package eaglemixins.mixin.cookingforblockheads;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.blay09.mods.cookingforblockheads.client.gui.GuiCounter;
 import net.blay09.mods.cookingforblockheads.tile.TileCounter;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.inventory.Container;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GuiCounter.class)
-public abstract class GuiCounterMixin extends GuiContainer {
+public abstract class GuiCounterMixin {
+    @Final @Shadow(remap = false) private TileCounter tileCounter;
 
-    @Final
-    @Shadow(remap = false)
-    private TileCounter tileCounter;
-
-    public GuiCounterMixin(Container inventorySlotsIn) {
-        super(inventorySlotsIn);
-    }
-
-    @Inject(
+    @WrapOperation(
             method = "drawGuiContainerForegroundLayer",
-            at = @At("HEAD"),
-            cancellable = true
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resources/I18n;format(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;", ordinal = 0)
     )
-    public void drawGuiContainerForegroundLayer(int mouseX, int mouseY, CallbackInfo ci) {
-        this.fontRenderer.drawString(this.tileCounter.getDisplayName().getUnformattedText(), 8, 6, 4210752);
-        this.fontRenderer.drawString(I18n.format("container.inventory"), 8, this.ySize - 96 + 2, 4210752);
-        ci.cancel();
+    public String eaglemixins_drawGuiContainerForegroundLayer(String translateKey, Object[] parameters, Operation<String> original) {
+        return this.tileCounter.getDisplayName().getUnformattedText();
     }
 }

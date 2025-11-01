@@ -61,9 +61,9 @@ public class EagleMixins {
         MinecraftForge.EVENT_BUS.register(PotionEffectsByFluidsHandler.class);
         registerIfModsPresent(new String[]{"nuclearcraft"},RadiationResistanceApplier.class);
         MinecraftForge.EVENT_BUS.register(RandomTippedArrowHandler.class);
-        MinecraftForge.EVENT_BUS.register(RandomTpCancelHandler.class);
+        if(ForgeConfigHandler.mixintoggles.punishAbyssalTeleportation) MinecraftForge.EVENT_BUS.register(RandomTpCancelHandler.class);
         MinecraftForge.EVENT_BUS.register(RecallFlightCancelHandler.class);
-        registerIfModsPresent(new String[]{"srparasites", "charm", "srpmixins"}, SentientWeaponEvolutionHandler.class);
+        if(ForgeConfigHandler.mixintoggles.customSRPGearEvolution) registerIfModsPresent(new String[]{"srparasites", "charm", "srpmixins"}, SentientWeaponEvolutionHandler.class);
         registerIfModsPresent(new String[]{"srparasites", "biomesoplenty"}, SRParasitesHandler.class);
 
         MinecraftForge.EVENT_BUS.register(PotionRadiationFatigueHandler.class);

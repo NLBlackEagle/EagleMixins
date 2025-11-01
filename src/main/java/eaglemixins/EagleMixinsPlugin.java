@@ -12,24 +12,6 @@ public class EagleMixinsPlugin implements IFMLLoadingPlugin {
 
 	public EagleMixinsPlugin() {
 		MixinBootstrap.init();
-		//False for Vanilla/Coremod mixins, true for regular mod mixins
-		FermiumRegistryAPI.enqueueMixin(false, "mixins.eaglemixins.vanilla.json");
-		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.reskillable.json", () -> Loader.isModLoaded("reskillable"));
-		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.simpledifficulty.json", () -> Loader.isModLoaded("simpledifficulty"));
-		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.legendarytooltips.json", () -> Loader.isModLoaded("legendarytooltips"));
-		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.nuclearcraft.json", () -> Loader.isModLoaded("nuclearcraft"));
-		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.rlartifacts.json", () -> Loader.isModLoaded("artifacts"));
-		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.srparasites.json", () -> Loader.isModLoaded("srparasites"));
-		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.fishsundeadrising.json", () -> Loader.isModLoaded("mod_lavacow"));
-		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.loadingscreens.json", () -> Loader.isModLoaded("loadingscreens"));
-		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.bettersurvival.json", () -> Loader.isModLoaded("mujmajnkraftsbettersurvival"));
-		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.somanyenchantments.json", () -> Loader.isModLoaded("somanyenchantments"));
-		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.cookingforblockheads.json", () -> Loader.isModLoaded("cookingforblockheads"));
-		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.playerbosses.json", () -> Loader.isModLoaded("playerbosses"));
-		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.dregorarl.json", () -> Loader.isModLoaded("dregorarl"));
-		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.otg.json", () -> Loader.isModLoaded("openterraingenerator"));
-		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.vc.json", () -> Loader.isModLoaded("variedcommodities"));
-		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.xat.json", () -> Loader.isModLoaded("xat"));
 
 		// Temporary FUR 1.4.2 fixes because we are not using 1.5.0+
 		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.furold.json", () -> Loader.isModLoaded("mod_lavacow") && Loader.instance().getIndexedModList().get("mod_lavacow").getVersion().equals("1.4.2"));

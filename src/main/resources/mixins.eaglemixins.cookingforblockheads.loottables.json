@@ -1,12 +1,12 @@
 {
   "required": true,
-  "package": "eaglemixins.mixin.somanyenchantments",
+  "package": "eaglemixins.mixin.cookingforblockheads",
   "refmap": "mixins.eaglemixins.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "target": "@env(DEFAULT)",
   "minVersion": "0.8",
   "mixins": [
-    "EnchantmentsUtilityMixin"
+    "TileCounterMixin_LootTables"
   ],
   "injectors": {
     "maxShiftBy": 10

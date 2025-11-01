@@ -13,7 +13,7 @@ public abstract class LegendaryTooltipsMixin {
 
 
     @Inject(method = "itemFrameColors", at = @At("HEAD"), cancellable = true, remap = false)
-    private static void eagleMixins$itemFrameColors(ItemStack stack, Integer[] defaults, CallbackInfoReturnable<Integer[]> cir) {
+    private static void eagleMixins_itemFrameColors(ItemStack stack, Integer[] defaults, CallbackInfoReturnable<Integer[]> cir) {
         if (stack == null || stack.isEmpty()) {
             cir.setReturnValue(defaults);
             return;

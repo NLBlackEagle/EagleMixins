@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "package": "eaglemixins.mixin.nuclearcraft.subchunkradiation",
+  "refmap": "mixins.eaglemixins.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "mixins": [
+    "BlockFluidCoriumMixin",
+    "InitSubchunkRadiationSource",
+    "RadiationHandlerMixin",
+    "RadiationHelperMixin",
+    "TileFissionControllerMixin",
+    "TileGeigerCounterMixin",
+    "TileRadiationScrubberMixin",
+    "TileSaltFissionVesselMixin"
+  ],
+  "injectors": {
+    "maxShiftBy": 10
+  }
+}

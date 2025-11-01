@@ -4,6 +4,7 @@ import com.dhanantry.scapeandrunparasites.entity.ai.misc.EntityParasiteBase;
 import com.dhanantry.scapeandrunparasites.item.tool.WeaponToolArmorBase;
 import com.dhanantry.scapeandrunparasites.item.tool.WeaponToolMeleeBase;
 import com.dhanantry.scapeandrunparasites.item.tool.WeaponToolRangeBase;
+import com.dhanantry.scapeandrunparasites.util.config.SRPConfig;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
@@ -53,11 +54,9 @@ public class SentientWeaponEvolutionHandler {
 
         //Count equipped srpGear
         int srpGearEquipped = 0;
-        for(ItemStack stack : player.getEquipmentAndArmor()){
-            ResourceLocation resourceLocation = stack.getItem().getRegistryName();
-            if(resourceLocation != null && isSRPLivingGear(stack.getItem()))
+        for(ItemStack stack : player.getEquipmentAndArmor())
+            if(isSRPLivingGear(stack.getItem()))
                 srpGearEquipped++;
-        }
         int dividedHealth = (int) (Math.floor(victim.getMaxHealth()) / srpGearEquipped);
 
         //Increase srpkills tag and evolve to sentient
@@ -69,8 +68,6 @@ public class SentientWeaponEvolutionHandler {
                 //Setup NBT tags if living item is fresh
                 if (!stack.hasTagCompound())
                     stack.setTagCompound(new NBTTagCompound());
-                if(!stack.getTagCompound().hasKey(srpkillsKey))
-                    stack.getTagCompound().setInteger(srpkillsKey, 0);
 
                 //Set srpkills tag
                 int currentKills = stack.getTagCompound().getInteger(srpkillsKey) + dividedHealth;
@@ -88,9 +85,10 @@ public class SentientWeaponEvolutionHandler {
                 }
 
                 //Evolve
-                if (currentKills > 50000) {
+                if (currentKills > SRPConfig.weapon_livingSentient_HP_needed) {
                     boolean isArmor = stack.getItem() instanceof ItemArmor;
 
+                    //Lightning strike(s)
                     for(int i = 0; i < (isArmor ? 10 : 1); i++) {
                         EntityChargedEmerald lightningBolt = new EntityChargedEmerald(player.world, player);
                         BlockPos randPos = player.getPosition();
@@ -100,14 +98,16 @@ public class SentientWeaponEvolutionHandler {
                         player.world.spawnEntity(lightningBolt);
                     }
 
-                    NBTTagCompound savedTags = stack.getTagCompound();
-
+                    //Get respective sentient gear
                     String itemId = stack.getItem().getRegistryName().getPath(); //!=null already checked in isSRPLivingGear()
-
                     Item newItem = Item.getByNameOrId("srparasites:" + itemId + "_sentient");
                     if (newItem == null) continue;
                     ItemStack newStack = new ItemStack(newItem);
+
+                    //Keep NBT (enchants, repair cost, etc)
+                    NBTTagCompound savedTags = stack.getTagCompound();
                     newStack.setTagCompound(savedTags);
+
                     //Keep adaptation in SRPMixins overhauled system
                     if(isArmor && SRPMixinsConfigHandler.adaptation.overhaulAdaptation) {
                         ICapabilityAdaptation adaCap = stack.getCapability(CapabilityAdaptationHandler.CAP_ADAPTATION, null);

@@ -1,6 +1,7 @@
 package eaglemixins.handlers;
 
 
+import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.util.Ref;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityEnderPearl;
@@ -18,8 +19,8 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class RandomTpCancelHandler {
 
@@ -29,6 +30,7 @@ public class RandomTpCancelHandler {
         if(entity.world.isRemote) return;
         if (!(entity instanceof EntityPlayer)) return;
         if (event.getSource() != DamageSource.IN_WALL) return;
+        if (!tpMethods.contains("wallDmg")) return;
         if (!Ref.entityIsInAbyssalRift(entity) && !Ref.entityIsInAbyssalGate(entity)) return;
 
         applyTpCooldownDebuffs((EntityPlayer) entity);
@@ -41,6 +43,7 @@ public class RandomTpCancelHandler {
         if(event.getThrowable().world.isRemote) return;
         EntityLivingBase entity = event.getThrowable().getThrower();
         if (!(entity instanceof EntityPlayer)) return;
+        if (!tpMethods.contains("enderPearl")) return;
         if (!Ref.entityIsInAbyssalRift(entity) && !Ref.entityIsInAbyssalGate(entity)) return;
 
         applyTpCooldownDebuffs((EntityPlayer) entity);
@@ -53,6 +56,7 @@ public class RandomTpCancelHandler {
         if(entity.world.isRemote) return;
         if (!(entity instanceof EntityPlayer)) return;
         if (!(event.getItem().getItem() instanceof ItemChorusFruit)) return;
+        if (!tpMethods.contains("chorusFruit")) return;
         if (!Ref.entityIsInAbyssalRift(entity) && !Ref.entityIsInAbyssalGate(entity)) return;
 
         applyTpCooldownDebuffs((EntityPlayer) entity);
@@ -70,17 +74,14 @@ public class RandomTpCancelHandler {
             applyTpCooldownDebuffs((EntityPlayer) entity);
     }
 
-    private static ArrayList<Potion> tpPotions = null;
-    private static final ArrayList<String> tpPotionStrings = new ArrayList<>(Arrays.asList(
-            "potioncore:teleport",
-            "potioncore:strong_teleport",
-            "mujmajnkraftsbettersurvival:warp"
-    ));
+    private static Set<Potion> tpPotions = null;
+    public static Set<String> tpMethods = null;
 
     public static boolean isTpPotion(Potion potion) {
         if (tpPotions == null) {
-            tpPotions = new ArrayList<>();
-            for (String potionString : tpPotionStrings) {
+            tpPotions = new HashSet<>();
+            for (String potionString : ForgeConfigHandler.abyssal.randomTpPots) {
+                if(!potionString.contains(":")) continue;
                 ResourceLocation location = new ResourceLocation(potionString);
                 if (ForgeRegistries.POTIONS.containsKey(location))
                     tpPotions.add(ForgeRegistries.POTIONS.getValue(location));
@@ -89,8 +90,8 @@ public class RandomTpCancelHandler {
         return tpPotions.contains(potion);
     }
 
-    private static ArrayList<Potion> tpCooldownPotions = null;
-    private static final ArrayList<String> tpCooldownPotionStrings = new ArrayList<>(Arrays.asList(
+    private static List<Potion> tpCooldownPotions = null;
+    private static final List<String> tpCooldownPotionStrings = new ArrayList<>(Arrays.asList(
             "potioncore:potion_sickness",
             "potioncore:teleport_surface"
     ));
@@ -131,5 +132,12 @@ public class RandomTpCancelHandler {
                 player.addPotionEffect(new PotionEffect(tpCooldownPotions.get(1), 1, 0));
 
         }
+    }
+
+    public static void refreshConfig(){
+        tpPotions = null;
+        tpMethods = Arrays.stream(ForgeConfigHandler.abyssal.randomTpPots)
+                .filter(s -> !s.contains(":"))
+                .collect(Collectors.toSet());
     }
 }

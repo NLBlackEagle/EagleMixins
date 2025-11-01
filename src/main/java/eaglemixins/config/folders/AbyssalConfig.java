@@ -1,5 +1,6 @@
 package eaglemixins.config.folders;
 
+import eaglemixins.handlers.RandomTpCancelHandler;
 import net.minecraftforge.common.config.Config;
 
 public class AbyssalConfig {
@@ -38,4 +39,20 @@ public class AbyssalConfig {
     @Config.Name("Abyssal Rift Parasite Stat Multi: Armor")
     @Config.RequiresMcRestart
     public float abyssalArmorModifier = 1;
+
+    @Config.Comment("Potions and other teleportation methods that will be punished when being applied on a player in Abyssal Rift")
+    @Config.Name("Abyssal Rift Teleportation Methods")
+    public String[] randomTpPots = {
+            "potioncore:teleport",
+            "potioncore:strong_teleport",
+            "mujmajnkraftsbettersurvival:warp",
+            "enderPearl",
+            "chorusFruit",
+            "wallDmg",
+            "enderCrown"
+    };
+
+    public void reset(){
+        RandomTpCancelHandler.refreshConfig();
+    }
 }

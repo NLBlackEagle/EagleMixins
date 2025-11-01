@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "package": "eaglemixins.mixin.otg",
+  "refmap": "mixins.eaglemixins.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "mixins": [
+    "GuiHandlerMixin"
+  ],
+  "client": [
+    "OTGGuiDimensionListMixin",
+    "OTGGuiDimensionSettingsListMixin",
+    "OTGGuiPresetListMixin",
+    "OTGGuiWorldSelectionMixin"
+  ],
+  "injectors": {
+    "maxShiftBy": 10
+  }
+}

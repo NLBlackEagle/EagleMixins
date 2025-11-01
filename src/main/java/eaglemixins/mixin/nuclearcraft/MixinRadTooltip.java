@@ -16,7 +16,7 @@ import java.util.List;
 public class MixinRadTooltip {
 
     @ModifyExpressionValue(method = "addRadiationTooltip", at = @At(value = "INVOKE", target="Lnc/radiation/RadiationHelper;getRadiationSource(Lnet/minecraftforge/common/capabilities/ICapabilityProvider;)Lnc/capability/radiation/source/IRadiationSource;"), remap = false)
-    private static IRadiationSource eaglemixins$filterLow(IRadiationSource stackRadiation, List<String> tooltip, ItemStack stack) {
+    private static IRadiationSource eaglemixins_filterLow(IRadiationSource stackRadiation, List<String> tooltip, ItemStack stack) {
         if (stackRadiation != null && stackRadiation.getRadiationLevel() * stack.getCount() <= NCConfig.radiation_lowest_rate) {
             return null;
         }
@@ -24,7 +24,7 @@ public class MixinRadTooltip {
     }
 
     @Redirect(method = "addRadiationTooltip", at = @At(value = "INVOKE", target = "Lnc/radiation/RadiationHelper;radsPrefix(DZ)Ljava/lang/String;"), remap = false)
-    private static String eaglemixins$radsPrefix(double rads, boolean rate, List<String> tooltip, ItemStack stack) {
+    private static String eaglemixins_radsPrefix(double rads, boolean rate, List<String> tooltip, ItemStack stack) {
         final int n = Math.max(1, NCConfig.radiation_unit_prefixes);
         final String num = RadsFormatter.formatRads(rads, n);
         return num + " " + (rate ? "Rads/t" : "Rads");

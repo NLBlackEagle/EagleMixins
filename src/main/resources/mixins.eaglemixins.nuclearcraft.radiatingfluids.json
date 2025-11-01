@@ -1,12 +1,12 @@
 {
   "required": true,
-  "package": "eaglemixins.mixin.reskillable",
+  "package": "eaglemixins.mixin.nuclearcraft",
   "refmap": "mixins.eaglemixins.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "target": "@env(DEFAULT)",
   "minVersion": "0.8",
   "mixins": [
-    "MixinReskillableInteractions"
+    "MixinBlockFluidClassicRadiation"
   ],
   "injectors": {
     "maxShiftBy": 10

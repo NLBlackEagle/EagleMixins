@@ -15,7 +15,7 @@ public class ModEventHandlerMixin {
     )
     public int eagleMixins_furModEventHandler_getAmplifier(PotionEffect instance){
         if(!instance.getPotion().equals(ModMobEffects.INFESTED)) return instance.getAmplifier();
-        //Limit infested effect to lvl 10
+        //Limit infested effect to lvl 5
         return Math.min(instance.getAmplifier(),4);
     }
 }

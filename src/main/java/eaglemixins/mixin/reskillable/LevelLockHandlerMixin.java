@@ -8,21 +8,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-
 @Mixin(LevelLockHandler.class)
-public class MixinReskillableInteractions {
+public class LevelLockHandlerMixin {
 
     @Inject(method = "rightClickBlock", at = @At("HEAD"), cancellable = true, remap = false)
-    private static void rightClickBlockEagleMixins(PlayerInteractEvent.RightClickBlock event, CallbackInfo ci) {
+    private static void eagleMixins_allowRightClickBlockForNCBlocks(PlayerInteractEvent.RightClickBlock event, CallbackInfo ci) {
         ResourceLocation id = event.getWorld().getBlockState(event.getPos()).getBlock().getRegistryName();
-
-        if (id != null) {
-            if ("nuclearcraft".equals(id.getNamespace())) {
-
-                if (event.isCanceled()) event.setCanceled(false);
-
-                ci.cancel();
-            }
-        }
+        if (id != null && "nuclearcraft".equals(id.getNamespace())) ci.cancel();
     }
 }

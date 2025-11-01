@@ -7,15 +7,7 @@
   "minVersion": "0.8",
   "mixins": [
     "BO3BlockCheckPerformance",
-    "BO3ConfigAccessor",
-    "CacheBlockFunctionsForBO3Config",
-    "GuiHandlerMixin"
-  ],
-  "client": [
-    "OTGGuiDimensionListMixin",
-    "OTGGuiDimensionSettingsListMixin",
-    "OTGGuiPresetListMixin",
-    "OTGGuiWorldSelectionMixin"
+    "BO3ConfigAccessor"
   ],
   "injectors": {
     "maxShiftBy": 10

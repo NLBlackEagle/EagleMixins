@@ -2,6 +2,8 @@ package eaglemixins.mixin.vanilla;
 
 import com.google.common.collect.Multimap;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import eaglemixins.config.ForgeConfigHandler;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -30,18 +32,18 @@ public abstract class ItemStackMixin {
             method = "getAttributeModifiers",
             at = @At("RETURN")
     )
-    Multimap<String, AttributeModifier> eagleMixins_itemStack_getAttributeModifiers(Multimap<String, AttributeModifier> map, @Local(argsOnly = true) EntityEquipmentSlot equipmentSlot) {
+    private Multimap<String, AttributeModifier> eagleMixins_itemStack_getAttributeModifiers(Multimap<String, AttributeModifier> map, @Local(argsOnly = true) EntityEquipmentSlot equipmentSlot) {
         if (this.hasTagCompound() && this.stackTagCompound.hasKey("AttributeModifiers", 9))
             map.putAll(this.getItem().getAttributeModifiers(equipmentSlot, (ItemStack) (Object) this));
         return map;
     }
 
-    @Redirect(
+    @WrapOperation(
             method = "writeToNBT",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/NBTTagCompound;setTag(Ljava/lang/String;Lnet/minecraft/nbt/NBTBase;)V")
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/NBTTagCompound;setTag(Ljava/lang/String;Lnet/minecraft/nbt/NBTBase;)V", ordinal = 0)
     )
-    void eagleMixins_itemStack_writeToNBT(NBTTagCompound tagCompound, String key, NBTBase value) {
-        tagCompound.setTag(key, value);  //Default behavior
+    private void eagleMixins_itemStack_writeToNBT(NBTTagCompound tagCompound, String key, NBTBase value, Operation<Void> original) {
+        original.call(tagCompound, key, value);  //Default behavior
         if (!ForgeConfigHandler.server.removeOldAttributes) return;
         if (!key.equals("tag")) return;
         NBTTagCompound stackCompound = (NBTTagCompound) value;
@@ -55,7 +57,7 @@ public abstract class ItemStackMixin {
         if (vanillaAtkDmg != null) attrModNBTList = eagleMixins$removeOldAttribute(attrModNBTList, "generic.attackDamage", "attackDamage", vanillaAtkDmg + 1.0);
         if (vanillaAtkSpd != null) attrModNBTList = eagleMixins$removeOldAttribute(attrModNBTList, "generic.attackSpeed", "attackSpeed", vanillaAtkSpd + 4.0);
         stackCompound.setTag("AttributeModifiers", attrModNBTList);
-        tagCompound.setTag(key, stackCompound);
+        original.call(tagCompound, key, stackCompound);
         this.stackTagCompound = stackCompound;
     }
 

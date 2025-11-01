@@ -12,16 +12,10 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 @Config(modid = EagleMixins.MODID)
 public class ForgeConfigHandler {
-
-	@Config.Ignore
-	public static final Set<String> cachedDrinkableBlocks = new HashSet<>();
 
 	@Config.Comment("Server-Side Options")
 	@Config.Name("Server Options")
@@ -55,6 +49,11 @@ public class ForgeConfigHandler {
 	@Config.Name("SRParasites Options")
 	public static final SRParasiteConfig srparasites = new SRParasiteConfig();
 
+	@Config.Comment("Disable to not modify any code")
+	@Config.Name("Mixin Toggles")
+	@SuppressWarnings("unused")
+	public static final MixinToggleConfig mixintoggles = new MixinToggleConfig();
+
 	public static class ServerConfig {
 
         @Config.Comment("Threshold at which point radiation becomes visible through particles configured under client config section.")
@@ -67,6 +66,7 @@ public class ForgeConfigHandler {
 
 		@Config.Comment("Chance of teleporting player to Underneath for exotic teleportation (through the concrete teleporters)")
 		@Config.Name("Teleportation Underneath chance 0 to 100")
+		@Config.RangeInt(min = 0, max = 100)
 		public int teleportation_chance = 1;
 
 		@Config.Comment({
@@ -81,7 +81,7 @@ public class ForgeConfigHandler {
 				"iceandfire:lightningdragon=1000.0"
 		};
 
-		@Config.Comment("Add Blocks you can drink from, like water")
+		@Config.Comment("Add Blocks you can drink from, will be treated like water blocks")
 		@Config.Name("Additional Water Blocks:")
 		public String[] waterblockListdrinkables = {
 				"cookingforblockheads:sink"
@@ -141,10 +141,6 @@ public class ForgeConfigHandler {
 		@Config.RequiresMcRestart
 		public Integer[] undergroundMimicDimensions = {0};
 
-		@Config.Comment("Prevents Observers from ticking a redstone pulse on world gen")
-		@Config.Name("Patch Observer Ticking")
-		public boolean patchObserversTickingOnWorldGen = false;
-
 		@Config.Comment("Removes old item attributes (atk dmg and atk speed) from 1.0.4")
 		@Config.Name("Remove old Attribute Modifiers")
 		public boolean removeOldAttributes = true;
@@ -152,7 +148,6 @@ public class ForgeConfigHandler {
 		@Config.Name("Fix Biomes O Plenty Door Duplication")
 		@Config.Comment("Prevents Biomes O Plenty doors from dropping twice when broken")
 		public static boolean fixBOPDoorDupe = true;
-
 	}
 
 	public static class ClientConfig {
@@ -185,14 +180,11 @@ public class ForgeConfigHandler {
         };
 	}
 
+	@Config.Ignore public static final Set<String> cachedDrinkableBlocks = new HashSet<>();
+
 	public static void refreshDrinkableBlockCache() {
 		cachedDrinkableBlocks.clear();
-
-		if (server.waterblockListdrinkables != null) {
-			for (String s : server.waterblockListdrinkables) {
-				cachedDrinkableBlocks.add(s.toLowerCase(Locale.ROOT));
-			}
-		}
+		cachedDrinkableBlocks.addAll(Arrays.asList(server.waterblockListdrinkables));
 	}
 
 	@Mod.EventBusSubscriber(modid = EagleMixins.MODID)
@@ -207,6 +199,7 @@ public class ForgeConfigHandler {
 				conductivity.reset();
 				irradiated.reset();
 				srparasites.reset();
+				abyssal.reset();
 				refreshDrinkableBlockCache();
                 if (FMLCommonHandler.instance().getSide().isClient()) {
                     loadParticleRulesFromConfig();

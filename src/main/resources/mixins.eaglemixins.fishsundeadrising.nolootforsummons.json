@@ -6,12 +6,8 @@
   "target": "@env(DEFAULT)",
   "minVersion": "0.8",
   "mixins": [
-    "EntityAvatonAIUseSpellMixin",
     "EntitySandBurstMixin",
-    "EntityUndertakerAIUseSpellMixin",
-    "ItemCrownMixin",
-    "ItemFishCustomWeaponMixin",
-    "ModEventHandlerMixin"
+    "UndertakerAvatonSummonMixin"
   ],
   "injectors": {
     "maxShiftBy": 10
