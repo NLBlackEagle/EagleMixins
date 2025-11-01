@@ -18,7 +18,7 @@ public class DoorDupeHandler {
 
     @SubscribeEvent
     public static void onDoorBreak(BlockEvent.BreakEvent event) {
-        if (!ForgeConfigHandler.ServerConfig.fixBOPDoorDupe) return;
+        if (!ForgeConfigHandler.server.fixBOPDoorDupe) return;
 
         World world = (World) event.getWorld();
         BlockPos pos = event.getPos();
