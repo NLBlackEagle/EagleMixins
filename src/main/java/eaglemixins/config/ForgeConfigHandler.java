@@ -152,7 +152,8 @@ public class ForgeConfigHandler {
 		@Config.Name("Unopened containers with the given loot tables will radiate the given amount of radiation into their subchunk")
 		@Config.Comment("Radiating Loot Tables")
 		public Map<String, Double> lootTableRadiation = new HashMap<String, Double>(){{
-			put("dregora:ruins/nuclear", 0.1); //value is average of such a loot table
+			put("dregora:ruins/nuclear", 0.1000); //value is average of such a loot table
+			put("dregora:ruins/starter", 0.0361); //value is average of such a loot table
 		}};
 	}
 
