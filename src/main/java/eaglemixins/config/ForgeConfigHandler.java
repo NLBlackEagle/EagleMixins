@@ -54,32 +54,15 @@ public class ForgeConfigHandler {
 	@SuppressWarnings("unused")
 	public static final MixinToggleConfig mixintoggles = new MixinToggleConfig();
 
+	@Config.Comment("NuclearCraft Options")
+	@Config.Name("NuclearCraft Options")
+	public static final NuclearConfig nuclear = new NuclearConfig();
+
 	public static class ServerConfig {
-
-        @Config.Comment("Threshold at which point radiation becomes visible through particles configured under client config section.")
-        @Config.Name("Radiation Particle Threshold")
-        public double rad_particle_threshold = 0.001;
-
-		@Config.Comment("The radiation in the current subchunk needs to be at least a factor of (this + 1) times higher than the subchunk above/below to spread to that subchunk.")
-		@Config.Name("Vertical Radiation Spread Gradient")
-		public float radiation_spread_gradient_vertical = 0.8F;
-
 		@Config.Comment("Chance of teleporting player to Underneath for exotic teleportation (through the concrete teleporters)")
 		@Config.Name("Teleportation Underneath chance 0 to 100")
 		@Config.RangeInt(min = 0, max = 100)
 		public int teleportation_chance = 1;
-
-		@Config.Comment({
-				"Radiation resistance per entity.",
-				"Format: <entity_id>=<value>",
-				"Example: minecraft:sheep=1.0"
-		})
-		@Config.Name("RadiationResistanceList")
-		public String[] radiationResistanceList = new String[] {
-				"iceandfire:firedragon=1000.0",
-				"iceandfire:icedragon=1000.0",
-				"iceandfire:lightningdragon=1000.0"
-		};
 
 		@Config.Comment("Add Blocks you can drink from, will be treated like water blocks")
 		@Config.Name("Additional Water Blocks:")
@@ -148,13 +131,6 @@ public class ForgeConfigHandler {
 		@Config.Name("Fix Biomes O Plenty Door Duplication")
 		@Config.Comment("Prevents Biomes O Plenty doors from dropping twice when broken")
 		public boolean fixBOPDoorDupe = true;
-
-		@Config.Name("Unopened containers with the given loot tables will radiate the given amount of radiation into their subchunk")
-		@Config.Comment("Radiating Loot Tables")
-		public Map<String, Double> lootTableRadiation = new HashMap<String, Double>(){{
-			put("dregora:ruins/nuclear", 0.1000); //value is average of such a loot table
-			put("dregora:ruins/starter", 0.0361); //value is average of such a loot table
-		}};
 	}
 
 	public static class ClientConfig {

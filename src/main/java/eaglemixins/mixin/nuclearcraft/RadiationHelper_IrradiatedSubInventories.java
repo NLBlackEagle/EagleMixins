@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import eaglemixins.EagleMixins;
+import eaglemixins.config.ForgeConfigHandler;
 import nc.capability.radiation.entity.IEntityRads;
 import nc.capability.radiation.source.IRadiationSource;
 import nc.config.NCConfig;
@@ -40,6 +41,7 @@ public abstract class RadiationHelper_IrradiatedSubInventories {
     @Shadow(remap = false) private static double transferRadsFromStackToPlayer(ItemStack stack, IEntityRads playerRads, EntityPlayer player, int updateRate) {EagleMixins.LOGGER.warn("EagleMixins shadowing RadiationHelper.transferRadsFromStackToPlayer failed!");return 0;}
 
     @Unique private static Item eaglemixins$crateItem = null; //charm crates are only defined as blocks, not items
+    @Unique private static Item eaglemixins$sealedCrateItem = null; //charm crates are only defined as blocks, not items
 
     @Unique
     private static double eagleMixins$applyOperationOnIInventory(IInventory inv, Function<ItemStack, Double> radsFunction, boolean alsoCheckSubInventories){
@@ -60,11 +62,12 @@ public abstract class RadiationHelper_IrradiatedSubInventories {
     @Unique
     private static double eagleMixins$applyOperationOnSubInventory(ItemStack stack, Function<ItemStack, Double> radsFunction) {
         if (eaglemixins$crateItem == null) eaglemixins$crateItem = ItemShulkerBox.getItemFromBlock(Crate.crate);
+        if (eaglemixins$sealedCrateItem == null) eaglemixins$sealedCrateItem = ItemShulkerBox.getItemFromBlock(Crate.crateSealed);
 
         //Only Shulkers and Charm Crates
         Item item = stack.getItem();
         boolean isShulker = item instanceof ItemShulkerBox;
-        if (!isShulker && !(item == eaglemixins$crateItem)) return 0;
+        if (!isShulker && !(item == eaglemixins$crateItem) && !(item == eaglemixins$sealedCrateItem)) return 0;
 
         //Sub inventory is saved as tile entity nbt
         NBTTagCompound tags = stack.getTagCompound();
@@ -104,7 +107,7 @@ public abstract class RadiationHelper_IrradiatedSubInventories {
     }
 
     @Unique
-    private static double eagleMixins$applyOperationOnBackpack(EntityPlayer player, Function<ItemStack, Double> radsFunction) {
+    private static double eagleMixins$applyOperationOnBackpack(EntityPlayer player, Function<ItemStack, Double> radsFunction, boolean alsoCheckSubInventories) {
         IBackpack cap = BackpackHelper.getBackpack(player);
         if (cap == null) return 0;
         IBackpackData data = cap.getData();
@@ -119,27 +122,28 @@ public abstract class RadiationHelper_IrradiatedSubInventories {
                 //Normal irradiated items in backpack
                 addedRads += radsFunction.apply(stack);
                 //Shulkers or crates in the backpack
-                addedRads += eagleMixins$applyOperationOnSubInventory(stack, radsFunction);
+                if(alsoCheckSubInventories)
+                    addedRads += eagleMixins$applyOperationOnSubInventory(stack, radsFunction);
             }
         }
         return addedRads;
     }
 
     @Unique
-    private static double eagleMixins$applyOperationOnEnderChest(EntityPlayer player, Function<ItemStack, Double> radsFunction) {
+    private static double eagleMixins$applyOperationOnEnderChest(EntityPlayer player, Function<ItemStack, Double> radsFunction, boolean alsoCheckSubInventories) {
         if (!(player.openContainer instanceof ContainerChest)) return 0;
         ContainerChest chest = (ContainerChest) player.openContainer;
         if (!(chest.getLowerChestInventory() instanceof InventoryEnderChest)) return 0;
         InventoryEnderChest enderInventory = (InventoryEnderChest) chest.getLowerChestInventory();
 
-        return eagleMixins$applyOperationOnIInventory(enderInventory, radsFunction, true);
+        return eagleMixins$applyOperationOnIInventory(enderInventory, radsFunction, alsoCheckSubInventories);
     }
 
     @Unique
-    private static double eagleMixins$applyOperationOnCraftingInventory(EntityPlayer player, Function<ItemStack, Double> radsFunction) {
+    private static double eagleMixins$applyOperationOnCraftingInventory(EntityPlayer player, Function<ItemStack, Double> radsFunction, boolean alsoCheckSubInventories) {
         if (!(player.openContainer instanceof ContainerPlayer)) return 0;
         InventoryCrafting invCrafting = ((ContainerPlayer) player.openContainer).craftMatrix;
-        return eagleMixins$applyOperationOnIInventory(invCrafting, radsFunction, true); //not craftResult cause that stack kinda doesn't exist (yet)
+        return eagleMixins$applyOperationOnIInventory(invCrafting, radsFunction, alsoCheckSubInventories); //not craftResult cause that stack kinda doesn't exist (yet)
     }
 
     //From Inventory to Chunk (if hardcore containers is enabled)
@@ -160,18 +164,23 @@ public abstract class RadiationHelper_IrradiatedSubInventories {
     @Inject(method = "transferRadsFromInventoryToChunkBuffer", at = @At("TAIL"), remap = false)
     private static void eagleMixins_useRadiationInBackpack_toChunk(InventoryPlayer inventory, IRadiationSource chunkSource, CallbackInfo ci) {
         if (!NCConfig.radiation_hardcore_stacks) return;
-        Function<ItemStack, Double> transferRadsToChunkFunction = subStack -> {
-            RadiationHelper.transferRadiationFromProviderToChunkBuffer(subStack, null, chunkSource);
-            return 0.;
-        };
-        eagleMixins$applyOperationOnBackpack(inventory.player, transferRadsToChunkFunction);
+        Function<ItemStack, Double> transferRadsToChunkFunction = subStack -> {RadiationHelper.transferRadiationFromProviderToChunkBuffer(subStack, null, chunkSource);return 0.;};
+
+        if(ForgeConfigHandler.nuclear.inventoryRadiation.containsKey("backpack"))
+            eagleMixins$applyOperationOnBackpack(inventory.player, transferRadsToChunkFunction, ForgeConfigHandler.nuclear.inventoryRadiation.get("backpack"));
 
         //If player has inventory gui open and has clicked on an item so it's held by the mouse pointer
-        if (!inventory.getItemStack().isEmpty())
-            eagleMixins$applyOperationOnSubInventory(inventory.getItemStack(), transferRadsToChunkFunction);
+        if (!inventory.getItemStack().isEmpty() && ForgeConfigHandler.nuclear.inventoryRadiation.containsKey("heldItem")) {
+            RadiationHelper.transferRadiationFromProviderToChunkBuffer(inventory.getItemStack(), null, chunkSource);
+            if(ForgeConfigHandler.nuclear.inventoryRadiation.get("heldItem"))
+                eagleMixins$applyOperationOnSubInventory(inventory.getItemStack(), transferRadsToChunkFunction);
+        }
 
-        eagleMixins$applyOperationOnEnderChest(inventory.player, transferRadsToChunkFunction);
-        eagleMixins$applyOperationOnCraftingInventory(inventory.player, transferRadsToChunkFunction);
+        if(ForgeConfigHandler.nuclear.inventoryRadiation.containsKey("enderChest"))
+            eagleMixins$applyOperationOnEnderChest(inventory.player, transferRadsToChunkFunction, ForgeConfigHandler.nuclear.inventoryRadiation.get("enderChest"));
+
+        if(ForgeConfigHandler.nuclear.inventoryRadiation.containsKey("inventoryCrafting"))
+            eagleMixins$applyOperationOnCraftingInventory(inventory.player, transferRadsToChunkFunction, ForgeConfigHandler.nuclear.inventoryRadiation.get("inventoryCrafting"));
     }
 
     //From Item Entity to Chunk (if hardcore containers is enabled)
@@ -182,6 +191,8 @@ public abstract class RadiationHelper_IrradiatedSubInventories {
     )
     private static void eagleMixins_useRadiationInShulkers_fromEntityItemToChunk(IRadiationSource chunkSource, double addedRadiation, Operation<Void> original, ItemStack stack, IRadiationSource unused, double multiplier) {
         original.call(chunkSource, addedRadiation);
+        if(!ForgeConfigHandler.nuclear.inventoryRadiation.containsKey("itemEntity")) return;
+        if(!ForgeConfigHandler.nuclear.inventoryRadiation.get("itemEntity")) return;
         eagleMixins$applyOperationOnSubInventory(stack, subStack -> {
             original.call(chunkSource, RadiationHelper.getRadiationFromStack(subStack, multiplier));
             return 0.;
@@ -206,17 +217,21 @@ public abstract class RadiationHelper_IrradiatedSubInventories {
     private static double eagleMixins_useRadiationInBackpack_toPlayer(double original, IEntityRads playerRads, EntityPlayer player, int updateRate) {
         Function<ItemStack, Double> transferRadsToPlayerFunction = subStack -> transferRadsFromStackToPlayer(subStack, playerRads, player, updateRate);
 
-        double backPackRads = eagleMixins$applyOperationOnBackpack(player, transferRadsToPlayerFunction);
+        if(ForgeConfigHandler.nuclear.inventoryRadiation.containsKey("backpack"))
+            original += eagleMixins$applyOperationOnBackpack(player, transferRadsToPlayerFunction, ForgeConfigHandler.nuclear.inventoryRadiation.get("backpack"));
 
-        double clickedItemRads = 0;
-        if (!player.inventory.getItemStack().isEmpty()) {
-            clickedItemRads += transferRadsFromStackToPlayer(player.inventory.getItemStack(), playerRads, player, updateRate);
-            clickedItemRads += eagleMixins$applyOperationOnSubInventory(player.inventory.getItemStack(), transferRadsToPlayerFunction);
+        if (!player.inventory.getItemStack().isEmpty() && ForgeConfigHandler.nuclear.inventoryRadiation.containsKey("heldItem")) {
+            original += transferRadsFromStackToPlayer(player.inventory.getItemStack(), playerRads, player, updateRate);
+            if(ForgeConfigHandler.nuclear.inventoryRadiation.get("heldItem"))
+                original += eagleMixins$applyOperationOnSubInventory(player.inventory.getItemStack(), transferRadsToPlayerFunction);
         }
 
-        double enderChestRads = eagleMixins$applyOperationOnEnderChest(player, transferRadsToPlayerFunction);
-        double inventoryCraftingRads = eagleMixins$applyOperationOnCraftingInventory(player, transferRadsToPlayerFunction);
+        if(ForgeConfigHandler.nuclear.inventoryRadiation.containsKey("enderChest"))
+            original += eagleMixins$applyOperationOnEnderChest(player, transferRadsToPlayerFunction, ForgeConfigHandler.nuclear.inventoryRadiation.get("enderChest"));
 
-        return original + backPackRads + clickedItemRads + enderChestRads + inventoryCraftingRads;
+        if(ForgeConfigHandler.nuclear.inventoryRadiation.containsKey("inventoryCrafting"))
+            original += eagleMixins$applyOperationOnCraftingInventory(player, transferRadsToPlayerFunction, ForgeConfigHandler.nuclear.inventoryRadiation.get("inventoryCrafting"));
+
+        return original;
     }
 }

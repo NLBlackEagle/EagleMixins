@@ -14,12 +14,12 @@ public final class RadiationResistanceRegistry {
     public static void reloadFromConfig() {
         MAP.clear();
 
-        if (ForgeConfigHandler.server.radiationResistanceList == null) {
+        if (ForgeConfigHandler.nuclear.radiationResistanceList == null) {
             EagleMixins.LOGGER.info("[EagleMixins] Radiation Immunity list empty, nothing loaded");
             return;
         }
 
-        for (String raw : ForgeConfigHandler.server.radiationResistanceList) {
+        for (String raw : ForgeConfigHandler.nuclear.radiationResistanceList) {
             if (raw == null) continue;
             String s = raw.trim();
             if (s.isEmpty()) continue;

@@ -44,7 +44,7 @@ public class PacketSyncHighRadiation implements IMessage {
                 }
                 short highRadiation = 0;
                 for (int y = 0; y < 16; y++) {
-                    if (((ChunkRadiationSource) radiation).getSubchunkRadiationLevel(y) > ForgeConfigHandler.server.rad_particle_threshold) {
+                    if (((ChunkRadiationSource) radiation).getSubchunkRadiationLevel(y) > ForgeConfigHandler.nuclear.rad_particle_threshold) {
                         highRadiation |= 1 << y;
                     }
                 }

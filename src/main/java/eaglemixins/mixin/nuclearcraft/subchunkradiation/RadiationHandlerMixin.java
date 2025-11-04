@@ -290,7 +290,7 @@ public abstract class RadiationHandlerMixin {
                 if (nextsubchunk < 0 || nextsubchunk > 15) continue;
 
                 float radLvlNext = chunkRadSource.getSubchunkRadiationLevel(nextsubchunk);
-                if (radLvlNext == 0 || radLvlCurr / radLvlNext > 1 + ForgeConfigHandler.server.radiation_spread_gradient_vertical) {
+                if (radLvlNext == 0 || radLvlCurr / radLvlNext > 1 + ForgeConfigHandler.nuclear.radiation_spread_gradient_vertical) {
                     float radiationSpread = (radLvlCurr - radLvlNext) * (float) NCConfig.radiation_spread_rate;
                     dRad[subchunk] -= radiationSpread; //current reduces from spreading
                     dRad[nextsubchunk] += radiationSpread * (1 - chunkRadSource.getSubchunkScrubbingFraction(nextsubchunk)); //nearby increases from spreading

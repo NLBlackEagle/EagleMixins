@@ -23,7 +23,7 @@ public abstract class RadiationHelper_IrradiatedLootTables {
         ResourceLocation lootTable = ((ILootContainer) original).getLootTable();
         if(lootTable == null) return original;
 
-        rawRadiation.set(rawRadiation.get() + ForgeConfigHandler.server.lootTableRadiation.getOrDefault(lootTable.toString(), 0.0));
+        rawRadiation.set(rawRadiation.get() + ForgeConfigHandler.nuclear.lootTableRadiation.getOrDefault(lootTable.toString(), 0.0));
         return null; //don't check the actual contents, otherwise the loot would be generated
     }
 }
