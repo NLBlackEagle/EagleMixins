@@ -15,7 +15,8 @@ import org.spongepowered.asm.mixin.injection.At;
 public abstract class RadiationHelper_IrradiatedLootTables {
     @ModifyExpressionValue(
             method = "transferRadiationFromProviderToChunkBuffer",
-            at = @At(value = "INVOKE", target = "Lnc/radiation/RadiationHelper;getTileInventory(Lnet/minecraftforge/common/capabilities/ICapabilityProvider;Lnet/minecraft/util/EnumFacing;)Lnet/minecraftforge/items/IItemHandler;")
+            at = @At(value = "INVOKE", target = "Lnc/radiation/RadiationHelper;getTileInventory(Lnet/minecraftforge/common/capabilities/ICapabilityProvider;Lnet/minecraft/util/EnumFacing;)Lnet/minecraftforge/items/IItemHandler;"),
+            remap = false
     )
     private static IItemHandler eagleMixins_allowRadiationOnLootTables(IItemHandler original, @Local(name = "rawRadiation") LocalDoubleRef rawRadiation){
         if(!(original instanceof ILootContainer)) return original;

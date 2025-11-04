@@ -143,6 +143,15 @@ public class MixinToggleConfig {
     @MixinConfig.CompatHandling(modid = "nuclearcraft", desired = true, reason = "Requires mod to properly function")
     public boolean lootTableRadiation = true;
 
+    @Config.Comment("Will make a lot of otherwise safe inventories also irradiate the player and the area if they have irradiated items, such as Shulker Boxes and Charm Crates, worn Backpacks and opened Ender Chests. Also takes care of the one item a player can hold with their mouse when having a GUI open.")
+    @Config.Name("Inventory Radiation (NuclearCraft/Charm/WearableBackpacks)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.nuclearcraft.inventoryradiation.json", defaultValue = true)
+    @MixinConfig.CompatHandling(modid = "nuclearcraft", desired = true, reason = "Requires mod to properly function")
+    @MixinConfig.CompatHandling(modid = "charm", desired = true, reason = "Requires mod to properly function")
+    @MixinConfig.CompatHandling(modid = "wearablebackpacks", desired = true, reason = "Requires mod to properly function")
+    public boolean inventoryRadiation = true;
+
     @Config.Comment("Make players regain their air slowly when resurfacing from submerged - instead of regaining it instantly.")
     @Config.Name("Slow Air Refill (Vanilla)")
     @Config.RequiresMcRestart
