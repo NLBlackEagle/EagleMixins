@@ -14,13 +14,10 @@ import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.misc.BackpackDataItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.ContainerChest;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryEnderChest;
+import net.minecraft.inventory.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemShulkerBox;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -40,13 +37,28 @@ import java.util.function.Function;
 
 @Mixin(RadiationHelper.class)
 public abstract class RadiationHelper_IrradiatedSubInventories {
-    @Shadow(remap = false)
-    private static double transferRadsFromStackToPlayer(ItemStack stack, IEntityRads playerRads, EntityPlayer player, int updateRate) {EagleMixins.LOGGER.warn("EagleMixins shadowing RadiationHelper.transferRadsFromStackToPlayer failed!");return 0;}
+    @Shadow(remap = false) private static double transferRadsFromStackToPlayer(ItemStack stack, IEntityRads playerRads, EntityPlayer player, int updateRate) {EagleMixins.LOGGER.warn("EagleMixins shadowing RadiationHelper.transferRadsFromStackToPlayer failed!");return 0;}
 
     @Unique private static Item eaglemixins$crateItem = null; //charm crates are only defined as blocks, not items
 
     @Unique
-    private static double eagleMixins$applyOperationOnSubInventory(ItemStack stack, Function<ItemStack, Double> function) {
+    private static double eagleMixins$applyOperationOnIInventory(IInventory inv, Function<ItemStack, Double> radsFunction, boolean alsoCheckSubInventories){
+        double addedRads = 0;
+        for (int i = 0; i < inv.getSizeInventory(); i++) {
+            ItemStack innerStack = inv.getStackInSlot(i);
+            if (!innerStack.isEmpty()) {
+                //transfer radiation for each stack in the inventory
+                addedRads += radsFunction.apply(innerStack);
+                //Shulkers or crates in the inventory
+                if(alsoCheckSubInventories)
+                    addedRads += eagleMixins$applyOperationOnSubInventory(innerStack, radsFunction);
+            }
+        }
+        return addedRads;
+    }
+
+    @Unique
+    private static double eagleMixins$applyOperationOnSubInventory(ItemStack stack, Function<ItemStack, Double> radsFunction) {
         if (eaglemixins$crateItem == null) eaglemixins$crateItem = ItemShulkerBox.getItemFromBlock(Crate.crate);
 
         //Only Shulkers and Charm Crates
@@ -77,20 +89,14 @@ public abstract class RadiationHelper_IrradiatedSubInventories {
         //Iterate over the inventory
         double addedRads = 0;
         if (containedTile instanceof IInventory) {
-            for (int i = 0; i < ((IInventory) containedTile).getSizeInventory(); i++) {
-                ItemStack innerStack = ((IInventory) containedTile).getStackInSlot(i);
-                if (!innerStack.isEmpty()) {
-                    //transfer radiation for each stack in the crate/shulker
-                    double rads = function.apply(innerStack);
-                    addedRads += rads;
-                }
-            }
+            addedRads = eagleMixins$applyOperationOnIInventory((IInventory) containedTile, radsFunction, false);
         } else if (containedTile instanceof TileCrate) {
             for (int i = 0; i < ((TileCrate) containedTile).getInventorySize(); i++) {
                 ItemStack innerStack = ((TileCrate) containedTile).getInventory().getStackInSlot(i);
                 if (!innerStack.isEmpty()) {
                     //transfer radiation for each stack in the crate/shulker
-                    addedRads += function.apply(innerStack);
+                    addedRads += radsFunction.apply(innerStack);
+                    //Not checking subinventories as we assume you cant stack shulkers in shulkers etc
                 }
             }
         }
@@ -126,17 +132,14 @@ public abstract class RadiationHelper_IrradiatedSubInventories {
         if (!(chest.getLowerChestInventory() instanceof InventoryEnderChest)) return 0;
         InventoryEnderChest enderInventory = (InventoryEnderChest) chest.getLowerChestInventory();
 
-        double addedRads = 0;
-        for (int i = 0; i < enderInventory.getSizeInventory(); i++) {
-            ItemStack stack = enderInventory.getStackInSlot(i);
-            if (!stack.isEmpty()) {
-                //Normal irradiated items in ender chest
-                addedRads += radsFunction.apply(stack);
-                //Shulkers or crates in the ender chest
-                addedRads += eagleMixins$applyOperationOnSubInventory(stack, radsFunction);
-            }
-        }
-        return addedRads;
+        return eagleMixins$applyOperationOnIInventory(enderInventory, radsFunction, true);
+    }
+
+    @Unique
+    private static double eagleMixins$applyOperationOnCraftingInventory(EntityPlayer player, Function<ItemStack, Double> radsFunction) {
+        if (!(player.openContainer instanceof ContainerPlayer)) return 0;
+        InventoryCrafting invCrafting = ((ContainerPlayer) player.openContainer).craftMatrix;
+        return eagleMixins$applyOperationOnIInventory(invCrafting, radsFunction, true); //not craftResult cause that stack kinda doesn't exist (yet)
     }
 
     //From Inventory to Chunk (if hardcore containers is enabled)
@@ -153,7 +156,7 @@ public abstract class RadiationHelper_IrradiatedSubInventories {
         });
     }
 
-    //From Backpack, Held Item and Ender Chest to Chunk (if hardcore containers is enabled)
+    //From Backpack, Held Item, Ender Chest and Inventory Crafting  to Chunk (if hardcore containers is enabled)
     @Inject(method = "transferRadsFromInventoryToChunkBuffer", at = @At("TAIL"), remap = false)
     private static void eagleMixins_useRadiationInBackpack_toChunk(InventoryPlayer inventory, IRadiationSource chunkSource, CallbackInfo ci) {
         if (!NCConfig.radiation_hardcore_stacks) return;
@@ -168,6 +171,7 @@ public abstract class RadiationHelper_IrradiatedSubInventories {
             eagleMixins$applyOperationOnSubInventory(inventory.getItemStack(), transferRadsToChunkFunction);
 
         eagleMixins$applyOperationOnEnderChest(inventory.player, transferRadsToChunkFunction);
+        eagleMixins$applyOperationOnCraftingInventory(inventory.player, transferRadsToChunkFunction);
     }
 
     //From Item Entity to Chunk (if hardcore containers is enabled)
@@ -197,7 +201,7 @@ public abstract class RadiationHelper_IrradiatedSubInventories {
         return originalRads + addedRads;
     }
 
-    //From Backpack, Held Item and Ender Chest to Player
+    //From Backpack, Held Item, Ender Chest and Inventory Crafting to Player
     @ModifyReturnValue(method = "transferRadsFromInventoryToPlayer", at = @At("TAIL"), remap = false)
     private static double eagleMixins_useRadiationInBackpack_toPlayer(double original, IEntityRads playerRads, EntityPlayer player, int updateRate) {
         Function<ItemStack, Double> transferRadsToPlayerFunction = subStack -> transferRadsFromStackToPlayer(subStack, playerRads, player, updateRate);
@@ -211,7 +215,8 @@ public abstract class RadiationHelper_IrradiatedSubInventories {
         }
 
         double enderChestRads = eagleMixins$applyOperationOnEnderChest(player, transferRadsToPlayerFunction);
+        double inventoryCraftingRads = eagleMixins$applyOperationOnCraftingInventory(player, transferRadsToPlayerFunction);
 
-        return original + backPackRads + clickedItemRads + enderChestRads;
+        return original + backPackRads + clickedItemRads + enderChestRads + inventoryCraftingRads;
     }
 }
