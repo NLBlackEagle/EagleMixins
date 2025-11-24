@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger;
 public class EagleMixins {
 
     public static final String MODID = "eaglemixins";
-    public static final String VERSION = "1.1.9";
+    public static final String VERSION = "1.2.0";
     public static final String NAME = "EagleMixins";
     public static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final boolean debugEnabled = false;
