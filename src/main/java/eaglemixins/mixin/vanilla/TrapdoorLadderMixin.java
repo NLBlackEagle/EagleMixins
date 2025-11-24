@@ -19,11 +19,12 @@ public abstract class TrapdoorLadderMixin {
     private boolean eaglemixins_expandLadderSupport(boolean originalReturnValue, IBlockState trapDoorState, IBlockAccess world, BlockPos pos, EntityLivingBase entity) {
         if (!trapDoorState.getValue(BlockTrapDoor.OPEN)) return originalReturnValue;
 
-        IBlockState downState = world.getBlockState(pos.down());
+        BlockPos posDown = pos.down();
+        IBlockState downState = world.getBlockState(posDown);
         Block downBlock = downState.getBlock();
         if(downBlock == Blocks.LADDER) return originalReturnValue;
 
-        if (downBlock.isLadder(downState, world, pos, entity)) { //in RLCraft this is for Quark iron ladder, BetterNether reeds ladder and vanilla vines
+        if (downBlock.isLadder(downState, world, posDown, entity)) { //in RLCraft this is for Quark iron ladder, BetterNether reeds ladder and vanilla vines
             // Try to match facing if possible (only if it's a vanilla-style ladder)
             if (downBlock instanceof BlockLadder) {
                 return downState.getValue(BlockLadder.FACING) == trapDoorState.getValue(BlockTrapDoor.FACING);
