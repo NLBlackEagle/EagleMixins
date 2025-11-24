@@ -38,7 +38,7 @@ public class NuclearConfig {
     public Map<String, Boolean> inventoryRadiation = new HashMap<String, Boolean>(){{
         put("enderChest", true);
         put("inventoryCrafting", true);
-        put("heldItem", true);
+        put("mouseItem", true);
         put("itemEntity", true);
         put("backpack", true);
     }};

@@ -170,9 +170,9 @@ public abstract class RadiationHelper_IrradiatedSubInventories {
             eagleMixins$applyOperationOnBackpack(inventory.player, transferRadsToChunkFunction, ForgeConfigHandler.nuclear.inventoryRadiation.get("backpack"));
 
         //If player has inventory gui open and has clicked on an item so it's held by the mouse pointer
-        if (!inventory.getItemStack().isEmpty() && ForgeConfigHandler.nuclear.inventoryRadiation.containsKey("heldItem")) {
+        if (!inventory.getItemStack().isEmpty() && ForgeConfigHandler.nuclear.inventoryRadiation.containsKey("mouseItem")) {
             RadiationHelper.transferRadiationFromProviderToChunkBuffer(inventory.getItemStack(), null, chunkSource);
-            if(ForgeConfigHandler.nuclear.inventoryRadiation.get("heldItem"))
+            if(ForgeConfigHandler.nuclear.inventoryRadiation.get("mouseItem"))
                 eagleMixins$applyOperationOnSubInventory(inventory.getItemStack(), transferRadsToChunkFunction);
         }
 
@@ -220,9 +220,9 @@ public abstract class RadiationHelper_IrradiatedSubInventories {
         if(ForgeConfigHandler.nuclear.inventoryRadiation.containsKey("backpack"))
             original += eagleMixins$applyOperationOnBackpack(player, transferRadsToPlayerFunction, ForgeConfigHandler.nuclear.inventoryRadiation.get("backpack"));
 
-        if (!player.inventory.getItemStack().isEmpty() && ForgeConfigHandler.nuclear.inventoryRadiation.containsKey("heldItem")) {
+        if (!player.inventory.getItemStack().isEmpty() && ForgeConfigHandler.nuclear.inventoryRadiation.containsKey("mouseItem")) {
             original += transferRadsFromStackToPlayer(player.inventory.getItemStack(), playerRads, player, updateRate);
-            if(ForgeConfigHandler.nuclear.inventoryRadiation.get("heldItem"))
+            if(ForgeConfigHandler.nuclear.inventoryRadiation.get("mouseItem"))
                 original += eagleMixins$applyOperationOnSubInventory(player.inventory.getItemStack(), transferRadsToPlayerFunction);
         }
 
