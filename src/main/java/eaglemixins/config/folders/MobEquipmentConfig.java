@@ -63,9 +63,13 @@ public class MobEquipmentConfig {
     @Config.RangeDouble(min = 0, max = 1.34F)
     public float additionalArmorChanceMulti = 1.0F;
 
-    @Config.Comment("Settings for enchants on the mob equipment")
+    @Config.Comment("Settings for enchants on the mob equipment. By default unchanged from vanilla.")
     @Config.Name("Enchants")
     public EnchantConfig enchants = new EnchantConfig();
+
+    @Config.Comment("Settings for skeletons using Spartan Crossbows and Longbows")
+    @Config.Name("Spartan Skeletons")
+    public SpartanWeaponrySkeletonsConfig spartanSkeletons = new SpartanWeaponrySkeletonsConfig();
 
     public static class EnchantConfig {
         @Config.Comment("Minimum enchantability enchanted mainhand items will have")
@@ -83,7 +87,7 @@ public class MobEquipmentConfig {
         public boolean mainhand_allowTreasure = false;
 
         @Config.Comment("Chance for mainhand items to be enchanted. Scaled with local clamped difficulty, so the given value will only be reached if the area is inhabited for a while.")
-        @Config.Name("Mainhand - Chance")
+        @Config.Name("Mainhand - Enchanted Chance")
         public float mainhand_chanceEnchant = 0.25F;
 
         @Config.Comment("Minimum enchantability enchanted armor pieces will have")
@@ -101,8 +105,22 @@ public class MobEquipmentConfig {
         public boolean armor_allowTreasure = false;
 
         @Config.Comment("Chance for armor pieces to be enchanted. Scaled with local clamped difficulty, so the given value will only be reached if the area is inhabited for a while.")
-        @Config.Name("Armor - Chance")
+        @Config.Name("Armor - Enchanted Chance")
         public float armor_chanceEnchant = 0.5F;
+    }
+
+    public static class SpartanWeaponrySkeletonsConfig{
+        @Config.Comment("Skeletons holding spartan bows/crossbows will have a movement speed penalty when strafing depending on the extra projectile speed they get from their spartan ranged weapon.")
+        @Config.Name("Enable Move Speed Penalty")
+        public boolean enableMoveSpeedPenalty = true;
+
+        @Config.Comment("Skeletons holding spartan bows/crossbows will gain a (multiplicative/op1) follow range modifier depending on the extra shooting range they get due to their increased projectile speed.")
+        @Config.Name("Enable Follow Range Bonus")
+        public boolean enableFollowRangeBonus = true;
+
+        @Config.Comment("Skeletons holding spartan bows/crossbows will gain a bonus on the distance in which they will strafe around a target entity based on the extra projectile range they get from their spartan ranged weapon.")
+        @Config.Name("Enable AI Strafe Distance Bonus")
+        public boolean enableStrafeDistanceBonus = true;
     }
 
     public static final List<ItemEntry> zombieHands = new ArrayList<>();
