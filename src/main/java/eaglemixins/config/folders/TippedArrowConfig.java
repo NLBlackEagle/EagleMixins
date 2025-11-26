@@ -1,17 +1,17 @@
 package eaglemixins.config.folders;
 
 import eaglemixins.EagleMixins;
+import eaglemixins.compat.ModLoadedUtil;
+import eaglemixins.compat.SpartanWeaponryUtil;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionType;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Config;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class TippedArrowConfig {
     @Config.Comment("Chance for an entity to have its arrow replaced with a tipped arrow")
@@ -23,7 +23,9 @@ public class TippedArrowConfig {
     @Config.Name("Tipped Arrow Replacement Allowed Entities")
     public String[] tippedArrowEntities = {
             "minecraft:skeleton",
-            "minecraft:wither_skeleton"
+            "minecraft:stray",
+            "minecraft:wither_skeleton",
+            "mod_lavacow:forsaken"
     };
 
     @Config.Comment("List of long potion types to be used for tipped arrows randomly added to entities")
@@ -128,10 +130,10 @@ public class TippedArrowConfig {
             "xat:goblin"
     };
 
-    private HashSet<ResourceLocation> tippedArrowAllowedEntities = null;
-    public HashSet<ResourceLocation> getTippedArrowAllowedEntities() {
+    private Set<ResourceLocation> tippedArrowAllowedEntities = null;
+    public Set<ResourceLocation> getTippedArrowAllowedEntities() {
         if(tippedArrowAllowedEntities == null) {
-            HashSet<ResourceLocation> set = new HashSet<>();
+            Set<ResourceLocation> set = new HashSet<>();
             for(String entity : this.tippedArrowEntities) {
                 set.add(new ResourceLocation(entity));
             }
@@ -142,32 +144,38 @@ public class TippedArrowConfig {
 
     private List<ItemStack> tippedArrowArrayLong = null;
     private List<ItemStack> tippedArrowArray = null;
-    public ItemStack getRandomArrowStack(Random rand, boolean isLong){
+    private List<ItemStack> tippedBoltArrayLong = null;
+    private List<ItemStack> tippedBoltArray = null;
+    public ItemStack getRandomArrowStack(Random rand, boolean isLong, boolean forCrossBow){
+        if(forCrossBow && ModLoadedUtil.spartanweaponry.isLoaded()){
+            if(isLong && tippedBoltArrayLong == null)
+                tippedBoltArrayLong = createTippedItemArray(this.tippedArrowPotionsLong, SpartanWeaponryUtil.getTippedBoltItem());
+            else if(!isLong && tippedBoltArray == null)
+                tippedBoltArray = createTippedItemArray(this.tippedArrowPotions, SpartanWeaponryUtil.getTippedBoltItem());
+            if(isLong) return tippedBoltArrayLong.get(rand.nextInt(tippedBoltArrayLong.size())).copy();
+            else       return tippedBoltArray.get(rand.nextInt(tippedBoltArray.size())).copy();
+        }
+
         //Lazy loading
-        if(isLong && tippedArrowArrayLong == null){
-            tippedArrowArrayLong = new ArrayList<>();
-            for(String potionString : this.tippedArrowPotionsLong) {
-                PotionType type = PotionType.getPotionTypeForName(potionString);
-                if(type == null){
-                    EagleMixins.LOGGER.warn("RLMixins Dregora Arrow PotionTypes invalid PotionType: " + potionString + ", ignoring.");
-                    continue;
-                }
-                tippedArrowArrayLong.add(PotionUtils.addPotionToItemStack(new ItemStack(Items.TIPPED_ARROW),type));
-            }
-        }
-        if(!isLong && tippedArrowArray == null){
-            tippedArrowArray = new ArrayList<>();
-            for(String potionString : this.tippedArrowPotions) {
-                PotionType type = PotionType.getPotionTypeForName(potionString);
-                if(type == null){
-                    EagleMixins.LOGGER.warn("RLMixins Dregora Arrow PotionTypes invalid PotionType: " + potionString + ", ignoring.");
-                    continue;
-                }
-                tippedArrowArray.add(PotionUtils.addPotionToItemStack(new ItemStack(Items.TIPPED_ARROW),type));
-            }
-        }
+        if(isLong && tippedArrowArrayLong == null)
+            tippedArrowArrayLong = createTippedItemArray(this.tippedArrowPotionsLong, Items.TIPPED_ARROW);
+        else if(!isLong && tippedArrowArray == null)
+            tippedArrowArray = createTippedItemArray(this.tippedArrowPotions, Items.TIPPED_ARROW);
         if(isLong) return tippedArrowArrayLong.get(rand.nextInt(tippedArrowArrayLong.size())).copy();
         else       return tippedArrowArray.get(rand.nextInt(tippedArrowArray.size())).copy();
+    }
+
+    private List<ItemStack> createTippedItemArray(String[] config, Item tippedItem){
+        List<ItemStack> itemArray = new ArrayList<>();
+        for(String potionString : config) {
+            PotionType type = PotionType.getPotionTypeForName(potionString);
+            if(type == null){
+                EagleMixins.LOGGER.warn("Arrow PotionTypes invalid, PotionType: {}, ignoring.", potionString);
+                continue;
+            }
+            itemArray.add(PotionUtils.addPotionToItemStack(new ItemStack(tippedItem),type));
+        }
+        return itemArray;
     }
 
     public void reset(){

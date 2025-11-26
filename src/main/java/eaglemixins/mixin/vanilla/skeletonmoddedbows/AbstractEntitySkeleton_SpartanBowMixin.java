@@ -5,7 +5,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.oblivioussp.spartanweaponry.entity.projectile.EntityBolt;
-import com.oblivioussp.spartanweaponry.entity.projectile.EntityBoltSpectral;
 import com.oblivioussp.spartanweaponry.entity.projectile.EntityBoltTipped;
 import com.oblivioussp.spartanweaponry.init.ItemRegistrySW;
 import com.oblivioussp.spartanweaponry.init.SoundRegistry;
@@ -17,7 +16,7 @@ import com.oblivioussp.spartanweaponry.util.Quaternion;
 import eaglemixins.EagleMixins;
 import eaglemixins.compat.SpartanWeaponryUtil;
 import eaglemixins.config.ForgeConfigHandler;
-import eaglemixins.mixin.spartanweaponry.IItemCrossbow_InvokerMixin;
+import eaglemixins.mixin.spartanweaponry.IItemCrossbow_Invoker;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackRangedBow;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -27,7 +26,6 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.monster.AbstractSkeleton;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.entity.projectile.EntitySpectralArrow;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -51,21 +49,16 @@ import java.util.UUID;
 
 @Mixin(AbstractSkeleton.class)
 public abstract class AbstractEntitySkeleton_SpartanBowMixin extends EntityMob {
-
-    @Unique
-    private static final String UUID_WEAPON_RANGE = "e7b2eccc-c495-42d9-81e8-9593f74be7f1";
-    @Unique
-    private static final String WEAPON_RANGE_MODIFIER = EagleMixins.MODID + ":spartanWeaponRange";
-    @Unique
-    private AttributeModifier eagleMixins$spartanWeaponRange;
-
-    @Shadow @Final private EntityAIAttackRangedBow<AbstractSkeleton> aiArrowAttack;
-
-    @Shadow protected abstract EntityArrow getArrow(float distanceFactor);
-
     public AbstractEntitySkeleton_SpartanBowMixin(World world) {
         super(world);
     }
+
+    @Unique private static final String UUID_WEAPON_RANGE = "e7b2eccc-c495-42d9-81e8-9593f74be7f1";
+    @Unique private static final String WEAPON_RANGE_MODIFIER = EagleMixins.MODID + ":spartanWeaponRange";
+    @Unique private AttributeModifier eagleMixins$spartanWeaponRange;
+
+    @Shadow @Final private EntityAIAttackRangedBow<AbstractSkeleton> aiArrowAttack;
+    @Shadow protected abstract EntityArrow getArrow(float distanceFactor);
 
     @Inject(
             method = "setCombatTask",
@@ -116,10 +109,11 @@ public abstract class AbstractEntitySkeleton_SpartanBowMixin extends EntityMob {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/projectile/EntityArrow;shoot(DDDFF)V")
     )
     private void eagleMixins_vanillaAbstractSkeleton_attackEntityWithRangedAttackWithSpartan(EntityArrow instance, double x, double y, double z, float velocity, float inaccuracy, Operation<Void> original, @Local(argsOnly = true) float distanceFactor){
-        if(SpartanWeaponryUtil.isHoldingSpartanBow(this)){
+        if(SpartanWeaponryUtil.isHoldingSpartanRangedWeapon(this)){
             ItemStack itemStack = this.getHeldItemMainhand();
             if (itemStack.getItem() instanceof ItemLongbow){
-                instance.shoot(
+                original.call(
+                        instance,
                         x,
                         y,
                         z,
@@ -127,7 +121,7 @@ public abstract class AbstractEntitySkeleton_SpartanBowMixin extends EntityMob {
                         inaccuracy * 0.5F
                 );
             }
-            else if (itemStack.getItem() instanceof IItemCrossbow_InvokerMixin) {
+            else if (itemStack.getItem() instanceof ItemCrossbow) {
                 int shots = 1;
                 float projectileAngle = 0F;
                 NBTTagCompound nbtLoadedBolt = NBTHelper.getTagCompound(itemStack, ItemCrossbow.nbtAmmoStack);
@@ -139,7 +133,7 @@ public abstract class AbstractEntitySkeleton_SpartanBowMixin extends EntityMob {
                 Vec3d vector = new Vec3d(lookVec.x, lookVec.y, lookVec.z);
                 for (int i = 0; i < shots; i++) {
                     if (projectileAngle != 0F) {
-                        Vec3d shooterUpVec = ((IItemCrossbow_InvokerMixin) itemStack.getItem()).invokeCalculateEntityViewVector(
+                        Vec3d shooterUpVec = ((IItemCrossbow_Invoker) itemStack.getItem()).invokeCalculateEntityViewVector(
                                 this.rotationPitch - 90.0f,
                                 this.rotationYaw
                         );
@@ -151,7 +145,8 @@ public abstract class AbstractEntitySkeleton_SpartanBowMixin extends EntityMob {
                     if (projectileAngle != 0F) {
                         entityBolt = this.getArrow(distanceFactor);
                     }
-                    entityBolt.shoot(
+                    original.call(
+                            entityBolt,
                             vector.x,
                             vector.y,
                             vector.z,
@@ -179,58 +174,23 @@ public abstract class AbstractEntitySkeleton_SpartanBowMixin extends EntityMob {
         original.call(instance, soundIn, volume, pitch);
     }
 
-    @WrapMethod(
-            method = "getArrow"
-    )
-    private EntityArrow eagleMixins_vanillaAbstractSkeleton_getArrowForSpartan(float distanceFactor, Operation<EntityArrow> original){
-        if(SpartanWeaponryUtil.isHoldingSpartanBow(this)){
-            ItemStack itemStack = this.getHeldItemMainhand();
+    @WrapMethod(method = "getArrow")
+    private EntityArrow eagleMixins_vanillaAbstractSkeleton_getBoltForSpartanCrossbow(float distanceFactor, Operation<EntityArrow> original){
+        //Allow special bolts held in offhand if using crossbow
+        if(SpartanWeaponryUtil.isSpartanCrossbow(this.getHeldItemMainhand().getItem())){
+            ItemStack offhandStack = this.getItemStackFromSlot(EntityEquipmentSlot.OFFHAND);
 
-            if (itemStack.getItem() instanceof ItemCrossbow){
-                ItemStack itemstack = this.getItemStackFromSlot(EntityEquipmentSlot.OFFHAND);
+            //No offhand item -> use normal bolts. Same if modded arrows are disallowed
+            if(!(offhandStack.getItem() instanceof ItemBolt) || !ForgeConfigHandler.mixintoggles.enabledModdedArrowsForAll)
+                offhandStack = new ItemStack(ItemRegistrySW.bolt);
 
-                if (itemstack.getItem() == ItemRegistrySW.boltSpectral) {
-                    EntityBoltSpectral entityBoltSpectral = new EntityBoltSpectral(this.world, this);
-                    entityBoltSpectral.setEnchantmentEffectsFromEntity(this, (float) (entityBoltSpectral.getDamage() * (distanceFactor / 2F)));
-                    return entityBoltSpectral;
-                }
-                else if (itemstack.getItem() instanceof ItemBolt) {
-                    EntityBolt entityBolt = ((ItemBolt) itemstack.getItem()).createBolt(this.world, itemstack, this);
-                    entityBolt.setEnchantmentEffectsFromEntity(this, (float) (entityBolt.getDamage() * (distanceFactor / 2F)));
-                    return entityBolt;
-                }
-                else {
-                    EntityBoltTipped entityBoltTipped = new EntityBoltTipped(this.world, this);
-                    entityBoltTipped.setEnchantmentEffectsFromEntity(this, (float) (entityBoltTipped.getDamage() * (distanceFactor / 2F)));
+            EntityBolt entityBolt = ((ItemBolt) offhandStack.getItem()).createBolt(this.world, offhandStack, this);
+            entityBolt.setEnchantmentEffectsFromEntity(this, (float) (entityBolt.getDamage() / 2. * (double) distanceFactor));
 
-                    if(itemstack.getItem() == ItemRegistrySW.boltTipped && entityBoltTipped instanceof EntityBoltTipped){
-                        entityBoltTipped.setPotionEffect(itemstack);
-                    }
+            if(offhandStack.getItem() == ItemRegistrySW.boltTipped && entityBolt instanceof EntityBoltTipped)
+                ((EntityBoltTipped) entityBolt).setPotionEffect(offhandStack);
 
-                    return entityBoltTipped;
-                }
-            }
-            else if(itemStack.getItem() instanceof ItemLongbow) {
-                ItemStack itemstack = this.getItemStackFromSlot(EntityEquipmentSlot.OFFHAND);
-
-                if (itemstack.getItem() == Items.SPECTRAL_ARROW) {
-                    EntitySpectralArrow entityspectralarrow = new EntitySpectralArrow(this.world, this);
-                    entityspectralarrow.setEnchantmentEffectsFromEntity(this, distanceFactor);
-                    return entityspectralarrow;
-                } else if (itemstack.getItem() instanceof ItemArrow) {
-                    EntityArrow entityArrow = ((ItemArrow) itemstack.getItem()).createArrow(this.world, itemstack, this);
-                    entityArrow.setEnchantmentEffectsFromEntity(this, (float) (entityArrow.getDamage() * (distanceFactor / 2F)));
-                    return entityArrow;
-                } else {
-                    EntityArrow entityarrow = original.call(distanceFactor);
-
-                    if (itemstack.getItem() == Items.TIPPED_ARROW && entityarrow instanceof EntityTippedArrow) {
-                        ((EntityTippedArrow) entityarrow).setPotionEffect(itemstack);
-                    }
-
-                    return entityarrow;
-                }
-            }
+            return entityBolt;
         }
         return original.call(distanceFactor);
     }

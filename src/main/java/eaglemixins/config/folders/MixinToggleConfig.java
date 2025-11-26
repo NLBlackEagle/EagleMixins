@@ -277,13 +277,20 @@ public class MixinToggleConfig {
     @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.mobequipment.json", defaultValue = true)
     public boolean mobEquipmentModify = true;
 
-    @Config.Comment("Allows skeletons to use Spartan Weaponry and benefit from weapon stats. Options in the \"Mob Equipment\" config.")
-    @Config.Name("Skeletons Use Crossbows and Longbows (Vanilla + SpartanWeaponry)")
+    @Config.Comment("Allows skeletons to use Spartan Weaponry and benefit from weapon stats. Options in the \"Mob Equipment\" config. If \"Modded Arrow Skeletons\" is disabled, skeletons using crossbows will always use normal bolts, and skeletons using longbows will use the same arrow behaviors like when they have a normal bow.")
+    @Config.Name("Spartan Skeletons (Vanilla/SpartanWeaponry)")
     @Config.RequiresMcRestart
     @MixinConfig.MixinToggle(
             earlyMixin = "mixins.eaglemixins.vanilla.rangedaiweapons.json",
             lateMixin = "mixins.eaglemixins.spartanweaponry.rangedaiweapons.json",
-            defaultValue = true)
+            defaultValue = true
+    )
     @MixinConfig.CompatHandling(modid = "spartanweaponry", desired = true, reason = "Requires mod to properly function")
     public boolean enableSpartanRangedSkeletons = true;
+
+    @Config.Comment("Allows all AbstractSkeletons (stray, wither skellie, FUR forsaken etc) to use offhand special arrows like tipped arrows, spectral arrows etc. This is also needed for the \"Tipped Arrows\" section to work.")
+    @Config.Name("Modded Arrow Skeletons (Vanilla)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.skeletonarrows.json", defaultValue = true)
+    public boolean enabledModdedArrowsForAll = true;
 }
