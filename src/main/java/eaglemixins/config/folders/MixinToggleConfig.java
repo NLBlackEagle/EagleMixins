@@ -293,4 +293,10 @@ public class MixinToggleConfig {
     @Config.RequiresMcRestart
     @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.skeletonarrows.json", defaultValue = true)
     public boolean enabledModdedArrowsForAll = true;
+
+    @Config.Comment("Mobs holding any bow or crossbow in mainhand will pickup tipped arrows or tipped bolts if they can pickup items at all. Only tipped arrows/bolts with potion types defined in the tipped arrow config are viable to pickup.")
+    @Config.Name("Mobs Pickup Tipped Arrows (Vanilla)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.pickuptippedarrows.json", defaultValue = true)
+    public boolean mobsPickupArrows = true;
 }

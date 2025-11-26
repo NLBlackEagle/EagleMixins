@@ -142,6 +142,7 @@ public class TippedArrowConfig {
         return tippedArrowAllowedEntities;
     }
 
+    private final Set<PotionType> tippedArrowTypes = new HashSet<>();
     private List<ItemStack> tippedArrowArrayLong = null;
     private List<ItemStack> tippedArrowArray = null;
     private List<ItemStack> tippedBoltArrayLong = null;
@@ -164,6 +165,9 @@ public class TippedArrowConfig {
         if(isLong) return tippedArrowArrayLong.get(rand.nextInt(tippedArrowArrayLong.size())).copy();
         else       return tippedArrowArray.get(rand.nextInt(tippedArrowArray.size())).copy();
     }
+    public boolean isRandomArrowPotionType(PotionType type){
+        return tippedArrowTypes.contains(type);
+    }
 
     private List<ItemStack> createTippedItemArray(String[] config, Item tippedItem){
         List<ItemStack> itemArray = new ArrayList<>();
@@ -173,6 +177,7 @@ public class TippedArrowConfig {
                 EagleMixins.LOGGER.warn("Arrow PotionTypes invalid, PotionType: {}, ignoring.", potionString);
                 continue;
             }
+            tippedArrowTypes.add(type);
             itemArray.add(PotionUtils.addPotionToItemStack(new ItemStack(tippedItem),type));
         }
         return itemArray;
@@ -180,5 +185,10 @@ public class TippedArrowConfig {
 
     public void reset(){
         tippedArrowAllowedEntities = null;
+        tippedArrowTypes.clear();
+        tippedArrowArrayLong = null;
+        tippedArrowArray = null;
+        tippedBoltArrayLong = null;
+        tippedBoltArray = null;
     }
 }

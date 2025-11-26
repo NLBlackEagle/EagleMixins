@@ -93,7 +93,7 @@ public class RandomTippedArrowHandler {
             attacker.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, ForgeConfigHandler.tippedarrows.getRandomArrowStack(attacker.getRNG(),false, hasCrossbow));
     }
 
-    private static boolean isValidTippedItem(Item arrow, boolean forCrossbow){
+    public static boolean isValidTippedItem(Item arrow, boolean forCrossbow){
         boolean spartanLoaded = ModLoadedUtil.spartanweaponry.isLoaded();
 
         //Bows need tipped arrows
