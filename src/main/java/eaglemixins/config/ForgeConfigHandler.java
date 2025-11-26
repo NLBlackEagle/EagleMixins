@@ -8,11 +8,13 @@ import eaglemixins.config.folders.*;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Config(modid = EagleMixins.MODID)
 public class ForgeConfigHandler {
@@ -57,6 +59,10 @@ public class ForgeConfigHandler {
 	@Config.Comment("NuclearCraft Options")
 	@Config.Name("NuclearCraft Options")
 	public static final NuclearConfig nuclear = new NuclearConfig();
+
+	@Config.Comment("Modify Gear of some Mobs")
+	@Config.Name("Mob Equipment")
+	public static final MobEquipmentConfig mobequipment = new MobEquipmentConfig();
 
 	public static class ServerConfig {
 		@Config.Comment("Chance of teleporting player to Underneath for exotic teleportation (through the concrete teleporters)")
@@ -153,9 +159,7 @@ public class ForgeConfigHandler {
                 "Example: all, all, [], [SPELL_MOB@121,189,101], 3, 8, 1.0, 0.0, 0.01, 20, true, 0, 256, [], NUCLEAR",
                 "Example: 0, minecraft:plains, [minecraft:grass|minecraft:tallgrass], [VILLAGER_HAPPY@121,189,101|TOWN_AURA@121,189,101], 3, 8, 1.0, 0.0, 0.01, 20, true, 0, 256, [], NUCLEAR",
                 "Particle List: use /particle"
-
         })
-
         @Config.Name("Particle Spawn System")
         public String[] ambientparticlespawnlist = {
                 "0, all, [], [SPELL_MOB], 3, 8, 1.0, 0.0, 0.01, 20, true, 0, 256, [], NUCLEAR",
@@ -183,10 +187,9 @@ public class ForgeConfigHandler {
 				irradiated.reset();
 				srparasites.reset();
 				abyssal.reset();
+				mobequipment.reset();
 				refreshDrinkableBlockCache();
-                if (FMLCommonHandler.instance().getSide().isClient()) {
-                    loadParticleRulesFromConfig();
-                }
+				loadParticleRulesFromConfig();
 			}
 		}
 	}

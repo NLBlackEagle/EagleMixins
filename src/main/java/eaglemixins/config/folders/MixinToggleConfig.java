@@ -270,4 +270,10 @@ public class MixinToggleConfig {
     @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.legendarytooltips.moreframes.json", defaultValue = true)
     @MixinConfig.CompatHandling(modid = "legendarytooltips", desired = true, reason = "Requires mod to properly function")
     public boolean moreLegendaryTooltipFrames = true;
+
+    @Config.Comment("Allows to modify mob equipment (mainly zombies and skeletons) set in the \"Mob Equipment\" config.")
+    @Config.Name("Mob Equipment Modification (Vanilla)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.mobequipment.json", defaultValue = true)
+    public boolean mobEquipmentModify = true;
 }

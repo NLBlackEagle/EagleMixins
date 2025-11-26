@@ -95,7 +95,6 @@ dependencies {
 
 mixin {
     add sourceSets.main, "mixins.${mod_id}.refmap.json"
-    defaultObfuscationEnv = "searge"
 }
 
 fancyGradle {

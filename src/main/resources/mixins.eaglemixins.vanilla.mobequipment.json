@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "package": "eaglemixins.mixin",
+  "refmap": "mixins.eaglemixins.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "mixins": [
+    "vanilla.mobequipment.AbstractSkeletonMixin",
+    "vanilla.mobequipment.EntityLivingMixin",
+    "vanilla.mobequipment.EntityLivingMixin_Enchants",
+    "vanilla.mobequipment.EntityZombieMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1,
+    "maxShiftBy": 10
+  }
+}
