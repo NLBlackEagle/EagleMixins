@@ -37,6 +37,11 @@ public class MobEquipmentConfig {
             "minecraft, diamond_helmet, diamond_chestplate, diamond_leggings, diamond_boots, 4, 1"
     };
 
+
+    @Config.Comment("Allows Strays and Wither Skeletons to use offhand vanilla tipped arrows and allows any skeleton to use offhand arrow items.")
+    @Config.Name("Enable Offhand Arrows For All Skeletons")
+    public boolean enabledModdedArrowsForAll = true;
+
     @Config.Comment("Base chance multiplier for zombie types getting weapons. By default 5% in hard mode, 1% in all other difficulties. The given multiplier here will be multiplied on top of those.")
     @Config.Name("Zombie Weapon Base Chance Multi")
     @Config.RangeDouble(min = Float.MIN_VALUE, max = 100)
@@ -66,6 +71,10 @@ public class MobEquipmentConfig {
     @Config.Comment("Settings for enchants on the mob equipment")
     @Config.Name("Enchants")
     public EnchantConfig enchants = new EnchantConfig();
+
+    @Config.Comment("Settings for skeletons using Spartan Crossbows and Longbows")
+    @Config.Name("Skeletons Using SpartanWeaponry")
+    public SpartanWeaponrySkeletonsConfig spartanSkeletons = new SpartanWeaponrySkeletonsConfig();
 
     public static class EnchantConfig {
         @Config.Comment("Minimum enchantability enchanted mainhand items will have")
@@ -103,6 +112,22 @@ public class MobEquipmentConfig {
         @Config.Comment("Chance for armor pieces to be enchanted. Scaled with local clamped difficulty, so the given value will only be reached if the area is inhabited for a while.")
         @Config.Name("Armor - Chance")
         public float armor_chanceEnchant = 0.5F;
+    }
+
+
+    public static class SpartanWeaponrySkeletonsConfig{
+
+        @Config.Comment("The range/projectile speed stat will provide a strafing penalty based on the difference between the vanilla bow.")
+        @Config.Name("Enable Move Speed Penalty")
+        public boolean enableMoveSpeedPenalty = true;
+
+        @Config.Comment("The range/projectile speed stat will provide an op1 Follow Range Attribute bonus based on the difference between the vanilla bow.")
+        @Config.Name("Enable Follow Range Bonus")
+        public boolean enableFollowRangeBonus = true;
+
+        @Config.Comment("The range/projectile speed stat will provide a strafing distance bonus based on the difference between the vanilla bow.")
+        @Config.Name("Enable AI Strafe Distance Bonus")
+        public boolean enableStrafeDistanceBonus = true;
     }
 
     public static final List<ItemEntry> zombieHands = new ArrayList<>();

@@ -276,4 +276,14 @@ public class MixinToggleConfig {
     @Config.RequiresMcRestart
     @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.mobequipment.json", defaultValue = true)
     public boolean mobEquipmentModify = true;
+
+    @Config.Comment("Allows skeletons to use Spartan Weaponry and benefit from weapon stats. Options in the \"Mob Equipment\" config.")
+    @Config.Name("Skeletons Use Crossbows and Longbows (Vanilla + SpartanWeaponry)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(
+            earlyMixin = "mixins.eaglemixins.vanilla.rangedaiweapons.json",
+            lateMixin = "mixins.eaglemixins.spartanweaponry.rangedaiweapons.json",
+            defaultValue = true)
+    @MixinConfig.CompatHandling(modid = "spartanweaponry", desired = true, reason = "Requires mod to properly function")
+    public boolean enableSpartanRangedSkeletons = true;
 }
