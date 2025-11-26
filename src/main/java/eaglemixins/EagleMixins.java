@@ -8,8 +8,6 @@ import eaglemixins.init.ModStats;
 import eaglemixins.init.RadiationResistanceRegistry;
 import eaglemixins.network.PacketHandler;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -22,7 +20,7 @@ import org.apache.logging.log4j.Logger;
 public class EagleMixins {
 
     public static final String MODID = "eaglemixins";
-    public static final String VERSION = "1.2.0";
+    public static final String VERSION = "1.2.1";
     public static final String NAME = "EagleMixins";
     public static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final boolean debugEnabled = false;
