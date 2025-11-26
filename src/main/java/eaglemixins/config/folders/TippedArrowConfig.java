@@ -4,6 +4,7 @@ import eaglemixins.EagleMixins;
 import eaglemixins.compat.ModLoadedUtil;
 import eaglemixins.compat.SpartanWeaponryUtil;
 import net.minecraft.init.Items;
+import net.minecraft.init.PotionTypes;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionType;
@@ -166,7 +167,7 @@ public class TippedArrowConfig {
         List<ItemStack> itemArray = new ArrayList<>();
         for(String potionString : config) {
             PotionType type = PotionType.getPotionTypeForName(potionString);
-            if(type == null){
+            if(type == null || type == PotionTypes.EMPTY){
                 EagleMixins.LOGGER.warn("Arrow PotionTypes invalid, PotionType: {}, ignoring.", potionString);
                 continue;
             }
