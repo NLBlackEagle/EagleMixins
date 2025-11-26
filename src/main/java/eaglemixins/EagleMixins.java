@@ -87,9 +87,6 @@ public class EagleMixins {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-
-        ConfigManager.sync(EagleMixins.MODID, Config.Type.INSTANCE); //TODO: why? are we writing smth into the config?
-
         BiomeTagHandler.init();
         RadiationResistanceRegistry.reloadFromConfig();
         if(Loader.isModLoaded("enhancedvisuals")) EnhancedVisualsHandler.init();
