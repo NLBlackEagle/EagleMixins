@@ -236,6 +236,13 @@ public class MixinToggleConfig {
     @MixinConfig.CompatHandling(modid = "openterraingenerator", desired = true, reason = "Requires mod to properly function")
     public boolean otgCreateWorldFix = true;
 
+    @Config.Comment("Stops crashing when OTG biomes are missing and instead uses a different biome for the missing one. No guarantees that this is gonna be structurally sound biome layering")
+    @Config.Name("Old world compatibility (OTG)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.otg.fixmissingbiomecrash.json", defaultValue = true)
+    @MixinConfig.CompatHandling(modid = "openterraingenerator", desired = true, reason = "Requires mod to properly function")
+    public boolean otgFixMissingBiomeCrash = true;
+
     @Config.Comment("Prevents Fish's Undead Rising Undertaker, Avaton and Skeleton King summons from dropping loot or XP.")
     @Config.Name("Cancel Summon Loot & XP (FUR)")
     @Config.RequiresMcRestart
