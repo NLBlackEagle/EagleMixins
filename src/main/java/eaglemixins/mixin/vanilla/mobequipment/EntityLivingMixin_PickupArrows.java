@@ -14,11 +14,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionType;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.world.World;
-import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-@Debug(export = true)
 @Mixin(EntityLiving.class)
 public abstract class EntityLivingMixin_PickupArrows extends EntityLivingBase {
     public EntityLivingMixin_PickupArrows(World worldIn) {

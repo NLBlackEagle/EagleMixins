@@ -142,30 +142,23 @@ public class TippedArrowConfig {
         return tippedArrowAllowedEntities;
     }
 
+    private boolean arraysAreSetup = false;
     private final Set<PotionType> tippedArrowTypes = new HashSet<>();
-    private List<ItemStack> tippedArrowArrayLong = null;
-    private List<ItemStack> tippedArrowArray = null;
-    private List<ItemStack> tippedBoltArrayLong = null;
-    private List<ItemStack> tippedBoltArray = null;
+    private final List<ItemStack> tippedArrowArrayLong = new ArrayList<>();
+    private final List<ItemStack> tippedArrowArray = new ArrayList<>();
+    private final List<ItemStack> tippedBoltArrayLong = new ArrayList<>();
+    private final List<ItemStack> tippedBoltArray = new ArrayList<>();
     public ItemStack getRandomArrowStack(Random rand, boolean isLong, boolean forCrossBow){
+        if(!arraysAreSetup) initArrays();
         if(forCrossBow && ModLoadedUtil.spartanweaponry.isLoaded()){
-            if(isLong && tippedBoltArrayLong == null)
-                tippedBoltArrayLong = createTippedItemArray(this.tippedArrowPotionsLong, SpartanWeaponryUtil.getTippedBoltItem());
-            else if(!isLong && tippedBoltArray == null)
-                tippedBoltArray = createTippedItemArray(this.tippedArrowPotions, SpartanWeaponryUtil.getTippedBoltItem());
             if(isLong) return tippedBoltArrayLong.get(rand.nextInt(tippedBoltArrayLong.size())).copy();
             else       return tippedBoltArray.get(rand.nextInt(tippedBoltArray.size())).copy();
         }
-
-        //Lazy loading
-        if(isLong && tippedArrowArrayLong == null)
-            tippedArrowArrayLong = createTippedItemArray(this.tippedArrowPotionsLong, Items.TIPPED_ARROW);
-        else if(!isLong && tippedArrowArray == null)
-            tippedArrowArray = createTippedItemArray(this.tippedArrowPotions, Items.TIPPED_ARROW);
         if(isLong) return tippedArrowArrayLong.get(rand.nextInt(tippedArrowArrayLong.size())).copy();
         else       return tippedArrowArray.get(rand.nextInt(tippedArrowArray.size())).copy();
     }
     public boolean isRandomArrowPotionType(PotionType type){
+        if(!arraysAreSetup) initArrays();
         return tippedArrowTypes.contains(type);
     }
 
@@ -183,12 +176,24 @@ public class TippedArrowConfig {
         return itemArray;
     }
 
+    public void initArrays(){
+        if(ModLoadedUtil.spartanweaponry.isLoaded()){
+            tippedBoltArrayLong.addAll(createTippedItemArray(this.tippedArrowPotionsLong, SpartanWeaponryUtil.getTippedBoltItem()));
+            tippedBoltArray.addAll(createTippedItemArray(this.tippedArrowPotions, SpartanWeaponryUtil.getTippedBoltItem()));
+        }
+        tippedArrowArrayLong.addAll(createTippedItemArray(this.tippedArrowPotionsLong, Items.TIPPED_ARROW));
+        tippedArrowArray.addAll(createTippedItemArray(this.tippedArrowPotions, Items.TIPPED_ARROW));
+
+        arraysAreSetup = true;
+    }
+
     public void reset(){
         tippedArrowAllowedEntities = null;
         tippedArrowTypes.clear();
-        tippedArrowArrayLong = null;
-        tippedArrowArray = null;
-        tippedBoltArrayLong = null;
-        tippedBoltArray = null;
+        tippedArrowArrayLong.clear();
+        tippedArrowArray.clear();
+        tippedBoltArrayLong.clear();
+        tippedBoltArray.clear();
+        arraysAreSetup = false;
     }
 }
