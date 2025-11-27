@@ -26,15 +26,15 @@ public class NuclearConfig {
             "iceandfire:lightningdragon=1000.0"
     };
 
-    @Config.Name("Unopened containers with the given loot tables will radiate the given amount of radiation into their subchunk")
-    @Config.Comment("Radiating Loot Tables")
+    @Config.Comment("Unopened containers with the given loot tables will radiate the given amount of radiation into their subchunk")
+    @Config.Name("Radiating Loot Tables")
     public Map<String, Double> lootTableRadiation = new HashMap<String, Double>(){{
         put("dregora:ruins/nuclear", 0.1000); //value is average of such a loot table
         put("dregora:ruins/starter", 0.0361); //value is average of such a loot table
     }};
 
-    @Config.Name("Remove entries to have them not count for irradiating the player and the chunks around it. Or set to false to not check sub-inventories like shulker box or crate contents")
-    @Config.Comment("Radiating Inventories")
+    @Config.Comment("Remove entries to have them not count for irradiating the player and the chunks around it. Or set to false to not check sub-inventories like shulker box or crate contents")
+    @Config.Name("Radiating Inventories")
     public Map<String, Boolean> inventoryRadiation = new HashMap<String, Boolean>(){{
         put("enderChest", true);
         put("inventoryCrafting", true);
