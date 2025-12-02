@@ -21,7 +21,7 @@ public abstract class EnderQueensCrownRandomTpCancel {
         if(!original) return false; //If tp failed for whatever reason, we don't punish (yet)
         if(entity.world.isRemote) return true;
         if (!(entity instanceof EntityPlayer)) return true;
-        if (!RandomTpCancelHandler.tpMethods.contains("enderCrown")) return true;
+        if (!RandomTpCancelHandler.isTpMethodEnabled("enderCrown")) return true;
         if (!Ref.entityIsInAbyssalRift(entity)) return true;
         RandomTpCancelHandler.applyTpCooldownDebuffs((EntityPlayer) entity);
         return true;

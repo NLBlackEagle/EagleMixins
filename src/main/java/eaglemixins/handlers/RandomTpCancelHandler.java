@@ -2,6 +2,7 @@ package eaglemixins.handlers;
 
 
 import eaglemixins.config.ForgeConfigHandler;
+import eaglemixins.config.folders.AbyssalConfig;
 import eaglemixins.util.Ref;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityEnderPearl;
@@ -30,7 +31,7 @@ public class RandomTpCancelHandler {
         if(entity.world.isRemote) return;
         if (!(entity instanceof EntityPlayer)) return;
         if (event.getSource() != DamageSource.IN_WALL) return;
-        if (!tpMethods.contains("wallDmg")) return;
+        if(!isTpMethodEnabled("wallDmg")) return;
         if (!Ref.entityIsInAbyssalRift(entity) && !Ref.entityIsInAbyssalGate(entity)) return;
 
         applyTpCooldownDebuffs((EntityPlayer) entity);
@@ -43,7 +44,7 @@ public class RandomTpCancelHandler {
         if(event.getThrowable().world.isRemote) return;
         EntityLivingBase entity = event.getThrowable().getThrower();
         if (!(entity instanceof EntityPlayer)) return;
-        if (!tpMethods.contains("enderPearl")) return;
+        if(!isTpMethodEnabled("enderPearl")) return;
         if (!Ref.entityIsInAbyssalRift(entity) && !Ref.entityIsInAbyssalGate(entity)) return;
 
         applyTpCooldownDebuffs((EntityPlayer) entity);
@@ -56,7 +57,7 @@ public class RandomTpCancelHandler {
         if(entity.world.isRemote) return;
         if (!(entity instanceof EntityPlayer)) return;
         if (!(event.getItem().getItem() instanceof ItemChorusFruit)) return;
-        if (!tpMethods.contains("chorusFruit")) return;
+        if(!isTpMethodEnabled("chorusFruit")) return;
         if (!Ref.entityIsInAbyssalRift(entity) && !Ref.entityIsInAbyssalGate(entity)) return;
 
         applyTpCooldownDebuffs((EntityPlayer) entity);
@@ -88,6 +89,13 @@ public class RandomTpCancelHandler {
             }
         }
         return tpPotions.contains(potion);
+    }
+
+    public static boolean isTpMethodEnabled(String method){
+        if(tpMethods == null) tpMethods = Arrays.stream(ForgeConfigHandler.abyssal.randomTpPots)
+                .filter(s -> !s.contains(":"))
+                .collect(Collectors.toSet());
+        return tpMethods.contains(method);
     }
 
     private static List<Potion> tpCooldownPotions = null;
@@ -136,8 +144,6 @@ public class RandomTpCancelHandler {
 
     public static void refreshConfig(){
         tpPotions = null;
-        tpMethods = Arrays.stream(ForgeConfigHandler.abyssal.randomTpPots)
-                .filter(s -> !s.contains(":"))
-                .collect(Collectors.toSet());
+        tpMethods = null;
     }
 }
