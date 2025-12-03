@@ -1,4 +1,4 @@
-package eaglemixins.mixin.vanilla;
+package eaglemixins.mixin.vanilla.slowairrefill;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
