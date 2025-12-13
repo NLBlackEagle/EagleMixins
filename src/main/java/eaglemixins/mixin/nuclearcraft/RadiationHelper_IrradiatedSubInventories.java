@@ -5,6 +5,9 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import eaglemixins.EagleMixins;
 import eaglemixins.config.ForgeConfigHandler;
+import gigaherz.toolbelt.BeltFinder;
+import gigaherz.toolbelt.belt.ItemToolBelt;
+import gigaherz.toolbelt.belt.ToolBeltInventory;
 import nc.capability.radiation.entity.IEntityRads;
 import nc.capability.radiation.source.IRadiationSource;
 import nc.config.NCConfig;
@@ -24,6 +27,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -64,8 +69,9 @@ public abstract class RadiationHelper_IrradiatedSubInventories {
         if (eaglemixins$crateItem == null) eaglemixins$crateItem = ItemShulkerBox.getItemFromBlock(Crate.crate);
         if (eaglemixins$sealedCrateItem == null) eaglemixins$sealedCrateItem = ItemShulkerBox.getItemFromBlock(Crate.crateSealed);
 
-        //Only Shulkers and Charm Crates
+        //Only Shulkers and Charm Crates and Toolbelts
         Item item = stack.getItem();
+        if (item instanceof ItemToolBelt) return eagleMixins$applyOperationOnToolbeltInventory(stack, radsFunction, true);
         boolean isShulker = item instanceof ItemShulkerBox;
         if (!isShulker && !(item == eaglemixins$crateItem) && !(item == eaglemixins$sealedCrateItem)) return 0;
 
@@ -107,6 +113,28 @@ public abstract class RadiationHelper_IrradiatedSubInventories {
     }
 
     @Unique
+    private static double eagleMixins$applyOperationOnToolbeltInventory(ItemStack beltStack, Function<ItemStack, Double> radsFunction, boolean alsoCheckSubInventories) {
+        if(beltStack.isEmpty()) return 0;
+
+        if(!beltStack.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) return 0;
+        IItemHandler handler = beltStack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        if(!(handler instanceof ToolBeltInventory)) return 0;
+
+        double addedRads = 0;
+        for (int i = 0; i < handler.getSlots(); i++) {
+            ItemStack stack = handler.getStackInSlot(i);
+            if (!stack.isEmpty()) {
+                //Normal irradiated items in toolbelt
+                addedRads += radsFunction.apply(stack);
+                //Shulkers or crates in the toolbelt
+                if(alsoCheckSubInventories)
+                    addedRads += eagleMixins$applyOperationOnSubInventory(stack, radsFunction);
+            }
+        }
+        return addedRads;
+    }
+
+    @Unique
     private static double eagleMixins$applyOperationOnBackpack(EntityPlayer player, Function<ItemStack, Double> radsFunction, boolean alsoCheckSubInventories) {
         IBackpack cap = BackpackHelper.getBackpack(player);
         if (cap == null) return 0;
@@ -125,6 +153,19 @@ public abstract class RadiationHelper_IrradiatedSubInventories {
                 if(alsoCheckSubInventories)
                     addedRads += eagleMixins$applyOperationOnSubInventory(stack, radsFunction);
             }
+        }
+        return addedRads;
+    }
+
+    @Unique
+    private static double eagleMixins$applyOperationOnToolbeltSlot(EntityPlayer player, Function<ItemStack, Double> radsFunction, boolean alsoCheckSubInventories) {
+        //Checks both custom toolbelt slot and belt slot in baubles inv
+        double addedRads = 0;
+        for(BeltFinder bf : BeltFinder.instances){
+            if(bf == null) continue;
+            BeltFinder.BeltGetter getter = bf.findStack(player);
+            if(getter == null) continue;
+            addedRads += eagleMixins$applyOperationOnToolbeltInventory(getter.getBelt(), radsFunction, alsoCheckSubInventories);
         }
         return addedRads;
     }
@@ -168,6 +209,9 @@ public abstract class RadiationHelper_IrradiatedSubInventories {
 
         if(ForgeConfigHandler.nuclear.inventoryRadiation.containsKey("backpack"))
             eagleMixins$applyOperationOnBackpack(inventory.player, transferRadsToChunkFunction, ForgeConfigHandler.nuclear.inventoryRadiation.get("backpack"));
+
+        if(ForgeConfigHandler.nuclear.inventoryRadiation.containsKey("toolbeltSlot"))
+            eagleMixins$applyOperationOnToolbeltSlot(inventory.player, transferRadsToChunkFunction, ForgeConfigHandler.nuclear.inventoryRadiation.get("toolbeltSlot"));
 
         //If player has inventory gui open and has clicked on an item so it's held by the mouse pointer
         if (!inventory.getItemStack().isEmpty() && ForgeConfigHandler.nuclear.inventoryRadiation.containsKey("mouseItem")) {
@@ -219,6 +263,9 @@ public abstract class RadiationHelper_IrradiatedSubInventories {
 
         if(ForgeConfigHandler.nuclear.inventoryRadiation.containsKey("backpack"))
             original += eagleMixins$applyOperationOnBackpack(player, transferRadsToPlayerFunction, ForgeConfigHandler.nuclear.inventoryRadiation.get("backpack"));
+
+        if(ForgeConfigHandler.nuclear.inventoryRadiation.containsKey("toolbeltSlot"))
+            original += eagleMixins$applyOperationOnToolbeltSlot(player, transferRadsToPlayerFunction, ForgeConfigHandler.nuclear.inventoryRadiation.get("toolbeltSlot"));
 
         if (!player.inventory.getItemStack().isEmpty() && ForgeConfigHandler.nuclear.inventoryRadiation.containsKey("mouseItem")) {
             original += transferRadsFromStackToPlayer(player.inventory.getItemStack(), playerRads, player, updateRate);

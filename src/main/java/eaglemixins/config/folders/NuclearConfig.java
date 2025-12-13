@@ -33,7 +33,7 @@ public class NuclearConfig {
         put("dregora:ruins/starter", 0.0361); //value is average of such a loot table
     }};
 
-    @Config.Comment("Remove entries to have them not count for irradiating the player and the chunks around it. Or set to false to not check sub-inventories like shulker box or crate contents")
+    @Config.Comment("Remove entries to have them not count for irradiating the player and the chunks around it. Or set to false to not check sub-inventories like contents of shulkerboxes, crates and toolbelts")
     @Config.Name("Radiating Inventories")
     public Map<String, Boolean> inventoryRadiation = new HashMap<String, Boolean>(){{
         put("enderChest", true);
@@ -41,5 +41,6 @@ public class NuclearConfig {
         put("mouseItem", true);
         put("itemEntity", true);
         put("backpack", true);
+        put("toolbeltSlot", true);
     }};
 }
