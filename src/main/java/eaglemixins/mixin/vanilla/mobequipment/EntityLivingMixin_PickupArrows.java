@@ -1,6 +1,7 @@
 package eaglemixins.mixin.vanilla.mobequipment;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import eaglemixins.compat.ModLoadedUtil;
 import eaglemixins.compat.SpartanWeaponryUtil;
@@ -23,14 +24,19 @@ public abstract class EntityLivingMixin_PickupArrows extends EntityLivingBase {
         super(worldIn);
     }
 
-    @ModifyExpressionValue(
+    @ModifyReturnValue(
             method = "getSlotForItemStack",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;isShield(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/EntityLivingBase;)Z", remap = false)
+            at = @At(value = "RETURN", ordinal = 3)
     )
-    private static boolean eaglemixins_vanillaEntityLiving_getSlotForItemStack_allowTippedArrows(boolean original, ItemStack stack){
-        if(original) return true;
+    private static EntityEquipmentSlot eaglemixins_vanillaEntityLiving_getSlotForItemStack_allowTippedArrows(EntityEquipmentSlot original, ItemStack stack){
+        if(original != EntityEquipmentSlot.MAINHAND) return original;
         //Put tipped arrows + tipped bolts in offhand
-        return RandomTippedArrowHandler.isValidTippedItem(stack.getItem(), true) || RandomTippedArrowHandler.isValidTippedItem(stack.getItem(), false);
+        if(
+                RandomTippedArrowHandler.isValidTippedItem(stack.getItem(), true) ||
+                RandomTippedArrowHandler.isValidTippedItem(stack.getItem(), false)
+        )
+            return EntityEquipmentSlot.OFFHAND;
+        return original;
     }
 
     @ModifyExpressionValue(
