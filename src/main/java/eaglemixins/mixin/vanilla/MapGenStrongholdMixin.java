@@ -1,15 +1,13 @@
 package eaglemixins.mixin.vanilla;
 
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.MapGenStronghold;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(MapGenStronghold.class)
 public abstract class MapGenStrongholdMixin {
@@ -24,7 +22,8 @@ public abstract class MapGenStrongholdMixin {
     private ChunkPos[] structureCoords;
 
     // Multiplier for scaling distance and spread
-    private static final int MULTIPLIER = 8;
+    @Unique
+    private static final int eagleMixins$MULTIPLIER = 8;
 
 
     /**
@@ -33,10 +32,10 @@ public abstract class MapGenStrongholdMixin {
     @Inject(method = "generatePositions", at = @At("HEAD"))
     private void eaglemixins$scaleStrongholdParams(CallbackInfo ci) {
         // Scale distance
-        this.distance *= MULTIPLIER;
+        this.distance *= eagleMixins$MULTIPLIER;
 
         // Scale number of strongholds per ring
-        this.spread *= MULTIPLIER;
+        this.spread *= eagleMixins$MULTIPLIER;
 
         // Safety clamp
         this.spread = Math.max(1, Math.min(this.spread, this.structureCoords.length));

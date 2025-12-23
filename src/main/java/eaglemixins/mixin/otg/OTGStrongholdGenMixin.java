@@ -11,8 +11,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(OTGStrongholdGen.class)
 public abstract class OTGStrongholdGenMixin extends MapGenStronghold
 {
-    @Shadow protected double distance;
-    @Shadow protected int spread;
+    @Shadow
+    private double distance;
+    @Shadow
+    private int spread;
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void eaglemixins$scaleStrongholdValues(CallbackInfo ci)
