@@ -2,7 +2,6 @@ package eaglemixins.handlers;
 
 
 import eaglemixins.config.ForgeConfigHandler;
-import eaglemixins.config.folders.AbyssalConfig;
 import eaglemixins.util.Ref;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityEnderPearl;
@@ -14,7 +13,6 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
