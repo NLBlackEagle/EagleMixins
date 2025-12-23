@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "eaglemixins.mixin.otg",
+  "refmap": "mixins.eaglemixins.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "target": "@env(SERVER)",
+  "minVersion": "0.8",
+  "mixins": [
+    "OTGStrongholdGenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1,
+    "maxShiftBy": 10
+  }
+}
