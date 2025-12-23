@@ -7,15 +7,19 @@ import eaglemixins.util.Ref;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityEnderPearl;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemChorusFruit;
+import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -24,6 +28,24 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class RandomTpCancelHandler {
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onRightClick (PlayerInteractEvent.RightClickBlock event) {
+
+        EntityLivingBase entity = event.getEntityLiving();
+        if(entity.world.isRemote) return;
+
+        if (!Ref.entityIsInAbyssalRift(entity) && !Ref.entityIsInAbyssalGate(entity)) return;
+
+        ItemStack heldItem = entity.getHeldItemMainhand();
+        if (heldItem.isEmpty()) return;
+
+        Item enderTalisman = Item.getByNameOrId("forgottenitems:ender_talisman");
+        if (enderTalisman == null || heldItem.getItem() != enderTalisman) return;
+
+        applyTpCooldownDebuffs((EntityPlayer) entity);
+
+    }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
     public static void onLivingHurt(LivingHurtEvent event) {
