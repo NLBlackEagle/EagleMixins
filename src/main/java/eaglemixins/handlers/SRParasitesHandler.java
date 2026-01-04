@@ -124,7 +124,7 @@ public class SRParasitesHandler {
 
         ResourceLocation biomeReg = entity.world.getBiome(entity.getPosition()).getRegistryName();
 
-        if (biomeReg != null && !SRParasitesHandler.isBiomeAllowed(biomeReg)){
+        if (biomeReg != null && SRParasitesHandler.isBiomeAllowed(biomeReg)){
             List<EntityItem> itemsToRemove = new ArrayList<>();
             List<EntityItem> itemsToAdd = new ArrayList<>();
             for (EntityItem drop : event.getDrops()) {
