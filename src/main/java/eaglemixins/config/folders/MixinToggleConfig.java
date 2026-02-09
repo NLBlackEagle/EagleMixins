@@ -319,4 +319,10 @@ public class MixinToggleConfig {
     @Config.RequiresMcRestart
     @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.otg.tweakstronghold.json", defaultValue = true)
     public boolean limitOTGStrongholdGen = true;
+
+    @Config.Comment("Stops blocks affected by gravity from updating when they are generated during worldgen")
+    @Config.Name("Blocks do not fall during world gen (Vanilla)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.stopworldgenfallingblocks.json", defaultValue = true)
+    public boolean stopFallingBlocks = true;
 }
