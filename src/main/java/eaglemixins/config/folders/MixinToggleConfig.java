@@ -309,14 +309,15 @@ public class MixinToggleConfig {
     public boolean mobsPickupArrows = true;
 
     @Config.Comment("Cancels generation of strongholds between 0 and 10.000 blocks from spawn")
-    @Config.Name("Limit Stronghold Generation")
+    @Config.Name("Limit Stronghold Generation (Vanilla)")
     @Config.RequiresMcRestart
     @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.mapgenstronghold.json", defaultValue = true)
     public boolean limitStrongholdGen = true;
 
     @Config.Comment("Account for OTG when Limit Stronghold Generation is set to true")
-    @Config.Name("OTG Stronghold Limiter")
+    @Config.Name("OTG Stronghold Limiter (OTG)")
     @Config.RequiresMcRestart
+    @MixinConfig.CompatHandling(modid = "openterraingenerator", desired = true, reason = "Requires mod to properly function")
     @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.otg.tweakstronghold.json", defaultValue = true)
     public boolean limitOTGStrongholdGen = true;
 
