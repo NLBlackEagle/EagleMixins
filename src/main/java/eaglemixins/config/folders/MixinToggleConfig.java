@@ -192,8 +192,8 @@ public class MixinToggleConfig {
     @Config.Comment("Prevents Observers from ticking a redstone pulse on world gen")
     @Config.Name("Patch Observer Ticking (Vanilla)")
     @Config.RequiresMcRestart
-    @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.observertickonchunkgen.json", defaultValue = false)
-    public boolean patchObserversTickingOnWorldGen = false;
+    @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.observertickonchunkgen.json", defaultValue = true)
+    public boolean patchObserversTickingOnWorldGen = true;
 
     @Config.Comment("Ice upgrades for the fridge will also treat SimpleDifficulty ice chunks as ice.")
     @Config.Name("More Ice in Fridge (CookingForBlockheads)")
