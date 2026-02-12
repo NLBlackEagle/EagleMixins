@@ -40,7 +40,7 @@ public class NamespacedEnchantNBT {
         NBTTagList list = stack.getEnchantmentTagList();
         for (int i = 0; i < list.tagCount(); i++) {
             NBTTagCompound tag = list.getCompoundTagAt(i);
-            Enchantment resolvedEnchantment = resolveEnchantmentByName(tag);
+            Enchantment resolvedEnchantment = eagleMixins$resolveEnchantmentByName(tag);
             if (resolvedEnchantment != null) {
                 ResourceLocation resolved = resolvedEnchantment.getRegistryName();
                 ResourceLocation target = enchantment.getRegistryName();
@@ -71,7 +71,7 @@ public class NamespacedEnchantNBT {
 
         for (int i = 0; i < list.tagCount(); i++) {
             NBTTagCompound tag = list.getCompoundTagAt(i);
-            Enchantment ench = resolveEnchantmentByName(tag);
+            Enchantment ench = eagleMixins$resolveEnchantmentByName(tag);
             if (ench == null) {
                 ench = Enchantment.getEnchantmentByID(tag.getShort("id"));
             }
@@ -105,7 +105,7 @@ public class NamespacedEnchantNBT {
 
         for (int i = 0; i < list.tagCount(); i++) {
             NBTTagCompound tag = list.getCompoundTagAt(i);
-            Enchantment ench = resolveEnchantmentByName(tag);
+            Enchantment ench = eagleMixins$resolveEnchantmentByName(tag);
             if (ench == null) {
                 ench = Enchantment.getEnchantmentByID(tag.getShort("id"));
             }
@@ -120,7 +120,7 @@ public class NamespacedEnchantNBT {
     /* ---------------- shared resolver ---------------- */
 
     @Unique
-    private static Enchantment resolveEnchantmentByName(NBTTagCompound tag) {
+    private static Enchantment eagleMixins$resolveEnchantmentByName(NBTTagCompound tag) {
         if (tag.hasKey("name", Constants.NBT.TAG_STRING)) {
             String name = tag.getString("name");
             if (!name.isEmpty()) {
