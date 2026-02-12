@@ -326,4 +326,11 @@ public class MixinToggleConfig {
     @Config.RequiresMcRestart
     @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.stopworldgenfallingblocks.json", defaultValue = true)
     public boolean stopFallingBlocks = true;
+
+    @Config.Comment("Allows namespaced nbt enchantments to be used within nbt data using STRING_TAG: 'name' ")
+    @Config.Name("Namespaced NBT Enchantments (Vanilla)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.nbtnamespaceenchants.json", defaultValue = true)
+    public boolean enableNamespaceNBT = true;
+
 }
