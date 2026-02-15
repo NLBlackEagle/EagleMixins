@@ -5,6 +5,7 @@ import com.dhanantry.scapeandrunparasites.item.tool.WeaponToolArmorBase;
 import com.dhanantry.scapeandrunparasites.item.tool.WeaponToolMeleeBase;
 import com.dhanantry.scapeandrunparasites.item.tool.WeaponToolRangeBase;
 import com.dhanantry.scapeandrunparasites.util.config.SRPConfig;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
@@ -15,32 +16,33 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import srpmixins.capability.adaptation.CapabilityAdaptationHandler;
 import srpmixins.capability.adaptation.ICapabilityAdaptation;
 import srpmixins.config.SRPMixinsConfigHandler;
 import svenhjol.charm.world.entity.EntityChargedEmerald;
+import net.minecraft.util.text.TextFormatting;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 public class SentientWeaponEvolutionHandler {
+
+    private static final String srpkillsKey = "srpkills";
+    private static final Enchantment smeCoP = Enchantment.getEnchantmentByLocation("somanyenchantments:curseofpossession");
+    private static final Random rand = new Random();
+
     private static boolean isSRPLivingGear(Item item){
         if(!(item instanceof WeaponToolMeleeBase || item instanceof WeaponToolArmorBase || item instanceof WeaponToolRangeBase))
             return false;
         ResourceLocation itemReg = item.getRegistryName();
         return itemReg != null && !itemReg.getPath().contains("sentient");
     }
-    private static final String srpkillsKey = "srpkills";
-    private static final Enchantment smeCoP =  Enchantment.getEnchantmentByLocation("somanyenchantments:curseofpossession");
-    private static final Random rand = new Random();
 
     @SubscribeEvent
     public static void onLivingDeath(LivingDeathEvent event){
@@ -50,39 +52,31 @@ public class SentientWeaponEvolutionHandler {
 
         if(!(event.getSource().getTrueSource() instanceof EntityPlayer)) return;
         EntityPlayer player = (EntityPlayer) event.getSource().getTrueSource();
-        if(player==null) return;
+        if(player == null) return;
 
         //Count equipped srpGear
         int srpGearEquipped = 0;
         for(ItemStack stack : player.getEquipmentAndArmor())
             if(isSRPLivingGear(stack.getItem()))
                 srpGearEquipped++;
+
+        if (srpGearEquipped == 0) return;
         int dividedHealth = (int) (Math.floor(victim.getMaxHealth()) / srpGearEquipped);
 
         //Increase srpkills tag and evolve to sentient
         for(EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {
             ItemStack stack = player.getItemStackFromSlot(slot);
             if (isSRPLivingGear(stack.getItem())) {
-                boolean isMeleeWeapon = stack.getItem() instanceof WeaponToolMeleeBase;    //Weapon true, bow and armor false
+                boolean isMeleeWeapon = stack.getItem() instanceof WeaponToolMeleeBase;
 
-                //Setup NBT tags if living item is fresh
+                //Setup NBT if missing
                 if (!stack.hasTagCompound())
                     stack.setTagCompound(new NBTTagCompound());
 
-                //Set srpkills tag
+                //Set srpkills
                 int currentKills = stack.getTagCompound().getInteger(srpkillsKey) + dividedHealth;
                 stack.getTagCompound().setInteger(srpkillsKey, currentKills);
-
-                //Set Lore tags
-                if (!isMeleeWeapon) {
-                    List<String> loreTags = new ArrayList<>();
-                    loreTags.add("" + TextFormatting.RESET + TextFormatting.BLUE + "---> " + currentKills);
-                    loreTags.add(stack.getItem() instanceof WeaponToolRangeBase ? "eaglemixins.srptooltip.bow" : "eaglemixins.srptooltip.armor");
-                    setLocLore(stack, loreTags);
-                } else {
-                    String loreTag = "eaglemixins.srptooltip.weapon";
-                    setLocLore(stack, Collections.singletonList(loreTag));
-                }
+                player.inventoryContainer.detectAndSendChanges();
 
                 //Evolve
                 if (currentKills > SRPConfig.weapon_livingSentient_HP_needed) {
@@ -99,7 +93,7 @@ public class SentientWeaponEvolutionHandler {
                     }
 
                     //Get respective sentient gear
-                    String itemId = stack.getItem().getRegistryName().getPath(); //!=null already checked in isSRPLivingGear()
+                    String itemId = stack.getItem().getRegistryName().getPath();
                     Item newItem = Item.getByNameOrId("srparasites:" + itemId + "_sentient");
                     if (newItem == null) continue;
                     ItemStack newStack = new ItemStack(newItem);
@@ -115,16 +109,11 @@ public class SentientWeaponEvolutionHandler {
                         if (adaCap != null && adaCapNew != null) adaCapNew.copyAdaptationsFrom(adaCap);
                     }
 
-                    if (!isMeleeWeapon)
-                        newStack.getTagCompound().getCompoundTag("display").removeTag("LocLore");
-
                     boolean hasCurseOfPossession = EnchantmentHelper.getEnchantments(newStack).get(smeCoP) != null;
                     if (hasCurseOfPossession || isArmor) {
-                        //replace item in slot if item has curse of possession or is armor
-                        stack.shrink(1);    //This shouldn't be necessary but we do it anyway
+                        stack.shrink(1);
                         player.setItemStackToSlot(slot, newStack);
                     } else {
-                        //otherwise throw it
                         stack.shrink(1);
                         player.entityDropItem(newStack, 0.5F);
                     }
@@ -133,19 +122,61 @@ public class SentientWeaponEvolutionHandler {
         }
     }
 
-    private static void setLocLore(ItemStack stack, List<String> srpkillsToolTip) {
-        NBTTagList lore = new NBTTagList();
-        for(String s : srpkillsToolTip)
-            lore.appendTag(new NBTTagString(s));
+    /**
+     * Forge tooltip event dynamically injects LocLore and kill counter.
+     */
+    @SubscribeEvent
+    public static void onItemTooltip(ItemTooltipEvent event) {
+        ItemStack stack = event.getItemStack();
+        if (stack == null || stack.isEmpty()) return;
+        if (!isSRPLivingGear(stack.getItem())) return;
 
-        if(stack.getTagCompound().hasKey("display")) {
-            NBTTagCompound displayCompound = stack.getTagCompound().getCompoundTag("display");
-            //TODO: this overwrites any other LocLore
-            displayCompound.setTag("LocLore", lore);
+        List<String> tooltip = event.getToolTip();
+        NBTTagCompound tag = stack.getTagCompound();
+        if (tag == null) return;
+
+        int kills = tag.getInteger(srpkillsKey);
+
+        // Add kill counter on the first line if missing
+        boolean hasCounter = tooltip.stream().anyMatch(line -> line.contains("--->"));
+        if (!hasCounter) {
+            tooltip.add(0, TextFormatting.RESET + "" + TextFormatting.BLUE + "---> " + kills);
         } else {
-            NBTTagCompound displayCompound = new NBTTagCompound();
-            displayCompound.setTag("LocLore",lore);
-            stack.getTagCompound().setTag("display", displayCompound);
+            // If it exists somewhere else, move it to the first line
+            tooltip.removeIf(line -> line.contains("--->"));
+            tooltip.add(0, TextFormatting.RESET + "" + TextFormatting.BLUE + "---> " + kills);
+        }
+
+        // Add type line below it with light purple + italic formatting
+        String typeKey = null;
+        if (stack.getItem() instanceof WeaponToolMeleeBase) {
+            typeKey = "eaglemixins.srptooltip.weapon";
+        } else if (stack.getItem() instanceof WeaponToolRangeBase) {
+            typeKey = "eaglemixins.srptooltip.bow";
+        } else if (stack.getItem() instanceof WeaponToolArmorBase) {
+            typeKey = "eaglemixins.srptooltip.armor";
+        }
+
+        if (typeKey != null) {
+            String localized = I18n.format(typeKey);
+            String formatted = TextFormatting.BLUE + "" + localized;
+
+            // Remove any previous instances of this type line
+            tooltip.removeIf(line -> line.contains(localized));
+            // Insert on line 1 (below kill counter)
+            tooltip.add(1, formatted);
+        }
+
+        // Add LocLore lines dynamically after the first two lines
+        if (tag.hasKey("display", 10)) {
+            NBTTagCompound display = tag.getCompoundTag("display");
+            if (display.hasKey("LocLore", 9)) {
+                NBTTagList locLore = display.getTagList("LocLore", 8);
+                for (int i = 0; i < locLore.tagCount(); i++) {
+                    String line = locLore.getStringTagAt(i);
+                    tooltip.add(line); // append after kill counter + type line
+                }
+            }
         }
     }
 }
