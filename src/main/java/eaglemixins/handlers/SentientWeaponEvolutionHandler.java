@@ -26,7 +26,6 @@ import srpmixins.capability.adaptation.CapabilityAdaptationHandler;
 import srpmixins.capability.adaptation.ICapabilityAdaptation;
 import srpmixins.config.SRPMixinsConfigHandler;
 import svenhjol.charm.world.entity.EntityChargedEmerald;
-import net.minecraft.util.text.TextFormatting;
 
 import java.util.List;
 import java.util.Random;
