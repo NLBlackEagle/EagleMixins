@@ -28,6 +28,7 @@ import srpmixins.config.SRPMixinsConfigHandler;
 import svenhjol.charm.world.entity.EntityChargedEmerald;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 public class SentientWeaponEvolutionHandler {
@@ -66,13 +67,13 @@ public class SentientWeaponEvolutionHandler {
         for(EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {
             ItemStack stack = player.getItemStackFromSlot(slot);
             if (isSRPLivingGear(stack.getItem())) {
-                boolean isMeleeWeapon = stack.getItem() instanceof WeaponToolMeleeBase;
 
                 //Setup NBT if missing
                 if (!stack.hasTagCompound())
                     stack.setTagCompound(new NBTTagCompound());
 
                 //Set srpkills
+                assert stack.getTagCompound() != null;
                 int currentKills = stack.getTagCompound().getInteger(srpkillsKey) + dividedHealth;
                 stack.getTagCompound().setInteger(srpkillsKey, currentKills);
                 player.inventoryContainer.detectAndSendChanges();
@@ -92,7 +93,7 @@ public class SentientWeaponEvolutionHandler {
                     }
 
                     //Get respective sentient gear
-                    String itemId = stack.getItem().getRegistryName().getPath();
+                    String itemId = Objects.requireNonNull(stack.getItem().getRegistryName()).getPath();
                     Item newItem = Item.getByNameOrId("srparasites:" + itemId + "_sentient");
                     if (newItem == null) continue;
                     ItemStack newStack = new ItemStack(newItem);
