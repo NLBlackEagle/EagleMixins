@@ -22,6 +22,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import srpmixins.capability.adaptation.CapabilityAdaptationHandler;
 import srpmixins.capability.adaptation.ICapabilityAdaptation;
 import srpmixins.config.SRPMixinsConfigHandler;
@@ -126,6 +128,7 @@ public class SentientWeaponEvolutionHandler {
      * Forge tooltip event dynamically injects LocLore and kill counter.
      */
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     public static void onItemTooltip(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
         if (stack == null || stack.isEmpty()) return;
