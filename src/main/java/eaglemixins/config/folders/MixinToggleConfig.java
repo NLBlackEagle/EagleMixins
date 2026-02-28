@@ -196,10 +196,11 @@ public class MixinToggleConfig {
     public boolean patchObserversTickingOnWorldGen = true;
 
     @Config.Comment("Ice upgrades for the fridge will also treat SimpleDifficulty ice chunks as ice.")
-    @Config.Name("More Ice in Fridge (CookingForBlockheads)")
+    @Config.Name("More Ice in Fridge (CookingForBlockheads/SimpleDifficulty)")
     @Config.RequiresMcRestart
     @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.cookingforblockheads.moreice.json", defaultValue = true)
     @MixinConfig.CompatHandling(modid = "cookingforblockheads", desired = true, reason = "Requires mod to properly function")
+    @MixinConfig.CompatHandling(modid = "simpledifficulty", desired = true, reason = "Requires mod to properly function")
     public boolean moreIceInFridge = true;
 
     @Config.Comment("Makes all CookingForBlockheads counters allow to have generatable loot using the vanilla loot table system.")
