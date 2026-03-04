@@ -328,6 +328,20 @@ public class MixinToggleConfig {
     @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.stopworldgenfallingblocks.json", defaultValue = true)
     public boolean stopFallingBlocks = true;
 
+    @Config.Comment("Adds loottable white/blacklist support to quality tools in configs (Requires QualityLoot to be enabled)")
+    @Config.Name("Qualitytools Loottables (QualityTools)")
+    @Config.RequiresMcRestart
+    @MixinConfig.CompatHandling(modid = "qualitytools", desired = true, reason = "Requires mod to properly function")
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.qualitytools.loottablequalities.json", defaultValue = true)
+    public boolean enableQualityLootTables = true;
+
+    @Config.Comment("Makes it possible for loottables to be passed to the QualityTools Loottable function")
+    @Config.Name("QualityLoot Support (Vanilla)")
+    @Config.RequiresMcRestart
+    @MixinConfig.CompatHandling(modid = "qualitytools", desired = true, reason = "Requires mod to properly function")
+    @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.qualitytoolsloot.json", defaultValue = true)
+    public boolean enableLootTablePassing = true;
+
     @Config.Comment("Allows namespaced nbt enchantments to be used within nbt data using STRING_TAG: 'name' ")
     @Config.Name("Namespaced NBT Enchantments (Vanilla)")
     @Config.RequiresMcRestart
