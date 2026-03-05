@@ -20,7 +20,7 @@ import java.util.ArrayList;
 public class QualityItemMixin implements LootTableSetter {
 
     @Unique
-    private ResourceLocation eaglemixins$loottable;
+    private List<ResourceLocation> eaglemixins$loottables;
 
     @Inject(method = "itemMatches", at = @At("HEAD"), cancellable = true)
     private void onItemMatches(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
@@ -28,10 +28,9 @@ public class QualityItemMixin implements LootTableSetter {
         if (stack == null || stack.isEmpty())
             return;
 
-        if (this.eaglemixins$loottable == null)
+        if (eaglemixins$loottables == null || eaglemixins$loottables.isEmpty())
             return;
 
-        // Collect loot tables from NBT
         List<String> itemLootTables = new ArrayList<>();
 
         if (stack.hasTagCompound()) {
@@ -46,13 +45,29 @@ public class QualityItemMixin implements LootTableSetter {
             }
         }
 
-        if (!itemLootTables.contains(this.eaglemixins$loottable.toString())) {
-            cir.setReturnValue(false);
+        // Check if any of the QualityItem loottables match
+        for (ResourceLocation rl : eaglemixins$loottables) {
+            String pattern = rl.toString().replace("*", ".*"); // wildcard support
+            boolean match = itemLootTables.stream().anyMatch(t -> t.matches(pattern));
+            if (match) return; // found a match, item is valid
         }
+
+        cir.setReturnValue(false); // no match found
     }
 
     @Override
     public void eaglemixins$setLootTable(ResourceLocation rl) {
-        this.eaglemixins$loottable = rl;
+        if (eaglemixins$loottables == null) {
+            eaglemixins$loottables = new ArrayList<>();
+        }
+        eaglemixins$loottables.add(rl);
+    }
+
+    @Override
+    public void eaglemixins$setLootTables(List<ResourceLocation> rls) {
+        if (eaglemixins$loottables == null) {
+            eaglemixins$loottables = new ArrayList<>();
+        }
+        eaglemixins$loottables.addAll(rls);
     }
 }

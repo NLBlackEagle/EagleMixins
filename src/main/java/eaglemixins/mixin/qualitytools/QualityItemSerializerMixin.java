@@ -14,6 +14,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 @Mixin(value = QualityItem.Serializer.class, remap = false)
 public class QualityItemSerializerMixin {
@@ -34,14 +36,20 @@ public class QualityItemSerializerMixin {
         JsonObject json = jsonElement.getAsJsonObject();
 
         if (json.has("loottable")) {
-
             JsonElement lootEl = json.get("loottable");
 
             if (lootEl.isJsonPrimitive()) {
-                ((LootTableSetter)item).eaglemixins$setLootTable(
+                ((LootTableSetter) item).eaglemixins$setLootTable(
                         new ResourceLocation(lootEl.getAsString())
                 );
                 System.out.println("[DEBUG] contains loottable: " + lootEl.getAsString());
+            } else if (lootEl.isJsonArray()) {
+                List<ResourceLocation> lootTables = new ArrayList<>();
+                for (JsonElement e : lootEl.getAsJsonArray()) {
+                    lootTables.add(new ResourceLocation(e.getAsString()));
+                    System.out.println("[DEBUG] contains loottable: " + e.getAsString());
+                }
+                ((LootTableSetter) item).eaglemixins$setLootTables(lootTables);
             }
         }
     }
