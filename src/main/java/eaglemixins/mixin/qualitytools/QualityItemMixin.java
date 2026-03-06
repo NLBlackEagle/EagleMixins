@@ -1,6 +1,5 @@
 package eaglemixins.mixin.qualitytools;
 
-import com.tmtravlr.qualitytools.QualityToolsHelper;
 import com.tmtravlr.qualitytools.config.QualityItem;
 import eaglemixins.util.LootTableSetter;
 import net.minecraft.item.ItemStack;
@@ -24,35 +23,28 @@ public class QualityItemMixin implements LootTableSetter {
 
     @Inject(method = "itemMatches", at = @At("HEAD"), cancellable = true)
     private void onItemMatches(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-
-        if (stack == null || stack.isEmpty())
-            return;
-
-        if (eaglemixins$loottables == null || eaglemixins$loottables.isEmpty())
-            return;
+        if (stack == null || stack.isEmpty()) return;
+        if (eaglemixins$loottables == null || eaglemixins$loottables.isEmpty()) return;
 
         List<String> itemLootTables = new ArrayList<>();
 
         if (stack.hasTagCompound()) {
             NBTTagCompound eagleTag = stack.getSubCompound("eaglemixins");
-
-            if (eagleTag != null && eagleTag.hasKey("LootTables", 9)) {
-                NBTTagList lootTables = eagleTag.getTagList("LootTables", 8);
-
+            if (eagleTag != null && eagleTag.hasKey("LootTable", 9)) { // singular key matches mixin
+                NBTTagList lootTables = eagleTag.getTagList("LootTable", 8);
                 for (int i = 0; i < lootTables.tagCount(); i++) {
                     itemLootTables.add(lootTables.getStringTagAt(i));
                 }
             }
         }
 
-        // Check if any of the QualityItem loottables match
-        for (ResourceLocation rl : eaglemixins$loottables) {
-            String pattern = rl.toString().replace("*", ".*"); // wildcard support
-            boolean match = itemLootTables.stream().anyMatch(t -> t.matches(pattern));
-            if (match) return; // found a match, item is valid
-        }
+        // Return true if ANY serializer loottable is found in the item's NBT
+        boolean matches = eaglemixins$loottables.stream().anyMatch(rl -> {
+            String pattern = rl.toString().replace("*", ".*");
+            return itemLootTables.stream().anyMatch(t -> t.matches(pattern));
+        });
 
-        cir.setReturnValue(false); // no match found
+        cir.setReturnValue(matches);
     }
 
     @Override
