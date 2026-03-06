@@ -15,7 +15,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 @Mixin(LootEntryTable.class)
 public abstract class LootEntryTableMixin {
@@ -35,13 +37,22 @@ public abstract class LootEntryTableMixin {
             if (stack.isEmpty()) continue;
 
             NBTTagCompound tag = stack.getOrCreateSubCompound("eaglemixins");
+            NBTTagList list;
 
-            if (!tag.hasKey("LootTable", 9)) { // Only tag once
-                NBTTagList list = new NBTTagList();
-                for (ResourceLocation rl : LootGenerationContext.getCurrentStack()) {
+            if (tag.hasKey("LootTable", 9)) { // NBTTagList exists
+                list = tag.getTagList("LootTable", 8);
+            } else {
+                list = new NBTTagList();
+                tag.setTag("LootTable", list);
+            }
+
+            Set<String> existing = new HashSet<>();
+            for (int i = 0; i < list.tagCount(); i++) existing.add(list.getStringTagAt(i));
+
+            for (ResourceLocation rl : LootGenerationContext.getCurrentStack()) {
+                if (existing.add(rl.toString())) {
                     list.appendTag(new NBTTagString(rl.toString()));
                 }
-                tag.setTag("LootTable", list);
             }
         }
 

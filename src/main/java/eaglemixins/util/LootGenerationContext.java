@@ -2,12 +2,13 @@ package eaglemixins.util;
 
 import net.minecraft.util.ResourceLocation;
 
+import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.LinkedList;
 
 public class LootGenerationContext {
 
-    private static final ThreadLocal<Deque<ResourceLocation>> stack = ThreadLocal.withInitial(LinkedList::new);
+    private static final ThreadLocal<Deque<ResourceLocation>> stack =
+            ThreadLocal.withInitial(ArrayDeque::new);
 
     public static void push(ResourceLocation table) {
         stack.get().push(table);
