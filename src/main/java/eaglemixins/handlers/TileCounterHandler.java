@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import net.blay09.mods.cookingforblockheads.tile.TileCounter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -63,29 +64,42 @@ public class TileCounterHandler  {
 
     private static void fillCounterWithLoot(World world, TileCounter counter, EntityPlayer player) {
         ResourceLocation lootTable = ((ILootContainer) counter).getLootTable();
-        if (lootTable != null) {
-            LootTable loottable = world.getLootTableManager().getLootTableFromLocation(lootTable);
-            Random random = new Random();
-            LootContext.Builder lootcontext$builder = new LootContext.Builder((WorldServer) world);
-            if (player != null) {
-                lootcontext$builder.withLuck(player.getLuck()).withPlayer(player);
-            }
-            List<ItemStack> stacks = loottable.generateLootForPools(random, lootcontext$builder.build());
-            List<Integer> emptySlots = getEmptySlotsRandomized(counter, random);
-            for (ItemStack stack : stacks) {
-                if (emptySlots.isEmpty()) {
-                    break;
-                } else if (stack.isEmpty()) {
-                    counter.getItemHandler().insertItem(emptySlots.remove(emptySlots.size() - 1), ItemStack.EMPTY, false);
-                } else {
-                    counter.getItemHandler().insertItem(emptySlots.remove(emptySlots.size() - 1), stack, false);
-                }
-            }
-            ((eaglemixins.util.LootTableSetter) counter).eaglemixins$addLootTables(null);
-            counter.markDirty();
-            BlockPos p = counter.getPos();
-            world.notifyBlockUpdate(p, world.getBlockState(p), world.getBlockState(p), 3);
+
+        if (lootTable == null) {
+            // No loot table, nothing to fill
+            return;
         }
+
+        LootTable loottable = world.getLootTableManager().getLootTableFromLocation(lootTable);
+        Random random = new Random();
+        LootContext.Builder lootcontext$builder = new LootContext.Builder((WorldServer) world);
+
+        if (player != null) {
+            lootcontext$builder.withLuck(player.getLuck()).withPlayer(player);
+        }
+
+        List<ItemStack> stacks = loottable.generateLootForPools(random, lootcontext$builder.build());
+        List<Integer> emptySlots = getEmptySlotsRandomized(counter, random);
+
+        for (ItemStack stack : stacks) {
+            if (emptySlots.isEmpty()) break;
+
+            // Add loot table metadata to the stack
+            NBTTagCompound tag = stack.hasTagCompound() ? stack.getTagCompound() : new NBTTagCompound();
+            assert tag != null;
+            tag.setString("EagleMixinsLootTable", lootTable.toString());
+            stack.setTagCompound(tag);
+
+            int slot = emptySlots.remove(emptySlots.size() - 1);
+            counter.getItemHandler().insertItem(slot, stack, false);
+        }
+
+        // Add loot table to the counter if it's not null
+        ((eaglemixins.util.LootTableSetter) counter).eaglemixins$addLootTable(lootTable);
+
+        counter.markDirty();
+        BlockPos pos = counter.getPos();
+        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
     }
 
     private static List<Integer> getEmptySlotsRandomized(TileCounter counter, Random rand) {
