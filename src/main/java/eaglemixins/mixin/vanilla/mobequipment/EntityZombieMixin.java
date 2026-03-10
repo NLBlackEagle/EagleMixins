@@ -3,8 +3,10 @@ package eaglemixins.mixin.vanilla.mobequipment;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.config.folders.MobEquipmentConfig;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin(EntityZombie.class)
-public abstract class EntityZombieMixin extends EntityLivingBase {
+public abstract class EntityZombieMixin extends EntityLiving {
     public EntityZombieMixin(World worldIn) {
         super(worldIn);
     }
@@ -22,7 +24,9 @@ public abstract class EntityZombieMixin extends EntityLivingBase {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;<init>(Lnet/minecraft/item/Item;)V")
     )
     private Item eaglemixins_vanillaEntityZombie_setEquipmentBasedOnDifficulty_changeItem(Item itemIn){
-        return MobEquipmentConfig.getRandomItem(this.getRNG(), true);
+        MobEquipmentConfig.ItemEntry entry = MobEquipmentConfig.getRandomWeapon(this.getRNG(), true);
+        this.setDropChance(EntityEquipmentSlot.MAINHAND, entry.dropChance);
+        return entry.item;
     }
 
     @ModifyExpressionValue(

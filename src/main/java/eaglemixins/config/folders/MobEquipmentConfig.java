@@ -1,6 +1,7 @@
 package eaglemixins.config.folders;
 
 import com.google.common.collect.ArrayListMultimap;
+import eaglemixins.EagleMixins;
 import eaglemixins.config.ForgeConfigHandler;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -9,20 +10,23 @@ import net.minecraft.util.WeightedRandom;
 import net.minecraftforge.common.config.Config;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MobEquipmentConfig {
-    @Config.Comment("Pattern: I:\"modid:itemid\"=weight")
-    @Config.Name("Zombie Hand Items")
-    public Map<String, Integer> zombieHand = new HashMap<String, Integer>(){{
-        put("minecraft:iron_sword", 1);
-        put("minecraft:iron_shovel", 2);
-    }};
+    //TODO: outer factors for having specific sets (biome/season/mob/dimension)
 
-    @Config.Comment("Pattern: I:\"modid:itemid\"=weight")
-    @Config.Name("Skeleton Hand Items")
-    public Map<String, Integer> skeletonHand = new HashMap<String, Integer>(){{
-        put("minecraft:bow", 1);
-    }};
+    @Config.Comment("Pattern: modid:itemid, weight, optional dropChance")
+    @Config.Name("Zombie Mainhand Items")
+    public String[] zombieHand = {
+        "minecraft:iron_sword, 1, 0.085",
+        "minecraft:iron_shovel, 2, 0.085"
+    };
+
+    @Config.Comment("Pattern: modid:itemid, weight, optional dropChance")
+    @Config.Name("Skeleton Mainhand Items")
+    public String[] skeletonHand = {
+        "minecraft:bow, 1, 0.085"
+    };
 
     @Config.Comment("Applied at least to zombies and skeletons but also to various other mobs extending from them\n" +
             "Pattern: mod_id, helmet_id, chestplate_id, leggings_id, boot_id, tier\n" +
@@ -123,27 +127,43 @@ public class MobEquipmentConfig {
         public boolean enableStrafeDistanceBonus = true;
     }
 
-    public static final List<ItemEntry> zombieHands = new ArrayList<>();
-    public static final List<ItemEntry> skeletonHands = new ArrayList<>();
+    public static List<ItemEntry> zombieHands = null;
+    public static List<ItemEntry> skeletonHands = null;
     public static final ArrayListMultimap<Integer, ItemSetEntry> armorByTier = ArrayListMultimap.create();
 
     public void reset(){
-        zombieHands.clear();
-        skeletonHands.clear();
+        zombieHands = null;
+        skeletonHands = null;
         armorByTier.clear();
     }
 
-    public static Item getRandomItem(Random rand, boolean forZombie) {
-        if (forZombie && zombieHands.isEmpty())
-            ForgeConfigHandler.mobequipment.zombieHand.forEach((itemid, weight) -> zombieHands.add(new ItemEntry(Item.getByNameOrId(itemid), weight)));
-        else if (!forZombie && skeletonHands.isEmpty())
-            ForgeConfigHandler.mobequipment.skeletonHand.forEach((itemid, weight) -> skeletonHands.add(new ItemEntry(Item.getByNameOrId(itemid), weight)));
-
-        if (forZombie) return WeightedRandom.getRandomItem(rand, zombieHands).item;
-        else return WeightedRandom.getRandomItem(rand, skeletonHands).item;
+    public static ItemEntry getRandomWeapon(Random rand, boolean forZombie) {
+        if (forZombie && zombieHands == null) {
+            zombieHands = new ArrayList<>();
+            setupItemEntryList(zombieHands, ForgeConfigHandler.mobequipment.zombieHand);
+        } else if(!forZombie && skeletonHands == null) {
+            skeletonHands = new ArrayList<>();
+            setupItemEntryList(skeletonHands, ForgeConfigHandler.mobequipment.skeletonHand);
+        }
+        return WeightedRandom.getRandomItem(rand, forZombie ? zombieHands : skeletonHands);
     }
 
-    public static ItemSetEntry getRandomArmor(Random rand, int tier) {
+    private static void setupItemEntryList(List<ItemEntry> list, String[] configArray) {
+        for (String s : configArray) {
+            String[] split = s.split(",");
+            Item item = Item.getByNameOrId(split[0].trim());
+            if(item == null){
+                EagleMixins.LOGGER.warn("Unable to find Mob Equipment item {}, skipping.", split[0].trim());
+                continue;
+            }
+            int weight = split.length > 1 ? Integer.parseInt(split[1].trim()) : 1;
+            float dropChance = split.length > 2 ? Float.parseFloat(split[2].trim()) : 0.085F;
+
+            list.add(new ItemEntry(item, weight, dropChance));
+        }
+    }
+
+    public static ItemSetEntry getRandomArmor(Random rand, int tier, boolean allowUndroppables) {
         if (armorByTier.isEmpty()) {
             for (String s : ForgeConfigHandler.mobequipment.armor) {
                 String[] split = s.split(",");
@@ -154,25 +174,29 @@ public class MobEquipmentConfig {
                 String boots = split[4].trim();
                 int parsedTier = Integer.parseInt(split[5].trim());
                 int weight = Integer.parseInt(split[6].trim());
+                float dropChance = split.length > 7 ? Float.parseFloat(split[7].trim()) : 0.085F;
 
-                armorByTier.put(parsedTier, new ItemSetEntry(modid, helmet, chest, legs, boots, weight));
+                armorByTier.put(parsedTier, new ItemSetEntry(modid, helmet, chest, legs, boots, weight, dropChance));
             }
         }
 
-        return WeightedRandom.getRandomItem(rand, armorByTier.get(tier));
+        return WeightedRandom.getRandomItem(rand, armorByTier.get(tier).stream().filter(set -> allowUndroppables || set.dropChance > 0).collect(Collectors.toList()));
     }
 
     public static class ItemEntry extends WeightedRandom.Item {
         public final Item item;
-        public ItemEntry(Item item, int weight){
+        public final float dropChance;
+        public ItemEntry(Item item, int weight, float dropChance){
             super(weight);
             this.item = item == null ? Items.AIR : item;
+            this.dropChance = dropChance;
         }
     }
 
     public static class ItemSetEntry extends WeightedRandom.Item {
         public final Item helmet, chest, legs, boots;
-        public ItemSetEntry(String modid, String helmet, String chest, String legs, String boots, int weight){
+        public final float dropChance;
+        public ItemSetEntry(String modid, String helmet, String chest, String legs, String boots, int weight, float dropChance){
             super(weight);
 
             Item tmp = Item.getByNameOrId(modid + ":" + helmet);
@@ -186,6 +210,8 @@ public class MobEquipmentConfig {
 
             tmp = Item.getByNameOrId(modid + ":" + boots);
             this.boots = tmp == null ? Items.AIR : tmp;
+
+            this.dropChance = dropChance;
         }
 
         public Item getItemForSlot(EntityEquipmentSlot slotIn) {

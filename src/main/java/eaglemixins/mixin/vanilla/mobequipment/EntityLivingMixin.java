@@ -1,44 +1,51 @@
 package eaglemixins.mixin.vanilla.mobequipment;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.config.folders.MobEquipmentConfig;
+import eaglemixins.util.MobEquipState;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Random;
 
 @Mixin(EntityLiving.class)
 public abstract class EntityLivingMixin extends EntityLivingBase {
+
     public EntityLivingMixin(World worldIn) {
         super(worldIn);
     }
 
-    @Unique private static int eaglemixins$state = -1;
+    @Unique private static MobEquipState eaglemixins$state = MobEquipState.OTHER;
     @Unique private static MobEquipmentConfig.ItemSetEntry eaglemixins$chosenSet = null;
-    @Unique private static Random eaglemixins$currentRand = null;
+    @Unique private static EntityLiving eaglemixins$currentEntity = null;
 
-    @WrapOperation(
+    @Inject(
             method = "setEquipmentBasedOnDifficulty",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityLiving;getArmorByChance(Lnet/minecraft/inventory/EntityEquipmentSlot;I)Lnet/minecraft/item/Item;")
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/EntityEquipmentSlot;values()[Lnet/minecraft/inventory/EntityEquipmentSlot;")
     )
-    private Item eaglemixins_vanillaEntityLiving_setEquipmentBasedOnDifficulty(EntityEquipmentSlot slotIn, int chance, Operation<Item> original){
-        eaglemixins$state = 0;
-        eaglemixins$currentRand = this.getRNG();
-        Item item = original.call(slotIn, chance);
-        eaglemixins$state = -1;
+    private void eaglemixins_vanillaEntityLiving_setEquipmentBasedOnDifficulty_beforeLoop(DifficultyInstance p_180481_1_, CallbackInfo ci){
+        eaglemixins$state = MobEquipState.START_EQUIPPING;
+        eaglemixins$currentEntity = (EntityLiving)(Object) this;
+    }
+
+    @Inject(
+            method = "setEquipmentBasedOnDifficulty",
+            at = @At(value = "RETURN")
+    )
+    private void eaglemixins_vanillaEntityLiving_setEquipmentBasedOnDifficulty_tail(DifficultyInstance p_180481_1_, CallbackInfo ci){
         eaglemixins$chosenSet = null;
-        eaglemixins$currentRand = null;
-        return item;
+        eaglemixins$currentEntity = null;
+        eaglemixins$state = MobEquipState.OTHER;
     }
 
     @Inject(
@@ -48,16 +55,18 @@ public abstract class EntityLivingMixin extends EntityLivingBase {
     )
     private static void eaglemixins_vanillaEntityLiving_getArmorByChance(EntityEquipmentSlot slotIn, int chance, CallbackInfoReturnable<Item> cir){
         switch (eaglemixins$state){
-            case 0: // called first time for one mob from EntityLiving.setEquipmentBasedOnDifficulty
-                eaglemixins$chosenSet = MobEquipmentConfig.getRandomArmor(eaglemixins$currentRand, chance); //TODO chose an actual set
+            case START_EQUIPPING: // called first time for one mob from EntityLiving.setEquipmentBasedOnDifficulty
+                eaglemixins$chosenSet = MobEquipmentConfig.getRandomArmor(eaglemixins$currentEntity.getRNG(), chance, true);
                 cir.setReturnValue(eaglemixins$chosenSet.getItemForSlot(slotIn));
-                eaglemixins$state = 1;
+                eaglemixins$currentEntity.setDropChance(slotIn, eaglemixins$chosenSet.dropChance);
+                eaglemixins$state = MobEquipState.SET_CHOSEN;
                 return;
-            case 1: // called a second/third/fourth time for the same mob from EntityLiving.setEquipmentBasedOnDifficulty -> use same set
+            case SET_CHOSEN: // called a second/third/fourth time for the same mob from EntityLiving.setEquipmentBasedOnDifficulty -> use same set
                 cir.setReturnValue(eaglemixins$chosenSet.getItemForSlot(slotIn));
+                eaglemixins$currentEntity.setDropChance(slotIn, eaglemixins$chosenSet.dropChance);
                 return;
-            case -1: // called from somewhere else -> random mix of sets
-                cir.setReturnValue(MobEquipmentConfig.getRandomArmor(eaglemixins$currentRand, chance).getItemForSlot(slotIn));
+            case OTHER: // called from somewhere else -> random mix of sets that don't have dropchance 0 cause we cant actually apply it here
+                cir.setReturnValue(MobEquipmentConfig.getRandomArmor(new Random(), chance, false).getItemForSlot(slotIn));
         }
     }
 
