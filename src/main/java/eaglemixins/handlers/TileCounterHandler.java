@@ -81,7 +81,7 @@ public class TileCounterHandler  {
                     counter.getItemHandler().insertItem(emptySlots.remove(emptySlots.size() - 1), stack, false);
                 }
             }
-            ((eaglemixins.util.LootTableSetter) counter).eaglemixins$setLootTable(null);
+            ((eaglemixins.util.LootTableSetter) counter).eaglemixins$addLootTables(null);
             counter.markDirty();
             BlockPos p = counter.getPos();
             world.notifyBlockUpdate(p, world.getBlockState(p), world.getBlockState(p), 3);

@@ -34,12 +34,14 @@ public abstract class LootEntryTableMixin {
     private void popTable(Collection<ItemStack> stacks, Random rand, LootContext context, CallbackInfo ci) {
 
         for (ItemStack stack : stacks) {
-            if (stack.isEmpty()) continue;
+
+            if (stack.isEmpty())
+                continue;
 
             NBTTagCompound tag = stack.getOrCreateSubCompound("eaglemixins");
-            NBTTagList list;
 
-            if (tag.hasKey("LootTable", 9)) { // NBTTagList exists
+            NBTTagList list;
+            if (tag.hasKey("LootTable", 9)) {
                 list = tag.getTagList("LootTable", 8);
             } else {
                 list = new NBTTagList();
@@ -47,11 +49,16 @@ public abstract class LootEntryTableMixin {
             }
 
             Set<String> existing = new HashSet<>();
-            for (int i = 0; i < list.tagCount(); i++) existing.add(list.getStringTagAt(i));
+            for (int i = 0; i < list.tagCount(); i++) {
+                existing.add(list.getStringTagAt(i));
+            }
 
             for (ResourceLocation rl : LootGenerationContext.getCurrentStack()) {
-                if (existing.add(rl.toString())) {
-                    list.appendTag(new NBTTagString(rl.toString()));
+
+                String s = rl.toString();
+
+                if (existing.add(s)) {
+                    list.appendTag(new NBTTagString(s));
                 }
             }
         }

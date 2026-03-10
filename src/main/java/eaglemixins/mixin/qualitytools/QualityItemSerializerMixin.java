@@ -4,18 +4,14 @@ import com.tmtravlr.qualitytools.config.QualityItem;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonArray;
 import eaglemixins.util.LootTableSetter;
 import net.minecraft.util.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 @Mixin(value = QualityItem.Serializer.class, remap = false)
 public class QualityItemSerializerMixin {
@@ -35,21 +31,22 @@ public class QualityItemSerializerMixin {
 
         JsonObject json = jsonElement.getAsJsonObject();
 
-        if (json.has("loottable")) {
-            JsonElement lootEl = json.get("loottable");
+        if (!json.has("loottable"))
+            return;
 
-            if (lootEl.isJsonPrimitive()) {
-                ((LootTableSetter) item).eaglemixins$setLootTable(
-                        new ResourceLocation(lootEl.getAsString())
+        LootTableSetter setter = (LootTableSetter) item;
+        JsonElement lootEl = json.get("loottable");
+
+        if (lootEl.isJsonPrimitive()) {
+            setter.eaglemixins$addLootTable(
+                    new ResourceLocation(lootEl.getAsString())
+            );
+        }
+        else if (lootEl.isJsonArray()) {
+            for (JsonElement e : lootEl.getAsJsonArray()) {
+                setter.eaglemixins$addLootTable(
+                        new ResourceLocation(e.getAsString())
                 );
-                System.out.println("[DEBUG] contains loottable: " + lootEl.getAsString());
-            } else if (lootEl.isJsonArray()) {
-                List<ResourceLocation> lootTables = new ArrayList<>();
-                for (JsonElement e : lootEl.getAsJsonArray()) {
-                    lootTables.add(new ResourceLocation(e.getAsString()));
-                    System.out.println("[DEBUG] contains loottable: " + e.getAsString());
-                }
-                ((LootTableSetter) item).eaglemixins$setLootTables(lootTables);
             }
         }
     }

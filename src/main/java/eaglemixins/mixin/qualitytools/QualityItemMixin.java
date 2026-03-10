@@ -5,6 +5,7 @@ import eaglemixins.util.LootTableSetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,16 +18,30 @@ import java.util.regex.Pattern;
 @Mixin(QualityItem.class)
 public class QualityItemMixin implements LootTableSetter {
 
-    // Patterns and string loot tables added by the serializer
+    @Unique
+    private List<String> eaglemixins$loottables;
+
     @Unique
     private List<Pattern> eaglemixins$loottablePatterns;
 
     @Unique
-    private List<String> eaglemixins$loottables;
+    private void eaglemixins$initLootTables() {
+        if (eaglemixins$loottables == null) {
+            eaglemixins$loottables = new ArrayList<>();
+            eaglemixins$loottablePatterns = new ArrayList<>();
+        }
+    }
 
-    /**
-     * Intercept itemMatches to check against stored loot tables and class
-     */
+
+    @Override
+    public void eaglemixins$addLootTable(ResourceLocation rl) {
+        eaglemixins$initLootTables();
+
+        String s = rl.toString();
+        eaglemixins$loottables.add(s);
+        eaglemixins$loottablePatterns.add(Pattern.compile(s.replace("*", ".*")));
+    }
+
     @Inject(method = "itemMatches", at = @At("HEAD"), cancellable = true, remap = false)
     private void onItemMatches(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
         if (stack == null || stack.isEmpty()) {
@@ -34,74 +49,73 @@ public class QualityItemMixin implements LootTableSetter {
             return;
         }
 
-        if (eaglemixins$loottables == null || eaglemixins$loottables.isEmpty()) {
+        // If this QualityItem has no loot table whitelist, skip the mixin
+        if (eaglemixins$loottablePatterns == null || eaglemixins$loottablePatterns.isEmpty()) {
+            return; // original logic will run
+        }
+
+        QualityItem self = (QualityItem) (Object) this;
+
+        // If class doesn't match, this quality can never apply
+        if (!eaglemixins$classMatches(self, stack)) {
             cir.setReturnValue(false);
             return;
         }
 
-        // Collect all loottables from the item's NBT
-        Set<String> itemLootTables = new HashSet<>();
-        if (stack.hasTagCompound()) {
-            NBTTagCompound eagleTag = stack.getSubCompound("eaglemixins");
-            if (eagleTag != null && eagleTag.hasKey("LootTable", 9)) {
-                NBTTagList list = eagleTag.getTagList("LootTable", 8);
-                for (int i = 0; i < list.tagCount(); i++) {
-                    itemLootTables.add(list.getStringTagAt(i));
+        // Get the item's loot table history
+        Set<String> itemLootTables = eaglemixins$getItemLootTables(stack);
+
+        // Only check patterns if the item actually has loot tables
+        for (Pattern pattern : eaglemixins$loottablePatterns) {
+            for (String table : itemLootTables) {
+                if (pattern.matcher(table).matches()) {
+                    cir.setReturnValue(true); // matched!
+                    return;
                 }
             }
         }
 
-        // Return true if ANY serializer loottable pattern matches and class matches
-        boolean matched = false;
-        for (int i = 0; i < eaglemixins$loottables.size(); i++) {
-            String lootTableStr = eaglemixins$loottables.get(i);
-            Pattern pattern = eaglemixins$loottablePatterns.get(i);
-
-            // Check item class if this QualityItem has a class restriction
-            boolean classMatches = true;
-            try {
-                if (((QualityItem) (Object) this).itemClass != null) {
-                    classMatches = com.tmtravlr.qualitytools.QualityToolsHelper.hasClassType(
-                            ((QualityItem) (Object) this).itemClass, stack.getItem().getClass()
-                    );
-                }
-            } catch (Exception ignored) {
-            }
-
-            // Loot table match
-            boolean lootMatches = itemLootTables.stream().anyMatch(t -> pattern.matcher(t).matches());
-
-            if (classMatches && lootMatches) {
-                matched = true;
-                break;
-            }
-        }
-
-        cir.setReturnValue(matched);
+        // If we get here, a whitelist exists but no match was found → explicitly block
+        cir.setReturnValue(false);
     }
 
-    /**
-     * LootTableSetter interface
-     */
-    @Override
-    public void eaglemixins$setLootTable(net.minecraft.util.ResourceLocation rl) {
-        if (eaglemixins$loottables == null) {
-            eaglemixins$loottables = new ArrayList<>();
-            eaglemixins$loottablePatterns = new ArrayList<>();
+    @Unique
+    private Set<String> eaglemixins$getItemLootTables(ItemStack stack) {
+
+        Set<String> tables = new HashSet<>();
+
+        if (!stack.hasTagCompound()) {
+            return tables;
         }
-        eaglemixins$loottables.add(rl.toString());
-        eaglemixins$loottablePatterns.add(Pattern.compile(rl.toString().replace("*", ".*")));
+
+        NBTTagCompound eagleTag = stack.getSubCompound("eaglemixins");
+        if (eagleTag == null || !eagleTag.hasKey("LootTable", 9)) {
+            return tables;
+        }
+
+        NBTTagList list = eagleTag.getTagList("LootTable", 8);
+
+        for (int i = 0; i < list.tagCount(); i++) {
+            tables.add(list.getStringTagAt(i));
+        }
+
+        return tables;
     }
 
-    @Override
-    public void eaglemixins$setLootTables(List<net.minecraft.util.ResourceLocation> rls) {
-        if (eaglemixins$loottables == null) {
-            eaglemixins$loottables = new ArrayList<>();
-            eaglemixins$loottablePatterns = new ArrayList<>();
-        }
-        for (net.minecraft.util.ResourceLocation rl : rls) {
-            eaglemixins$loottables.add(rl.toString());
-            eaglemixins$loottablePatterns.add(Pattern.compile(rl.toString().replace("*", ".*")));
+    @Unique
+    private boolean eaglemixins$classMatches(QualityItem item, ItemStack stack) {
+
+        try {
+            if (item.itemClass == null) {
+                return true;
+            }
+
+            return com.tmtravlr.qualitytools.QualityToolsHelper.hasClassType(
+                    item.itemClass,
+                    stack.getItem().getClass()
+            );
+        } catch (Exception ignored) {
+            return true;
         }
     }
 }

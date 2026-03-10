@@ -25,7 +25,7 @@ public abstract class TileCounterMixin_LootTables implements LootTableSetter, IL
     }
 
     @Override
-    public void eaglemixins$setLootTable(@Nullable ResourceLocation rl) {
+    public void eaglemixins$addLootTable(@Nullable ResourceLocation rl) {
         this.eagleMixins$lootTable = rl;
     }
 

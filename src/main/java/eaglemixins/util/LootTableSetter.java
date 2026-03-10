@@ -5,6 +5,11 @@ import java.util.List;
 
 public interface LootTableSetter {
 
-    void eaglemixins$setLootTable(ResourceLocation rl); // single
-    void eaglemixins$setLootTables(List<ResourceLocation> rls); // multiple
+    void eaglemixins$addLootTable(ResourceLocation rl);
+
+    default void eaglemixins$addLootTables(List<ResourceLocation> rls) {
+        for (ResourceLocation rl : rls) {
+            eaglemixins$addLootTable(rl);
+        }
+    }
 }
