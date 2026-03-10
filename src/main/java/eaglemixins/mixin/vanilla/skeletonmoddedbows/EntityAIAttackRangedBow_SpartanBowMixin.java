@@ -2,15 +2,11 @@ package eaglemixins.mixin.vanilla.skeletonmoddedbows;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import com.oblivioussp.spartanweaponry.item.ItemCrossbow;
-import com.oblivioussp.spartanweaponry.util.NBTHelper;
 import eaglemixins.compat.SpartanWeaponryUtil;
 import eaglemixins.config.ForgeConfigHandler;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.ai.EntityAIAttackRangedBow;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -82,10 +78,6 @@ public abstract class EntityAIAttackRangedBow_SpartanBowMixin<T extends EntityMo
             at = @At(value = "FIELD", target = "Lnet/minecraft/entity/ai/EntityAIAttackRangedBow;attackTime:I", ordinal = 0)
     )
     private void spartanCombat_vanillaEntityAIAttackRangedBow_updateTaskResetCrossbow(CallbackInfo ci){
-        ItemStack itemStack = this.entity.getHeldItemMainhand();
-        if(itemStack.getItem() instanceof ItemCrossbow) {
-            NBTHelper.setBoolean(itemStack, ItemCrossbow.NBT_IS_LOADED, false);
-            NBTHelper.setTagCompound(itemStack, ItemCrossbow.nbtAmmoStack, new NBTTagCompound());
-        }
+        SpartanWeaponryUtil.addCrossbowNBT(this.entity.getHeldItemMainhand());
     }
 }

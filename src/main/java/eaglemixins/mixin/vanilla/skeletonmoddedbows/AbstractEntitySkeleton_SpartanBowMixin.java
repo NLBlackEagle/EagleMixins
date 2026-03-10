@@ -4,19 +4,9 @@ import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.oblivioussp.spartanweaponry.entity.projectile.EntityBolt;
-import com.oblivioussp.spartanweaponry.entity.projectile.EntityBoltTipped;
-import com.oblivioussp.spartanweaponry.init.ItemRegistrySW;
-import com.oblivioussp.spartanweaponry.init.SoundRegistry;
-import com.oblivioussp.spartanweaponry.item.ItemBolt;
-import com.oblivioussp.spartanweaponry.item.ItemCrossbow;
-import com.oblivioussp.spartanweaponry.item.ItemLongbow;
-import com.oblivioussp.spartanweaponry.util.NBTHelper;
-import com.oblivioussp.spartanweaponry.util.Quaternion;
 import eaglemixins.EagleMixins;
 import eaglemixins.compat.SpartanWeaponryUtil;
 import eaglemixins.config.ForgeConfigHandler;
-import eaglemixins.mixin.spartanweaponry.IItemCrossbow_Invoker;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackRangedBow;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -26,12 +16,8 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.monster.AbstractSkeleton;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.entity.projectile.EntityTippedArrow;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.EnumDifficulty;
@@ -77,7 +63,7 @@ public abstract class AbstractEntitySkeleton_SpartanBowMixin extends EntityMob {
     )
     private int eagleMixins_vanillaAbstractSkeleton_setCombatTaskModifyForLongbow(int cooldown) {
         ItemStack itemStack = this.getHeldItemMainhand();
-        if(itemStack.getItem() instanceof ItemLongbow){
+        if(SpartanWeaponryUtil.isSpartanLongbow(itemStack.getItem())){
             this.eagleMixins$applyBonusFollowRange(SpartanWeaponryUtil.getMaxVelocity(itemStack));
             return (cooldown / 20) * SpartanWeaponryUtil.getAimAndLoadingTicks(itemStack);
         }
@@ -89,7 +75,7 @@ public abstract class AbstractEntitySkeleton_SpartanBowMixin extends EntityMob {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ai/EntityAITasks;addTask(ILnet/minecraft/entity/ai/EntityAIBase;)V", ordinal = 1)
     )
     private void eagleMixins_vanillaAbstractSkeleton_setCombatTaskCreateForCrossbow(EntityAITasks instance, int priority, EntityAIBase task, Operation<Void> original){
-        if(this.getHeldItemMainhand().getItem() instanceof ItemCrossbow){
+        if(SpartanWeaponryUtil.isSpartanCrossbow(this.getHeldItemMainhand().getItem())){
             ItemStack itemStack = this.getHeldItemMainhand();
             this.eagleMixins$applyBonusFollowRange(SpartanWeaponryUtil.getMaxVelocity(itemStack));
 
@@ -111,35 +97,25 @@ public abstract class AbstractEntitySkeleton_SpartanBowMixin extends EntityMob {
     private void eagleMixins_vanillaAbstractSkeleton_attackEntityWithRangedAttackWithSpartan(EntityArrow instance, double x, double y, double z, float velocity, float inaccuracy, Operation<Void> original, @Local(argsOnly = true) float distanceFactor){
         if(SpartanWeaponryUtil.isHoldingSpartanRangedWeapon(this)){
             ItemStack itemStack = this.getHeldItemMainhand();
-            if (itemStack.getItem() instanceof ItemLongbow){
+            if (SpartanWeaponryUtil.isSpartanLongbow(itemStack.getItem())){
                 original.call(
                         instance,
                         x,
                         y,
                         z,
-                        velocity * ((ItemLongbow)itemStack.getItem()).getMaxArrowSpeed(),
+                        velocity * SpartanWeaponryUtil.getMaxLongbowArrowSpeed(itemStack.getItem()),
                         inaccuracy * 0.5F
                 );
             }
-            else if (itemStack.getItem() instanceof ItemCrossbow) {
-                int shots = 1;
+            else if (SpartanWeaponryUtil.isSpartanCrossbow(itemStack.getItem())) {
                 float projectileAngle = 0F;
-                NBTTagCompound nbtLoadedBolt = NBTHelper.getTagCompound(itemStack, ItemCrossbow.nbtAmmoStack);
-                if (nbtLoadedBolt.hasKey("Count") && nbtLoadedBolt.getInteger("Count") > 1) {
-                    shots = 3;
-                }
-
                 Vec3d lookVec = this.getLook(1.0F);
                 Vec3d vector = new Vec3d(lookVec.x, lookVec.y, lookVec.z);
+
+                int shots = SpartanWeaponryUtil.getCrossbowShotCount(itemStack);
                 for (int i = 0; i < shots; i++) {
-                    if (projectileAngle != 0F) {
-                        Vec3d shooterUpVec = ((IItemCrossbow_Invoker) itemStack.getItem()).invokeCalculateEntityViewVector(
-                                this.rotationPitch - 90.0f,
-                                this.rotationYaw
-                        );
-                        Quaternion quat = new Quaternion(shooterUpVec, projectileAngle, true);
-                        vector = quat.transformVector(lookVec);
-                    }
+                    if (projectileAngle != 0F)
+                        vector = SpartanWeaponryUtil.getShootingVector(itemStack.getItem(), lookVec, this.rotationPitch, this.rotationYaw, projectileAngle);
 
                     EntityArrow entityBolt = instance;
                     if (projectileAngle != 0F) {
@@ -150,7 +126,7 @@ public abstract class AbstractEntitySkeleton_SpartanBowMixin extends EntityMob {
                             vector.x,
                             vector.y,
                             vector.z,
-                            velocity * ((ItemCrossbow) itemStack.getItem()).getBoltSpeed(),
+                            velocity * SpartanWeaponryUtil.getCrossbowBoltSpeed(itemStack.getItem()),
                             0F
                     );
 
@@ -169,8 +145,8 @@ public abstract class AbstractEntitySkeleton_SpartanBowMixin extends EntityMob {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/monster/AbstractSkeleton;playSound(Lnet/minecraft/util/SoundEvent;FF)V")
     )
     private void eagleMixins_vanillaAbstractSkeleton_attackEntityWithRangedAttackCrossbowSound(AbstractSkeleton instance, SoundEvent soundIn, float volume, float pitch, Operation<Void> original){
-        if(this.getHeldItemMainhand().getItem() instanceof ItemCrossbow)
-            soundIn = SoundRegistry.CROSSBOW_FIRE;
+        if(SpartanWeaponryUtil.isSpartanCrossbow(this.getHeldItemMainhand().getItem()))
+            soundIn = SpartanWeaponryUtil.getCrossbowFireSound();
         original.call(instance, soundIn, volume, pitch);
     }
 
@@ -178,19 +154,7 @@ public abstract class AbstractEntitySkeleton_SpartanBowMixin extends EntityMob {
     private EntityArrow eagleMixins_vanillaAbstractSkeleton_getBoltForSpartanCrossbow(float distanceFactor, Operation<EntityArrow> original){
         //Allow special bolts held in offhand if using crossbow
         if(SpartanWeaponryUtil.isSpartanCrossbow(this.getHeldItemMainhand().getItem())){
-            ItemStack offhandStack = this.getItemStackFromSlot(EntityEquipmentSlot.OFFHAND);
-
-            //No offhand item -> use normal bolts. Same if modded arrows are disallowed
-            if(!(offhandStack.getItem() instanceof ItemBolt) || !ForgeConfigHandler.mixintoggles.enabledModdedArrowsForAll)
-                offhandStack = new ItemStack(ItemRegistrySW.bolt);
-
-            EntityBolt entityBolt = ((ItemBolt) offhandStack.getItem()).createBolt(this.world, offhandStack, this);
-            entityBolt.setEnchantmentEffectsFromEntity(this, (float) (entityBolt.getDamage() / 2. * (double) distanceFactor));
-
-            if(offhandStack.getItem() == ItemRegistrySW.boltTipped && entityBolt instanceof EntityBoltTipped)
-                ((EntityBoltTipped) entityBolt).setPotionEffect(offhandStack);
-
-            return entityBolt;
+            return SpartanWeaponryUtil.createBolt(this.getItemStackFromSlot(EntityEquipmentSlot.OFFHAND), distanceFactor, this);
         }
         return original.call(distanceFactor);
     }
