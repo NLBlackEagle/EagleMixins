@@ -1,5 +1,6 @@
 package eaglemixins.mixin.vanilla.mobequipment;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.config.folders.MobEquipmentConfig;
 import eaglemixins.util.MobEquipState;
@@ -16,6 +17,8 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 @Mixin(EntityLiving.class)
@@ -36,6 +39,41 @@ public abstract class EntityLivingMixin extends EntityLivingBase {
     private void eaglemixins_vanillaEntityLiving_setEquipmentBasedOnDifficulty_beforeLoop(DifficultyInstance p_180481_1_, CallbackInfo ci){
         eaglemixins$state = MobEquipState.START_EQUIPPING;
         eaglemixins$currentEntity = (EntityLiving)(Object) this;
+    }
+
+    @Unique private static final List<EntityEquipmentSlot[]> eaglemixins$equipmentSlotPermutations = Arrays.asList( //lol... permutations by https://eleif.net/permutations.html
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET},
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.FEET, EntityEquipmentSlot.LEGS},
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.HEAD, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.FEET},
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.HEAD, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET, EntityEquipmentSlot.CHEST},
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.HEAD, EntityEquipmentSlot.FEET, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS},
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.HEAD, EntityEquipmentSlot.FEET, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.CHEST},
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.CHEST, EntityEquipmentSlot.HEAD, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET},
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.CHEST, EntityEquipmentSlot.HEAD, EntityEquipmentSlot.FEET, EntityEquipmentSlot.LEGS},
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.HEAD, EntityEquipmentSlot.FEET},
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET, EntityEquipmentSlot.HEAD},
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.CHEST, EntityEquipmentSlot.FEET, EntityEquipmentSlot.HEAD, EntityEquipmentSlot.LEGS},
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.CHEST, EntityEquipmentSlot.FEET, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.HEAD},
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.LEGS, EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.FEET},
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.LEGS, EntityEquipmentSlot.HEAD, EntityEquipmentSlot.FEET, EntityEquipmentSlot.CHEST},
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.LEGS, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.HEAD, EntityEquipmentSlot.FEET},
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.LEGS, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.FEET, EntityEquipmentSlot.HEAD},
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET, EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST},
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.HEAD},
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.FEET, EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS},
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.FEET, EntityEquipmentSlot.HEAD, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.CHEST},
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.FEET, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.HEAD, EntityEquipmentSlot.LEGS},
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.FEET, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.HEAD},
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.FEET, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST},
+            new EntityEquipmentSlot[]{EntityEquipmentSlot.FEET, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.HEAD}
+    );
+
+    @ModifyExpressionValue(
+            method = "setEquipmentBasedOnDifficulty",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/EntityEquipmentSlot;values()[Lnet/minecraft/inventory/EntityEquipmentSlot;")
+    )
+    private EntityEquipmentSlot[] eaglemixins_vanillaEntityLiving_setEquipmentBasedOnDifficulty_randomiseLoop(EntityEquipmentSlot[] original){
+        return eaglemixins$equipmentSlotPermutations.get(this.getRNG().nextInt(24)); //this is probably cheaper than creating a new shuffle every time
     }
 
     @Inject(
