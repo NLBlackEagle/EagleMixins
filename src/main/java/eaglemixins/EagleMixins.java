@@ -87,7 +87,7 @@ public class EagleMixins {
     public void init(FMLInitializationEvent event) {
         BiomeTagHandler.init();
         RadiationResistanceRegistry.reloadFromConfig();
-        if(Loader.isModLoaded("enhancedvisuals")) EnhancedVisualsHandler.init();
+        if(Loader.isModLoaded("enhancedvisuals") && Loader.isModLoaded("nuclearcraft")) EnhancedVisualsHandler.init();
         EntitySpawnListener.init();
         ModStats.init();
 
