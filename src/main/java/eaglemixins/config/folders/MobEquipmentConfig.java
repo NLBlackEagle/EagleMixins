@@ -15,30 +15,38 @@ import java.util.stream.Collectors;
 public class MobEquipmentConfig {
     //TODO: outer factors for having specific sets (biome/season/mob/dimension)
 
-    @Config.Comment("Pattern: modid:itemid, weight, optional dropChance")
+    @Config.Comment("Pattern: modid:itemid, weight, optional dropChance (default vanilla 0.085)")
     @Config.Name("Zombie Mainhand Items")
     public String[] zombieHand = {
-        "minecraft:iron_sword, 1, 0.085",
-        "minecraft:iron_shovel, 2, 0.085"
+        "minecraft:iron_sword, 1",
+        "minecraft:iron_shovel, 2"
     };
 
-    @Config.Comment("Pattern: modid:itemid, weight, optional dropChance")
+    @Config.Comment("Pattern: modid:itemid, weight, optional dropChance (default vanilla 0.085)")
     @Config.Name("Skeleton Mainhand Items")
     public String[] skeletonHand = {
-        "minecraft:bow, 1, 0.085"
+        "minecraft:bow, 1"
     };
 
-    @Config.Comment("Applied at least to zombies and skeletons but also to various other mobs extending from them\n" +
-            "Pattern: mod_id, helmet_id, chestplate_id, leggings_id, boot_id, tier, optional dropChance\n" +
-            "Leave slots empty if the armor set doesn't have a piece for that slot. Example: somemod, , onlychest, , , 1, 1\n" +
-            "Default: 0: Leather Tier, 1: Gold Tier, 2: Chainmail Tier, 3: Iron Tier, 4: Diamond Tier, >4 custom to be defined if max tier is increased")
+    @Config.Comment({
+            "Applied at least to zombies and skeletons but also to various other mobs extending from them",
+            "Pattern: mod_id, helmet_id, chestplate_id, leggings_id, boot_id, tier, optional dropChance (default vanilla 0.085)",
+            "Leave slots empty if the armor set doesn't have a piece for that slot. Example: somemod, , onlychest, , , 1, 1",
+            "If one of the set pieces are from a different mod, just name the armor piece as modid:itemid",
+            "Default: 0: Leather Tier, 1: Gold Tier, 2: Chainmail Tier, 3: Iron Tier, 4: Diamond Tier, >4 custom to be defined if max tier is increased"
+    })
     @Config.Name("Armor Sets")
     public String[] armor = {
-            "minecraft, leather_helmet, leather_chestplate, leather_leggings, leather_boots, 0, 1, 0.085",
-            "minecraft, golden_helmet, golden_chestplate, golden_leggings, golden_boots, 1, 1, 0.085",
-            "minecraft, chainmail_helmet, chainmail_chestplate, chainmail_leggings, chainmail_boots, 2, 1, 0.085",
-            "minecraft, iron_helmet, iron_chestplate, iron_leggings, iron_boots, 3, 1, 0.085",
-            "minecraft, diamond_helmet, diamond_chestplate, diamond_leggings, diamond_boots, 4, 1, 0.085"
+            "minecraft, leather_helmet, leather_chestplate, leather_leggings, leather_boots, 0, 5",
+            "minecraft, leather_helmet, leather_chestplate, variedcommodities:leather_skirt, leather_boots, 0, 1",
+            "minecraft, golden_helmet, golden_chestplate, golden_leggings, golden_boots, 1, 5",
+            "minecraft, golden_helmet, golden_chestplate, variedcommodities:golden_skirt, golden_boots, 1, 1",
+            "minecraft, chainmail_helmet, chainmail_chestplate, chainmail_leggings, chainmail_boots, 2, 5",
+            "minecraft, chainmail_helmet, chainmail_chestplate, variedcommodities:chain_skirt, chainmail_boots, 2, 1",
+            "minecraft, iron_helmet, iron_chestplate, iron_leggings, iron_boots, 3, 5",
+            "minecraft, iron_helmet, iron_chestplate, variedcommodities:iron_skirt, iron_boots, 3, 1",
+            "minecraft, diamond_helmet, diamond_chestplate, diamond_leggings, diamond_boots, 4, 5",
+            "minecraft, diamond_helmet, diamond_chestplate, variedcommodities:diamond_skirt, diamond_boots, 4, 1"
     };
 
     @Config.Comment("Base chance multiplier for zombie types getting weapons. By default 5% in hard mode, 1% in all other difficulties. The given multiplier here will be multiplied on top of those.")
@@ -201,15 +209,19 @@ public class MobEquipmentConfig {
             super(weight);
 
             Item tmp = Item.getByNameOrId(modid + ":" + helmet);
+            if(tmp == null) tmp = Item.getByNameOrId(helmet); //different mod
             this.helmet = tmp == null ? Items.AIR : tmp;
 
             tmp = Item.getByNameOrId(modid + ":" + chest);
+            if(tmp == null) tmp = Item.getByNameOrId(chest); //different mod
             this.chest = tmp == null ? Items.AIR : tmp;
 
             tmp = Item.getByNameOrId(modid + ":" + legs);
+            if(tmp == null) tmp = Item.getByNameOrId(legs); //different mod
             this.legs = tmp == null ? Items.AIR : tmp;
 
             tmp = Item.getByNameOrId(modid + ":" + boots);
+            if(tmp == null) tmp = Item.getByNameOrId(boots); //different mod
             this.boots = tmp == null ? Items.AIR : tmp;
 
             this.dropChance = dropChance;
