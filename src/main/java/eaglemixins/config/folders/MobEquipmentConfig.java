@@ -29,16 +29,16 @@ public class MobEquipmentConfig {
     };
 
     @Config.Comment("Applied at least to zombies and skeletons but also to various other mobs extending from them\n" +
-            "Pattern: mod_id, helmet_id, chestplate_id, leggings_id, boot_id, tier\n" +
+            "Pattern: mod_id, helmet_id, chestplate_id, leggings_id, boot_id, tier, optional dropChance\n" +
             "Leave slots empty if the armor set doesn't have a piece for that slot. Example: somemod, , onlychest, , , 1, 1\n" +
             "Default: 0: Leather Tier, 1: Gold Tier, 2: Chainmail Tier, 3: Iron Tier, 4: Diamond Tier, >4 custom to be defined if max tier is increased")
     @Config.Name("Armor Sets")
     public String[] armor = {
-            "minecraft, leather_helmet, leather_chestplate, leather_leggings, leather_boots, 0, 1",
-            "minecraft, golden_helmet, golden_chestplate, golden_leggings, golden_boots, 1, 1",
-            "minecraft, chainmail_helmet, chainmail_chestplate, chainmail_leggings, chainmail_boots, 2, 1",
-            "minecraft, iron_helmet, iron_chestplate, iron_leggings, iron_boots, 3, 1",
-            "minecraft, diamond_helmet, diamond_chestplate, diamond_leggings, diamond_boots, 4, 1"
+            "minecraft, leather_helmet, leather_chestplate, leather_leggings, leather_boots, 0, 1, 0.085",
+            "minecraft, golden_helmet, golden_chestplate, golden_leggings, golden_boots, 1, 1, 0.085",
+            "minecraft, chainmail_helmet, chainmail_chestplate, chainmail_leggings, chainmail_boots, 2, 1, 0.085",
+            "minecraft, iron_helmet, iron_chestplate, iron_leggings, iron_boots, 3, 1, 0.085",
+            "minecraft, diamond_helmet, diamond_chestplate, diamond_leggings, diamond_boots, 4, 1, 0.085"
     };
 
     @Config.Comment("Base chance multiplier for zombie types getting weapons. By default 5% in hard mode, 1% in all other difficulties. The given multiplier here will be multiplied on top of those.")
@@ -129,12 +129,12 @@ public class MobEquipmentConfig {
 
     public static List<ItemEntry> zombieHands = null;
     public static List<ItemEntry> skeletonHands = null;
-    public static final ArrayListMultimap<Integer, ItemSetEntry> armorByTier = ArrayListMultimap.create();
+    public static ArrayListMultimap<Integer, ItemSetEntry> armorByTier = null;
 
     public void reset(){
         zombieHands = null;
         skeletonHands = null;
-        armorByTier.clear();
+        armorByTier = null;
     }
 
     public static ItemEntry getRandomWeapon(Random rand, boolean forZombie) {
@@ -164,7 +164,8 @@ public class MobEquipmentConfig {
     }
 
     public static ItemSetEntry getRandomArmor(Random rand, int tier, boolean allowUndroppables) {
-        if (armorByTier.isEmpty()) {
+        if (armorByTier == null) {
+            armorByTier = ArrayListMultimap.create();
             for (String s : ForgeConfigHandler.mobequipment.armor) {
                 String[] split = s.split(",");
                 String modid = split[0].trim();
