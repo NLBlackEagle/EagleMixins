@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 public class MobEquipmentConfig {
     //TODO: outer factors for having specific sets (biome/season/mob/dimension)
+    //TODO: add mobs to this (zombie pigs, oe drowned, defiled hosts?...)
 
     @Config.Comment("Pattern: modid:itemid, weight, optional dropChance (default vanilla 0.085)")
     @Config.Name("Zombie Mainhand Items")
@@ -176,13 +177,14 @@ public class MobEquipmentConfig {
             armorByTier = ArrayListMultimap.create();
             for (String s : ForgeConfigHandler.mobequipment.armor) {
                 String[] split = s.split(",");
+                if(split.length < 6) continue;
                 String modid = split[0].trim();
                 String helmet = split[1].trim();
                 String chest = split[2].trim();
                 String legs = split[3].trim();
                 String boots = split[4].trim();
                 int parsedTier = Integer.parseInt(split[5].trim());
-                int weight = Integer.parseInt(split[6].trim());
+                int weight = split.length > 6 ? Integer.parseInt(split[6].trim()) : 1;
                 float dropChance = split.length > 7 ? Float.parseFloat(split[7].trim()) : 0.085F;
 
                 armorByTier.put(parsedTier, new ItemSetEntry(modid, helmet, chest, legs, boots, weight, dropChance));
