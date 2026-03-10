@@ -39,43 +39,38 @@ public class QualityItemMixin implements LootTableSetter {
 
         String s = rl.toString();
         eaglemixins$loottables.add(s);
-        eaglemixins$loottablePatterns.add(Pattern.compile(s.replace("*", ".*")));
+        eaglemixins$loottablePatterns.add(Pattern.compile("^" + s.replace("*", ".*") + ".*$"));
     }
 
     @Inject(method = "itemMatches", at = @At("HEAD"), cancellable = true, remap = false)
     private void onItemMatches(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+
         if (stack == null || stack.isEmpty()) {
             cir.setReturnValue(false);
             return;
         }
 
-        // If this QualityItem has no loot table whitelist, skip the mixin
         if (eaglemixins$loottablePatterns == null || eaglemixins$loottablePatterns.isEmpty()) {
-            return; // original logic will run
+            return;
         }
 
         QualityItem self = (QualityItem) (Object) this;
-
-        // If class doesn't match, this quality can never apply
         if (!eaglemixins$classMatches(self, stack)) {
             cir.setReturnValue(false);
             return;
         }
 
-        // Get the item's loot table history
         Set<String> itemLootTables = eaglemixins$getItemLootTables(stack);
 
-        // Only check patterns if the item actually has loot tables
         for (Pattern pattern : eaglemixins$loottablePatterns) {
             for (String table : itemLootTables) {
+
                 if (pattern.matcher(table).matches()) {
-                    cir.setReturnValue(true); // matched!
+                    cir.setReturnValue(true);
                     return;
                 }
             }
         }
-
-        // If we get here, a whitelist exists but no match was found → explicitly block
         cir.setReturnValue(false);
     }
 

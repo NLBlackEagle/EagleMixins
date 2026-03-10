@@ -7,9 +7,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.loot.LootContext;
-import net.minecraft.world.storage.loot.LootEntryTable;
+import net.minecraft.world.storage.loot.LootEntryItem;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -19,24 +18,18 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-@Mixin(LootEntryTable.class)
-public abstract class LootEntryTableMixin {
-
-    @Shadow
-    private ResourceLocation table;
-
-    @Inject(method = "addLoot", at = @At("HEAD"))
-    private void pushTable(Collection<ItemStack> stacks, Random rand, LootContext context, CallbackInfo ci) {
-        LootGenerationContext.push(this.table);
-    }
+@Mixin(LootEntryItem.class)
+public abstract class LootEntryItemMixin {
 
     @Inject(method = "addLoot", at = @At("RETURN"))
-    private void popTable(Collection<ItemStack> stacks, Random rand, LootContext context, CallbackInfo ci) {
+    private void eaglemixins$attachLootNBT(Collection<ItemStack> stacks, Random rand, LootContext context, CallbackInfo ci) {
 
         for (ItemStack stack : stacks) {
+
             if (stack.isEmpty()) continue;
 
             NBTTagCompound tag = stack.getOrCreateSubCompound("eaglemixins");
+
             NBTTagList list;
             if (tag.hasKey("LootTable", 9)) {
                 list = tag.getTagList("LootTable", 8);
@@ -50,15 +43,14 @@ public abstract class LootEntryTableMixin {
                 existing.add(list.getStringTagAt(i));
             }
 
-            // Use unique stack to avoid duplicate tables
-            for (ResourceLocation rl : LootGenerationContext.getUniqueStack()) {
+            for (ResourceLocation rl : LootGenerationContext.getCurrentStack()) {
+
                 String s = rl.toString();
+
                 if (existing.add(s)) {
                     list.appendTag(new NBTTagString(s));
                 }
             }
         }
-
-        LootGenerationContext.pop();
     }
 }
