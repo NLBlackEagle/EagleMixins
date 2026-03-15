@@ -1,5 +1,6 @@
 package eaglemixins.config.folders;
 
+import eaglemixins.config.ForgeConfigHandler;
 import net.minecraftforge.common.config.Config;
 
 import java.util.Arrays;
@@ -26,9 +27,14 @@ public class SRParasiteConfig {
             "openterraingenerator:overworld_ruins_of_blight"
     };
 
+    @Config.Comment("Enables the 'Parasite full loot-drop enabler' when set to true.")
+    @Config.Name("Parasite full loot-drop toggle")
+    public Boolean keepLootNamesEnabled = true;
+
     @Config.Comment("Parasite display names that are allowed to always drop loot (even outside allowed biomes).\n" +
             "This matches the entity's *custom display name*, not its ID.\n" +
-            "It's enough if the custom name contains any of these listed strings for it to be always allowed to drop loot.")
+            "It's enough if the custom name contains any of these listed strings for it to be always allowed to drop loot.\n" +
+            "Requires 'Parasite full loot-drop toggle' to be enabled.")
     @Config.Name("Parasite full loot-drop enabler")
     public String[] keepLootNames = {
             "Sentient Horror",
