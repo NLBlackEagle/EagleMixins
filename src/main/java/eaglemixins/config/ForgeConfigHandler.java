@@ -91,6 +91,17 @@ public class ForgeConfigHandler {
 				"Jester"
 		};
 
+		@Config.Comment("Any riding entity that takes more than this amount of damage will automatically be dismounted. Set negative to disable")
+		@Config.Name("Dismount Damage Threshold")
+		@Config.RangeDouble(min = -1)
+		public float dismountThreshold = 6;
+
+		@Config.Comment("Taking any amount of damage from these sources will automatically dismount any riding entity")
+		@Config.Name("Dismounting Damage Types")
+		public String[] dismountDamageTypes = {
+				"lightningBolt"
+		};
+
 		@Config.Comment("Cannot rename Player Bosses with or to these names")
 		@Config.Name("Blacklisted Name Change Player Bosses")
 		public String[] blackListEntitiesNameChangePlayerbosses = {
@@ -168,10 +179,17 @@ public class ForgeConfigHandler {
 	}
 
 	@Config.Ignore public static final Set<String> cachedDrinkableBlocks = new HashSet<>();
+	@Config.Ignore public static Set<String> dismountDamageTypes = null;
 
 	public static void refreshDrinkableBlockCache() {
 		cachedDrinkableBlocks.clear();
 		cachedDrinkableBlocks.addAll(Arrays.asList(server.waterblockListdrinkables));
+	}
+
+	public static boolean isDismountDamageType(String damageType) {
+		if(dismountDamageTypes == null)
+			dismountDamageTypes = new HashSet<>(Arrays.asList(server.dismountDamageTypes));
+		return dismountDamageTypes.contains(damageType);
 	}
 
 	@Mod.EventBusSubscriber(modid = EagleMixins.MODID)

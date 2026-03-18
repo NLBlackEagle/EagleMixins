@@ -28,7 +28,7 @@ public class DismountHandler {
         if(event.getSource() == null) return;
 
         String damageType = event.getSource().getDamageType();
-        boolean doDismount = damageType.equals(DamageSource.LIGHTNING_BOLT.damageType) || event.getAmount() > 6;
+        boolean doDismount = ForgeConfigHandler.isDismountDamageType(damageType) || ForgeConfigHandler.server.dismountThreshold >= 0 && event.getAmount() > ForgeConfigHandler.server.dismountThreshold;
 
         if(event.getSource().getTrueSource() instanceof EntityLivingBase) {
             EntityLivingBase attacker = (EntityLivingBase) event.getSource().getTrueSource();
