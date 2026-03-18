@@ -1,6 +1,5 @@
 package eaglemixins.config.folders;
 
-import eaglemixins.config.ForgeConfigHandler;
 import net.minecraftforge.common.config.Config;
 
 import java.util.Arrays;
@@ -27,9 +26,15 @@ public class SRParasiteConfig {
             "openterraingenerator:overworld_ruins_of_blight"
     };
 
-    @Config.Comment("Enables the 'Parasite full loot-drop enabler' when set to true.")
-    @Config.Name("Parasite full loot-drop toggle")
-    public Boolean keepLootNamesEnabled = true;
+    @Config.Comment({
+            "EagleMixins modifies parasite loot in the overworld.",
+            "Parasites are only allowed to drop loot in certain named biomes (\"SRParasites allowed biomes\")",
+            "In those biomes, they have a reduced chance to drop parasite loot and will drop Corrupted Ashes instead (\"Corrupted Ashes chance\")",
+            "Only parasites with specific custom names are exempt from this modification (\"Parasite full loot-drop enabler\")",
+            "If set to false, EagleMixins will instead not modify parasite loot at all."
+    })
+    @Config.Name("Modify Parasite Loot")
+    public boolean modifyLoot = true;
 
     @Config.Comment("Parasite display names that are allowed to always drop loot (even outside allowed biomes).\n" +
             "This matches the entity's *custom display name*, not its ID.\n" +

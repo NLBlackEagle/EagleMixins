@@ -112,7 +112,7 @@ public class SRParasitesHandler {
         EntityLivingBase entity = event.getEntityLiving();
 
         //Return if config is disabled
-        if (!ForgeConfigHandler.srparasites.keepLootNamesEnabled) return;
+        if (!ForgeConfigHandler.srparasites.modifyLoot) return;
 
         //Only Overworld
         if(entity.dimension != 0) return;
