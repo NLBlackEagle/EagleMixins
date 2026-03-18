@@ -36,10 +36,12 @@ public class SRParasiteConfig {
     @Config.Name("Modify Parasite Loot")
     public boolean modifyLoot = true;
 
-    @Config.Comment("Parasite display names that are allowed to always drop loot (even outside allowed biomes).\n" +
-            "This matches the entity's *custom display name*, not its ID.\n" +
-            "It's enough if the custom name contains any of these listed strings for it to be always allowed to drop loot.\n" +
-            "Requires 'Parasite full loot-drop toggle' to be enabled.")
+    @Config.Comment({
+            "Parasite display names that are allowed to always drop loot (even outside allowed biomes).",
+            "This matches the entity's *custom display name*, not its ID.",
+            "It's enough if the custom name contains any of these listed strings for it to be always allowed to drop loot.",
+            "Requires 'Modify Parasite Loot' to be enabled."
+    })
     @Config.Name("Parasite full loot-drop enabler")
     public String[] keepLootNames = {
             "Sentient Horror",
