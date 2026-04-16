@@ -34,6 +34,7 @@ public class EagleMixins {
         if(event.getSide() == Side.CLIENT) registerIfModsPresent(new String[]{"nuclearcraft"}, ParticlesClientRunner.class);
 
         MinecraftForge.EVENT_BUS.register(ProjectileImmunityHandler.class);
+        MinecraftForge.EVENT_BUS.register(new QualityToolsNBTRemover());
         registerIfModsPresent(new String[]{"firstaid"}, FirstAidRadiationHandler.class);
         registerIfModsPresent(new String[]{"nuclearcraft"}, ContainerNBTRadHandler.class);
         registerIfModsPresent(new String[]{"nuclearcraft"}, ItemRadCapAttacher.class);
