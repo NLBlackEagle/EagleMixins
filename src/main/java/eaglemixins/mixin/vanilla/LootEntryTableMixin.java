@@ -1,5 +1,6 @@
 package eaglemixins.mixin.vanilla;
 
+import com.tmtravlr.qualitytools.config.ConfigLoader;
 import eaglemixins.util.LootGenerationContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -35,6 +36,12 @@ public abstract class LootEntryTableMixin {
 
         for (ItemStack stack : stacks) {
             if (stack.isEmpty()) continue;
+
+            boolean stackableBlocked =
+                    stack.getItem().getItemStackLimit(stack) > 1
+                            && !ConfigLoader.allowStackableItems;
+
+            if (stackableBlocked) return;
 
             NBTTagCompound tag = stack.getOrCreateSubCompound("eaglemixins");
             NBTTagList list;

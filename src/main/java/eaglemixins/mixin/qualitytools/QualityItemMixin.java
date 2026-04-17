@@ -68,13 +68,13 @@ public class QualityItemMixin implements LootTableSetter {
 
                 if (pattern.matcher(table).matches()) {
                     cir.setReturnValue(true);
-                    QualityToolsNBTRemover.eaglemixins$clean(stack);
                     return;
                 }
             }
         }
         cir.setReturnValue(false);
     }
+
 
 
     @Unique
