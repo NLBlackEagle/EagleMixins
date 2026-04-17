@@ -2,6 +2,7 @@ package eaglemixins.mixin.qualitytools;
 
 import com.tmtravlr.qualitytools.config.QualityItem;
 import eaglemixins.util.LootTableSetter;
+import eaglemixins.util.QualityToolsNBTRemover;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -67,13 +68,14 @@ public class QualityItemMixin implements LootTableSetter {
 
                 if (pattern.matcher(table).matches()) {
                     cir.setReturnValue(true);
-                    eaglemixins$clean(stack);
+                    QualityToolsNBTRemover.eaglemixins$clean(stack);
                     return;
                 }
             }
         }
         cir.setReturnValue(false);
     }
+
 
     @Unique
     private Set<String> eaglemixins$getItemLootTables(ItemStack stack) {
@@ -112,22 +114,6 @@ public class QualityItemMixin implements LootTableSetter {
             );
         } catch (Exception ignored) {
             return true;
-        }
-    }
-
-    @Unique
-    public static void eaglemixins$clean(ItemStack stack) {
-        if (stack.isEmpty()) return;
-
-        NBTTagCompound tag = stack.getTagCompound();
-        if (tag == null) return;
-
-        if (tag.hasKey("eaglemixins")) {
-            tag.removeTag("eaglemixins");
-
-            if (tag.isEmpty()) {
-                stack.setTagCompound(null);
-            }
         }
     }
 }
