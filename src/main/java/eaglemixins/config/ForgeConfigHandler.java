@@ -176,6 +176,19 @@ public class ForgeConfigHandler {
                 "0, all, [], [SPELL_MOB], 3, 8, 1.0, 0.0, 0.01, 20, true, 0, 256, [], NUCLEAR",
                 "0, minecraft:plains, [minecraft:grass|minecraft:tallgrass], [VILLAGER_HAPPY|TOWN_AURA], 3, 8, 1.0, 0.0, 0.01, 20, true, 0, 256, [thunder|rain|clear], NUCLEAR"
         };
+
+        @Config.Comment("Cull mob spawner rendering (spinning mob model) for performance")
+        @Config.Name("Spawners: Enable Render Culling")
+        public boolean cullSpawnerRendering = true;
+
+        @Config.Comment("Max distance (blocks) at which a spawner's mob model renders. Beyond this, only the cage renders")
+        @Config.Name("Spawners: Render Distance")
+        @Config.RangeDouble(min = 1D, max = 128D)
+        public double spawnerRenderDistance = 32D;
+
+        @Config.Comment("Skip rendering the mob model entirely if the spawner is fully enclosed by opaque blocks on all 6 sides")
+        @Config.Name("Spawners: Cull Fully Enclosed Spawners")
+        public boolean cullEnclosedSpawners = true;
 	}
 
 	@Config.Ignore public static final Set<String> cachedDrinkableBlocks = new HashSet<>();
