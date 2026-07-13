@@ -15,13 +15,13 @@ public class MixinToggleConfig {
     @MixinConfig.CompatHandling(modid = "sereneseasons", desired = true, reason = "Requires mod to properly function")
     public boolean sereneSeasonsMetadataFertility = true;
 
-    @Config.Comment("Adds a tooltip to Dynamic Trees seeds showing growth speed by season (Temperate and Tropical biomes), based on Dynamic Trees' own seasonal growth curve.")
-    @Config.Name("Seasonal Growth Tooltip (DynamicTrees/SereneSeasons)")
+    @Config.Comment("Enables serene seaons cropfertility for dynamictrees cancelling the growth-tick outside of fertile seasons")
+    @Config.Name("Dynamic Trees Seasonal Growth (DynamicTrees/SereneSeasons)")
     @Config.RequiresMcRestart
-    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.dynamictrees.seasontooltips.json", defaultValue = true)
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.dynamictrees.seasongrowth.json", defaultValue = true)
     @MixinConfig.CompatHandling(modid = "dynamictrees", desired = true, reason = "Requires mod to properly function")
     @MixinConfig.CompatHandling(modid = "sereneseasons", desired = true, reason = "Requires mod to properly function")
-    public boolean dynamicTreesSeasonalGrowthTooltip = true;
+    public boolean dynamicTreesSeasonalGrowth = true;
 
     @Config.Comment("Will stop disarming mobs with living/sentient or dragonbone gear using the BS Disarm or the SME Disarmament enchantment.")
     @Config.Name("Stop disarming some gear (BS/SME/RLCombat)")

@@ -112,12 +112,25 @@ public abstract class FertilityMixins
                 }
             }
 
-            if (resolvedBlock == null)
+            String plantName;
+
+            if (resolvedBlock != null)
             {
-                continue; // silently skip, same behaviour as vanilla when unresolved
+                plantName = resolvedBlock.getRegistryName().toString();
+            }
+            else if (item != null && item.getRegistryName() != null)
+            {
+                // Fallback: plain Item with no corresponding Block at all - e.g.
+                // Dynamic Trees seeds, which are ordinary Item subclasses (not
+                // ItemBlock, not IPlantable) with no block sharing their registry
+                // name. Use the item's own identity directly instead of skipping.
+                plantName = item.getRegistryName().toString();
+            }
+            else
+            {
+                continue; // genuinely unresolvable, silently skip
             }
 
-            String plantName = resolvedBlock.getRegistryName().toString();
             String key = (meta != null) ? (plantName + "@" + meta) : plantName;
 
             cropSet.add(key);
