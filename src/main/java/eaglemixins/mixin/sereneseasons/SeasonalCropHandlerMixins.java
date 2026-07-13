@@ -16,7 +16,7 @@ import sereneseasons.api.SSBlocks;
 import sereneseasons.config.FertilityConfig;
 import sereneseasons.handler.season.SeasonalCropGrowthHandler;
 
-@Mixin(SeasonalCropGrowthHandler.class)
+@Mixin(value = SeasonalCropGrowthHandler.class, remap = false)
 public abstract class SeasonalCropHandlerMixins
 {
     /**

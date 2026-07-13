@@ -25,7 +25,7 @@ import sereneseasons.init.ModFertility;
  * to target a specific metadata variant of a shared-ID item. Entries without an
  * "@meta" suffix behave exactly as before (apply to all metadata variants).
  */
-@Mixin(ModFertility.class)
+@Mixin(value = ModFertility.class, remap = false)
 public abstract class FertilityMixins
 {
     @Shadow private static HashSet<String> springPlants;
