@@ -27,16 +27,43 @@ public class SRParasitesHandler {
 
     //Parasites will be allowed to spawn via spawners, stay alive and will drop (reduced) loot in these biomes
     //Handled in ForgeConfigHandler class
-    public static boolean isBiomeAllowed(ResourceLocation biomeId) {
+    //Entries in config support "dimensionId@modid:biome" syntax (e.g. 1@biomesoplenty:steppe).
+    //Entries with no "@" prefix (or a "*@" prefix) match that biome in any dimension.
+    public static boolean isBiomeAllowed(ResourceLocation biomeId, int dimensionId) {
         String id = biomeId.toString();
-        String modid = biomeId.getNamespace() + ":*";
+        String modWildcard = biomeId.getNamespace() + ":*";
 
-        boolean isInList = ForgeConfigHandler.srparasites.getAllowedBiomeList().contains(modid) ||
-                ForgeConfigHandler.srparasites.getAllowedBiomeList().stream().anyMatch(listedBiome -> listedBiome.equalsIgnoreCase(id));
+        boolean isInList = ForgeConfigHandler.srparasites.getAllowedBiomeList().stream()
+                .anyMatch(entry -> matchesEntry(entry, id, modWildcard, dimensionId));
 
         //true (allowed) if in list and whitelist, or not in list and blacklist
         //false (not allowed) if in list and blacklist, or not in list and whitelist
         return isInList == ForgeConfigHandler.srparasites.biomeListIsWhitelist;
+    }
+
+    private static boolean matchesEntry(String entry, String biomeId, String biomeWildcard, int dimensionId) {
+        String dimPart = null;
+        String biomePart = entry;
+
+        int atIndex = entry.indexOf('@');
+        if (atIndex != -1) {
+            dimPart = entry.substring(0, atIndex);
+            biomePart = entry.substring(atIndex + 1);
+        }
+
+        // If a dimension is specified (and isn't a wildcard), it must match.
+        if (dimPart != null && !dimPart.equals("*")) {
+            try {
+                if (Integer.parseInt(dimPart.trim()) != dimensionId) {
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                // Malformed dimension prefix, treat as non-matching rather than crashing.
+                return false;
+            }
+        }
+
+        return biomePart.equals("*") || biomePart.equalsIgnoreCase(biomeWildcard) || biomePart.equalsIgnoreCase(biomeId);
     }
 
     private static ItemStack corruptedAshes = null;
@@ -63,7 +90,6 @@ public class SRParasitesHandler {
         EntityLivingBase entity = event.getEntityLiving();
         World world = entity.world;
         if (world.isRemote || world.getTotalWorldTime() % 50 != 23) return;
-        if (entity.dimension != 0 && entity.dimension != 3) return;
 
         if (!(entity instanceof EntityParasiteBase)) return;
 
@@ -71,21 +97,18 @@ public class SRParasitesHandler {
         if (ForgeConfigHandler.abyssal.killAbyssalNexus && Ref.entityIsInAbyssalRift(entity)) {
             if (entity instanceof EntityPStationaryArchitect)
                 entity.setDead();
-        //Otherwise kill all other beckons around one beckon
+            //Otherwise kill all other beckons around one beckon
         } else if (ForgeConfigHandler.srparasites.killNearbyBeckon && isBeckon(entity))
             for (Entity entityNearby : entity.world.getEntitiesWithinAABB(EntityPStationaryArchitect.class, new AxisAlignedBB(entity.getPosition()).grow(ForgeConfigHandler.srparasites.killNearbyBeckonRange)))
                 if (entityNearby != entity && isBeckon(entityNearby))
                     entityNearby.setDead();
-
-        //Rest of this method is for overworld only
-        if(entity.dimension == 3) return;
 
         //Only if enabled
         if(!ForgeConfigHandler.srparasites.killEscapedParasites) return;
 
         //Slowly kill Parasites outside specific biomes
         ResourceLocation biomeReg = entity.world.getBiome(entity.getPosition()).getRegistryName();
-        if (biomeReg != null && SRParasitesHandler.isBiomeAllowed(biomeReg)) return;
+        if (biomeReg != null && SRParasitesHandler.isBiomeAllowed(biomeReg, entity.dimension)) return;
 
         float health = entity.getHealth();
         if (health > 1000)      entity.setHealth(health / 50);
@@ -97,11 +120,11 @@ public class SRParasitesHandler {
     @SubscribeEvent
     public static void onCheckSpawn(LivingSpawnEvent.CheckSpawn event){
         if(!event.isSpawner()) return;
-        if(event.getWorld().provider.getDimension()!=0) return;
+        int dimensionId = event.getWorld().provider.getDimension();
         EntityLivingBase entity = event.getEntityLiving();
         if(!(entity instanceof EntityParasiteBase)) return;
         ResourceLocation biomeReg = event.getWorld().getBiome(entity.getPosition()).getRegistryName();
-        if (biomeReg != null && !SRParasitesHandler.isBiomeAllowed(biomeReg))
+        if (biomeReg != null && !SRParasitesHandler.isBiomeAllowed(biomeReg, dimensionId))
             event.setResult(Event.Result.DENY);
     }
 
@@ -114,9 +137,6 @@ public class SRParasitesHandler {
         //Return if config is disabled
         if (!ForgeConfigHandler.srparasites.modifyLoot) return;
 
-        //Only Overworld
-        if(entity.dimension != 0) return;
-
         //Only for Parasites
         if(!(entity instanceof EntityParasiteBase)) return;
 
@@ -127,7 +147,7 @@ public class SRParasitesHandler {
 
         ResourceLocation biomeReg = entity.world.getBiome(entity.getPosition()).getRegistryName();
 
-        if (biomeReg != null && SRParasitesHandler.isBiomeAllowed(biomeReg)){
+        if (biomeReg != null && SRParasitesHandler.isBiomeAllowed(biomeReg, entity.dimension)){
             List<EntityItem> itemsToRemove = new ArrayList<>();
             List<EntityItem> itemsToAdd = new ArrayList<>();
             for (EntityItem drop : event.getDrops()) {

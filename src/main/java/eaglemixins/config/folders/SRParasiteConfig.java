@@ -13,17 +13,26 @@ public class SRParasiteConfig {
 
     //Parasites will be allowed to spawn via spawners, stay alive and will drop (reduced) loot in these biomes
     @Config.Comment("List of biome IDs to whitelist or blacklist depending on biomeListIsWhitelist.\n" +
-            "This list supports the * wildcard, example: biomesoplenty:* would whitelist all biomesoplenty biomes.")
+            "This list supports the * wildcard, example: biomesoplenty:* would whitelist all biomesoplenty biomes.\n" +
+            "Optionally prefix an entry with \"dimensionId@\" to restrict it to a specific dimension,\n" +
+            "example: 1@biomesoplenty:steppe only matches biomesoplenty:steppe in dimension 1.\n" +
+            "Entries with no dimension prefix (or a \"*@\" prefix) match that biome in any dimension.\n" +
+            "The dimension prefix can be combined with the wildcard biome, example: 1@biomesoplenty:*"
+    )
     @Config.Name("SRParasites allowed biomes")
     public String[] biomeList = {
-            "biomesoplenty:heath",
-            "biomesoplenty:steppe",
-            "biomesoplenty:wasteland",
-            "openterraingenerator:overworld_abyssal_rift",
-            "srparasites:biome_parasite",
-            "openterraingenerator:overworld_lair_of_the_thing",
-            "openterraingenerator:overworld_nuclear_ruins",
-            "openterraingenerator:overworld_ruins_of_blight"
+            "0@biomesoplenty:heath",
+            "0@biomesoplenty:steppe",
+            "0@biomesoplenty:wasteland",
+            "0@openterraingenerator:overworld_abyssal_rift",
+            "0@srparasites:biome_parasite",
+            "0@openterraingenerator:overworld_lair_of_the_thing",
+            "0@openterraingenerator:overworld_nuclear_ruins",
+            "0@openterraingenerator:overworld_ruins_of_blight",
+            "1@*",
+            "3@*",
+            "-1@*",
+            "111@*"
     };
 
     @Config.Comment({
