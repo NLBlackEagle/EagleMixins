@@ -65,6 +65,7 @@ dependencies {
     compileOnly fg.deobf("curse.maven:reskillable-${reskillable_version}")
     compileOnly fg.deobf("curse.maven:legendarytooltips-${legendarytooltips_version}")
     compileOnly fg.deobf("curse.maven:sereneseasons-${sereneseasons_version}")
+    compileOnly fg.deobf("curse.maven:dynamictrees-${dynamictrees_version}")
     compileOnly fg.deobf("curse.maven:charm-${charm_version}")
     compileOnly fg.deobf("curse.maven:simpledifficulty-${simpledifficulty_version}")
     compileOnly fg.deobf("curse.maven:rlartifacts-${rlartifacts_version}")

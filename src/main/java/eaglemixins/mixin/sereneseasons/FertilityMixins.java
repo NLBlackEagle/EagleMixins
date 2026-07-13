@@ -6,6 +6,7 @@ import java.util.HashSet;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -78,17 +79,27 @@ public abstract class FertilityMixins
             Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(resourceStr));
 
             Block resolvedBlock = null;
-            if (item instanceof IPlantable)
+
+            if (item instanceof ItemBlock)
+            {
+                // Safe, direct lookup - no null world/pos risk at all. Covers most
+                // "place directly" plant items: saplings, herb blocks, mushrooms, etc.
+                resolvedBlock = ((ItemBlock) item).getBlock();
+            }
+            else if (item instanceof IPlantable)
             {
                 try
                 {
+                    // Needed for genuine seed items (e.g. ItemSeeds like wheat/carrot)
+                    // that aren't themselves an ItemBlock and only exist to be planted
+                    // into a separate crop block.
                     resolvedBlock = ((IPlantable) item).getPlant(null, null).getBlock();
                 }
                 catch (Exception e)
                 {
                     // Some mods' IPlantable#getPlant implementations don't handle a
-                    // null world/pos gracefully (e.g. Rustic's herb blocks) and throw
-                    // instead. Skip this entry rather than crashing the whole class load.
+                    // null world/pos gracefully and throw instead of returning a
+                    // sensible default. Skip this entry rather than crashing.
                     resolvedBlock = null;
                 }
             }
