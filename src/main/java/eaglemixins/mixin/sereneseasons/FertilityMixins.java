@@ -7,16 +7,14 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import sereneseasons.config.FertilityConfig;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import sereneseasons.init.ModFertility;
 
 /**
@@ -24,6 +22,11 @@ import sereneseasons.init.ModFertility;
  * Config entries may now optionally end in "@<meta>" (e.g. "minecraft:sapling@1")
  * to target a specific metadata variant of a shared-ID item. Entries without an
  * "@meta" suffix behave exactly as before (apply to all metadata variants).
+ *
+ * The metadata-aware lookup entry point (isCropFertileMeta) does NOT live here -
+ * Mixin rejects merging new non-private methods into a target class. It lives in
+ * eaglemixins.util.sereneseasons.FertilityMetaHelper, an ordinary utility class,
+ * which reaches this class's private allListedPlants field via FertilityAccessor.
  */
 @Mixin(value = ModFertility.class, remap = false)
 public abstract class FertilityMixins
@@ -77,7 +80,17 @@ public abstract class FertilityMixins
             Block resolvedBlock = null;
             if (item instanceof IPlantable)
             {
-                resolvedBlock = ((IPlantable) item).getPlant(null, null).getBlock();
+                try
+                {
+                    resolvedBlock = ((IPlantable) item).getPlant(null, null).getBlock();
+                }
+                catch (Exception e)
+                {
+                    // Some mods' IPlantable#getPlant implementations don't handle a
+                    // null world/pos gracefully (e.g. Rustic's herb blocks) and throw
+                    // instead. Skip this entry rather than crashing the whole class load.
+                    resolvedBlock = null;
+                }
             }
             else
             {
@@ -119,61 +132,17 @@ public abstract class FertilityMixins
     }
 
     /**
-     * New overload - NOT an @Overwrite, this is an additional method merged into
-     * ModFertility by Mixin. SeasonalCropGrowthHandler's mixin calls this instead
-     * of the original isCropFertile so metadata can be taken into account.
-     * Falls back to the metadata-less key if no specific entry was found, so mixed
-     * configs (some entries with @meta, some without) both resolve correctly.
+     * Non-destructive: only swaps the lookup key to a metadata-aware one if a
+     * matching entry exists. Deliberately NOT an @Overwrite - other mods (e.g.
+     * localization mods) may inject into this method's original tooltip-adding
+     * calls, and an @Overwrite would destroy those anchor points, breaking them.
      */
-    public static boolean isCropFertileMeta(String plantName, Integer meta, net.minecraft.world.World world, net.minecraft.util.math.BlockPos pos)
+    @ModifyVariable(method = "setupTooltips", at = @At("STORE"), ordinal = 0)
+    private static String eagleMixins$useMetaKeyIfPresent(String name, ItemTooltipEvent event)
     {
-        String metaKey = (meta != null) ? (plantName + "@" + meta) : null;
+        int meta = event.getItemStack().getItem().getHasSubtypes() ? event.getItemStack().getMetadata() : 0;
+        String metaKey = name + "@" + meta;
 
-        // Prefer the metadata-specific key if it was actually configured
-        if (metaKey != null && allListedPlants.contains(metaKey))
-        {
-            return ModFertility.isCropFertile(metaKey, world, pos);
-        }
-
-        // Fall back to the bare (metadata-agnostic) key - preserves old behaviour
-        return ModFertility.isCropFertile(plantName, world, pos);
-    }
-
-    /**
-     * @author NLBlackEagle
-     * @reason Seasons does not support metadata, now it does.
-     */
-    @Overwrite
-    @SideOnly(Side.CLIENT)
-    public static void setupTooltips(ItemTooltipEvent event)
-    {
-        if (FertilityConfig.general_category.crop_tooltips && FertilityConfig.general_category.seasonal_crops)
-        {
-            String baseName = event.getItemStack().getItem().getRegistryName().toString();
-            int meta = event.getItemStack().getItem().getHasSubtypes() ? event.getItemStack().getMetadata() : 0;
-            String metaKey = baseName + "@" + meta;
-
-            // Prefer a metadata-specific entry; fall back to the bare entry
-            String lookupKey = seedSeasons.containsKey(metaKey) ? metaKey : baseName;
-
-            if (seedSeasons.containsKey(lookupKey))
-            {
-                int mask = seedSeasons.get(lookupKey);
-
-                event.getToolTip().add("Fertile Seasons:");
-
-                if ((mask & 1) != 0 && (mask & 2) != 0 && (mask & 4) != 0 && (mask & 8) != 0)
-                {
-                    event.getToolTip().add(TextFormatting.LIGHT_PURPLE + " Year-Round");
-                }
-                else
-                {
-                    if ((mask & 1) != 0) event.getToolTip().add(TextFormatting.GREEN + " Spring");
-                    if ((mask & 2) != 0) event.getToolTip().add(TextFormatting.YELLOW + " Summer");
-                    if ((mask & 4) != 0) event.getToolTip().add(TextFormatting.GOLD + " Autumn");
-                    if ((mask & 8) != 0) event.getToolTip().add(TextFormatting.AQUA + " Winter");
-                }
-            }
-        }
+        return seedSeasons.containsKey(metaKey) ? metaKey : name;
     }
 }

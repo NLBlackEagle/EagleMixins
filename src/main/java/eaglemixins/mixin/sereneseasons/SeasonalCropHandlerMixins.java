@@ -16,6 +16,8 @@ import sereneseasons.api.SSBlocks;
 import sereneseasons.config.FertilityConfig;
 import sereneseasons.handler.season.SeasonalCropGrowthHandler;
 
+import eaglemixins.util.sereneseasons.FertilityMetaHelper;
+
 @Mixin(value = SeasonalCropGrowthHandler.class, remap = false)
 public abstract class SeasonalCropHandlerMixins
 {
@@ -31,7 +33,7 @@ public abstract class SeasonalCropHandlerMixins
         Block plant = state.getBlock();
         int meta = plant.getMetaFromState(state);
 
-        boolean isFertile = FertilityMixins.isCropFertileMeta(
+        boolean isFertile = FertilityMetaHelper.isCropFertileMeta(
                 plant.getRegistryName().toString(), meta, event.getWorld(), event.getPos());
 
         if (FertilityConfig.general_category.seasonal_crops && !isFertile && !isGreenhouseGlassAboveBlock(event.getWorld(), event.getPos()))
@@ -59,7 +61,7 @@ public abstract class SeasonalCropHandlerMixins
         Block plant = state.getBlock();
         int meta = plant.getMetaFromState(state);
 
-        boolean isFertile = FertilityMixins.isCropFertileMeta(
+        boolean isFertile = FertilityMetaHelper.isCropFertileMeta(
                 plant.getRegistryName().toString(), meta, event.getWorld(), event.getPos());
 
         if (FertilityConfig.general_category.seasonal_crops && !isFertile && !isGreenhouseGlassAboveBlock(event.getWorld(), event.getPos()))
@@ -73,8 +75,6 @@ public abstract class SeasonalCropHandlerMixins
         }
     }
 
-    // Duplicated from the original private method since @Overwrite methods can't call
-    // the original private helper directly once it's shadowed out; keep behaviour identical.
     private boolean isGreenhouseGlassAboveBlock(World world, BlockPos cropPos)
     {
         for (int i = 0; i < FertilityConfig.general_category.greenhouse_glass_max_height; i++)
