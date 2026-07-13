@@ -6,7 +6,8 @@
   "target": "@env(CLIENT)",
   "minVersion": "0.8",
   "mixins": [
-    "TileEntityMobSpawnerRendererMixin"
+    "TileEntityMobSpawnerRendererMixin",
+    "TileEntityMobSpawnerMixin"
   ],
   "injectors": {
     "defaultRequire": 1,

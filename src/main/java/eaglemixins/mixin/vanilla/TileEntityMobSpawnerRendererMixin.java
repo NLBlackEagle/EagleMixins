@@ -1,10 +1,10 @@
 package eaglemixins.mixin.vanilla;
 
 import eaglemixins.config.ForgeConfigHandler;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntityMobSpawnerRenderer;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.MobSpawnerBaseLogic;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,36 +32,52 @@ public abstract class TileEntityMobSpawnerRendererMixin {
             return; // feature off, vanilla behavior
         }
 
+        if (!ForgeConfigHandler.client.cullEnclosedSpawners) {
+            return;
+        }
+
         World world = mobSpawnerLogic.getSpawnerWorld();
         BlockPos pos = mobSpawnerLogic.getSpawnerPosition();
 
-        // 1. distance cull — skip mobs rendering past a configurable radius
-        Entity view = Minecraft.getMinecraft().getRenderViewEntity();
-        if (view != null) {
-            double dx = posX - view.posX;
-            double dy = posY - view.posY;
-            double dz = posZ - view.posZ;
-            double distSq = dx * dx + dy * dy + dz * dz;
-            double maxDist = ForgeConfigHandler.client.spawnerRenderDistance;
-            if (distSq > maxDist * maxDist) {
-                ci.cancel();
-                return;
-            }
-        }
-
-        // 2. occlusion cull — skip if fully sealed in opaque blocks
-        if (ForgeConfigHandler.client.cullEnclosedSpawners && eagleMixins$isFullyEnclosed(world, pos)) {
+        if (eagleMixins$isOccluded(world, pos)) {
             ci.cancel();
         }
     }
 
+    /**
+     * Only checks the up-to-3 faces that could actually be facing the camera,
+     * instead of blindly requiring all 6 neighbours to be opaque.
+     */
     @Unique
-    private static boolean eagleMixins$isFullyEnclosed(World world, BlockPos pos) {
-        return world.getBlockState(pos.up()).isOpaqueCube()
-                && world.getBlockState(pos.down()).isOpaqueCube()
-                && world.getBlockState(pos.north()).isOpaqueCube()
-                && world.getBlockState(pos.south()).isOpaqueCube()
-                && world.getBlockState(pos.east()).isOpaqueCube()
-                && world.getBlockState(pos.west()).isOpaqueCube();
+    private static boolean eagleMixins$isOccluded(World world, BlockPos pos) {
+        BlockPos.MutableBlockPos neighbor = new BlockPos.MutableBlockPos(pos);
+
+        if (TileEntityRendererDispatcher.staticPlayerX < pos.getX()) {
+            if (eagleMixins$isFaceVisible(world, neighbor, EnumFacing.WEST)) return false;
+        } else if (TileEntityRendererDispatcher.staticPlayerX > pos.getX() + 1) {
+            if (eagleMixins$isFaceVisible(world, neighbor, EnumFacing.EAST)) return false;
+        }
+
+        if (TileEntityRendererDispatcher.staticPlayerY < pos.getY()) {
+            if (eagleMixins$isFaceVisible(world, neighbor, EnumFacing.DOWN)) return false;
+        } else if (TileEntityRendererDispatcher.staticPlayerY > pos.getY() + 1) {
+            if (eagleMixins$isFaceVisible(world, neighbor, EnumFacing.UP)) return false;
+        }
+
+        if (TileEntityRendererDispatcher.staticPlayerZ < pos.getZ()) {
+            if (eagleMixins$isFaceVisible(world, neighbor, EnumFacing.NORTH)) return false;
+        } else if (TileEntityRendererDispatcher.staticPlayerZ > pos.getZ() + 1) {
+            if (eagleMixins$isFaceVisible(world, neighbor, EnumFacing.SOUTH)) return false;
+        }
+
+        return true;
+    }
+
+    @Unique
+    private static boolean eagleMixins$isFaceVisible(World world, BlockPos.MutableBlockPos pos, EnumFacing face) {
+        pos.move(face);
+        boolean visible = !world.getBlockState(pos).doesSideBlockRendering(world, pos, face.getOpposite());
+        pos.move(face.getOpposite());
+        return visible;
     }
 }
