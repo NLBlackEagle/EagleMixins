@@ -7,6 +7,14 @@ import net.minecraftforge.common.config.Config;
 @MixinConfig(name = EagleMixins.MODID)
 @SuppressWarnings("unused")
 public class MixinToggleConfig {
+
+    @Config.Comment("Adds metadata-specific fertility support to Serene Seasons, allowing shared-ID saplings (vanilla saplings, Biomes O' Plenty saplings, etc.) to have per-species seasonal fertility instead of being treated as one item.")
+    @Config.Name("Metadata Fertility Support (SereneSeasons)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.sereneseasons.metadata.json", defaultValue = true)
+    @MixinConfig.CompatHandling(modid = "sereneseasons", desired = true, reason = "Requires mod to properly function")
+    public boolean sereneSeasonsMetadataFertility = true;
+
     @Config.Comment("Will stop disarming mobs with living/sentient or dragonbone gear using the BS Disarm or the SME Disarmament enchantment.")
     @Config.Name("Stop disarming some gear (BS/SME/RLCombat)")
     @Config.RequiresMcRestart
