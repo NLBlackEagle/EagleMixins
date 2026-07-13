@@ -60,8 +60,8 @@ public abstract class FertilityMixins
     }
 
     /**
-     * Fully replaces the original method. Same signature, same call sites -
-     * SeasonalCropGrowthHandler and ModFertility.init() are untouched.
+     * @author NLBlackEagle
+     * @reason Seasons does not support metadata, now it does.
      */
     @Overwrite
     private static void initSeasonCrops(String[] seeds, HashSet<String> cropSet, int bitmask)
@@ -139,6 +139,10 @@ public abstract class FertilityMixins
         return ModFertility.isCropFertile(plantName, world, pos);
     }
 
+    /**
+     * @author NLBlackEagle
+     * @reason Seasons does not support metadata, now it does.
+     */
     @Overwrite
     @SideOnly(Side.CLIENT)
     public static void setupTooltips(ItemTooltipEvent event)
