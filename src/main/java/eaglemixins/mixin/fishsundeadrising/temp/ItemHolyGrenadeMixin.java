@@ -59,6 +59,6 @@ public abstract class ItemHolyGrenadeMixin extends ItemFishCustom {
 				}
 			}
 		}
-		return new ActionResult(EnumActionResult.SUCCESS, itemstack);
+		return new ActionResult<>(EnumActionResult.SUCCESS, itemstack);
 	}
 }
