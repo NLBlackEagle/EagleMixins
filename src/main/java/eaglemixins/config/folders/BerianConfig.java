@@ -114,8 +114,8 @@ public class BerianConfig {
     }
 
     public void reset(){
-        mentalberianEffects = null;
-        sussyberianEffects = null;
-        berianConstantEffect = null;
+        mentalberianEffectList = null;
+        sussyberianEffectList = null;
+        berianConstantEffectPotion = null;
     }
 }

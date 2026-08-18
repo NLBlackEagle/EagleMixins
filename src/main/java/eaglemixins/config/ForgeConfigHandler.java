@@ -21,48 +21,48 @@ public class ForgeConfigHandler {
 
 	@Config.Comment("Server-Side Options")
 	@Config.Name("Server Options")
-	public static final ServerConfig server = new ServerConfig();
+	public static ServerConfig server = new ServerConfig();
 
 	@Config.Comment("Client-Side Options")
 	@Config.Name("Client Options")
-	public static final ClientConfig client = new ClientConfig();
+	public static ClientConfig client = new ClientConfig();
 
 	@Config.Comment("Abyssal Rift Options")
 	@Config.Name("Abyssal Rift Options")
-	public static final AbyssalConfig abyssal = new AbyssalConfig();
+	public static AbyssalConfig abyssal = new AbyssalConfig();
 
 	@Config.Comment("Irradiated Options")
 	@Config.Name("Irradiated Options")
-	public static final IrradiatedConfig irradiated = new IrradiatedConfig();
+	public static IrradiatedConfig irradiated = new IrradiatedConfig();
 
 	@Config.Comment("Conductivity Options")
 	@Config.Name("Conductivity Options")
-	public static final ConductivityConfig conductivity = new ConductivityConfig();
+	public static ConductivityConfig conductivity = new ConductivityConfig();
 
 	@Config.Comment("Tipped Arrow Options")
 	@Config.Name("Tipped Arrow Options")
-	public static final TippedArrowConfig tippedarrows = new TippedArrowConfig();
+	public static TippedArrowConfig tippedarrows = new TippedArrowConfig();
 
 	@Config.Comment("Berian Options")
 	@Config.Name("Berian Options")
-	public static final BerianConfig berian = new BerianConfig();
+	public static BerianConfig berian = new BerianConfig();
 
 	@Config.Comment("SRParasites Options")
 	@Config.Name("SRParasites Options")
-	public static final SRParasiteConfig srparasites = new SRParasiteConfig();
+	public static SRParasiteConfig srparasites = new SRParasiteConfig();
 
 	@Config.Comment("Disable to not modify any code")
 	@Config.Name("Mixin Toggles")
 	@SuppressWarnings("unused")
-	public static final MixinToggleConfig mixintoggles = new MixinToggleConfig();
+	public static MixinToggleConfig mixintoggles = new MixinToggleConfig();
 
 	@Config.Comment("NuclearCraft Options")
 	@Config.Name("NuclearCraft Options")
-	public static final NuclearConfig nuclear = new NuclearConfig();
+	public static NuclearConfig nuclear = new NuclearConfig();
 
 	@Config.Comment("Modify Gear of some Mobs")
 	@Config.Name("Mob Equipment")
-	public static final MobEquipmentConfig mobequipment = new MobEquipmentConfig();
+	public static MobEquipmentConfig mobequipment = new MobEquipmentConfig();
 
 	public static class ServerConfig {
 		@Config.Comment("Chance of teleporting player to Underneath for exotic teleportation (through the concrete teleporters)")
@@ -201,7 +201,7 @@ public class ForgeConfigHandler {
 		return dismountDamageTypes.contains(damageType);
 	}
 
-	@Mod.EventBusSubscriber(modid = EagleMixins.MODID)
+	@Mod.EventBusSubscriber
 	public static class EventHandler {
 
 		@SubscribeEvent
