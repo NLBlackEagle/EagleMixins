@@ -12,51 +12,61 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class TeleportService {
 
-    private static final Queue<EntityPlayer> TELEPORT_QUEUE = new ConcurrentLinkedQueue<>();
+    private static final List<EntityPlayerMP> RE_TELEPORT_QUEUE = new ArrayList<>();
 
     private TeleportService() {}
 
-    public static void enqueue(EntityPlayer player) {
-        TELEPORT_QUEUE.add(player);
+    public static void enqueueToReTeleport(EntityPlayerMP player) {
+        RE_TELEPORT_QUEUE.add(player);
     }
 
-    public static void onServerTick(TickEvent.ServerTickEvent event) {
+    // This is only used to teleport players AGAIN right after the receiver structure generated due to the first teleport to the receiver
+    public static void teleportPlayersToNewTeleporter(TickEvent.ServerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
+        if (RE_TELEPORT_QUEUE.isEmpty()) return;
 
-        while (!TELEPORT_QUEUE.isEmpty()) {
-            EntityPlayer player = TELEPORT_QUEUE.poll();
-            if (player == null || player.world == null) continue;
+        for (EntityPlayerMP player : RE_TELEPORT_QUEUE) {
+            NBTTagCompound persistedData = TeleportService.getPlayerPersistedData(player);
+            if(!persistedData.hasKey(TeleportNBTKeys.PLAYER_CURR_LINKID)) continue; // player generated the chunk differently, e.g. by exploring
+            int linkId = persistedData.getInteger(TeleportNBTKeys.PLAYER_CURR_LINKID);
+            boolean toReceiver = persistedData.getBoolean(TeleportNBTKeys.PLAYER_CURR_DIRECTION);
 
-            NBTTagCompound tag = player.getEntityData().getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
-            int linkId = tag.getInteger("linkId");
-            TeleportData data = TeleportRegistry.get(linkId);
-            if (data == null || data.receiver == null) continue;
+            // cleanup
+            persistedData.removeTag(TeleportNBTKeys.PLAYER_CURR_LINKID);
+            persistedData.removeTag(TeleportNBTKeys.PLAYER_CURR_DIRECTION);
 
-            BlockPos finalPos = data.receiver.add(0, 3, 3);
-            MinecraftServer server = player.getServer();
-            if (server != null) {
-                server.addScheduledTask(() -> {
-                    player.setPositionAndUpdate(finalPos.getX() + 0.5, finalPos.getY(), finalPos.getZ() + 0.5);
-                    player.addPotionEffect(new PotionEffect(PotionTeleportationSickness.INSTANCE, 200, 0));
-                });
-            }
+            TeleportData data = TeleportDataHandler.get(player.world).getTeleportData(linkId);
+            if (data == null || !data.isDiscovered(!toReceiver)) continue;
 
-            if (player instanceof EntityPlayerMP) {
-                PacketHandler.sendTo(new PacketStopTeleportOverlay(), (EntityPlayerMP) player);
-            }
+            BlockPos targetPos = data.getBlockPos(!toReceiver);
+            teleportWithSickness(player,
+                    targetPos.getX(),
+                    targetPos.getY() + 2,
+                    targetPos.getZ() + 3
+            );
+        }
 
-            tag.removeTag("justTeleported");
-            tag.removeTag("linkId");
-            player.getEntityData().setTag(EntityPlayer.PERSISTED_NBT_TAG, tag);
+        RE_TELEPORT_QUEUE.clear();
+    }
+
+    public static void teleportWithSickness(EntityPlayerMP player, double x, double y, double z){
+        MinecraftServer server = player.getServer();
+        if (server != null) {
+            server.addScheduledTask(() -> {
+                player.setPositionAndUpdate(x + 0.5, y, z + 0.5);
+                if(ForgeConfigHandler.teleporter.sicknessDuration > 0)
+                    player.addPotionEffect(new PotionEffect(PotionTeleportationSickness.INSTANCE, 20 * ForgeConfigHandler.teleporter.sicknessDuration, 0));
+                PacketHandler.sendTo(new PacketStopTeleportOverlay(), player);
+            });
         }
     }
 
-    public static boolean onePercent(java.util.Random rand) {
-        return rand.nextInt(100) < ForgeConfigHandler.server.teleportation_chance;
+    public static NBTTagCompound getPlayerPersistedData(EntityPlayer player){
+        return player.getEntityData().getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG); // Not having this in a separate sub-compound isn't perfect but i just gave them em$ prefixes now
     }
 }

@@ -30,9 +30,7 @@ public class PacketStartTeleportOverlay implements IMessage {
     public static class Handler implements IMessageHandler<PacketStartTeleportOverlay, IMessage> {
         @Override
         public IMessage onMessage(PacketStartTeleportOverlay message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(() ->
-                    TeleportOverlayHandler.trigger(message.isGlitch)
-            );
+            Minecraft.getMinecraft().addScheduledTask(() -> TeleportOverlayHandler.startRendering(message.isGlitch));
             return null;
         }
     }

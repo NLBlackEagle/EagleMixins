@@ -1,35 +1,28 @@
 package eaglemixins.teleport;
 
+import eaglemixins.EagleMixins;
+import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.network.PacketHandler;
 import eaglemixins.network.PacketStartTeleportOverlay;
-import eaglemixins.network.PacketStopTeleportOverlay;
-import eaglemixins.potion.PotionTeleportationSickness;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.Teleporter;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.Objects;
-import java.util.Random;
 
 public final class TeleportUnderneath {
-    private static final Logger LOGGER = LogManager.getLogger("EagleMixins");
 
     public static final int GLITCH_DIM = 3;
-    public static final int OVERWORLD_DIM = 0;
 
     private TeleportUnderneath() {}
 
-    public static void triggerGlitch(EntityPlayer player) {
-        if (!DimensionManager.isDimensionRegistered(GLITCH_DIM) || !DimensionManager.isDimensionRegistered(OVERWORLD_DIM)) {
-            LOGGER.error("[EagleMixins] Glitch or Overworld dimension not registered.");
+    public static void teleportToUnderneath(EntityPlayer player) {
+        if (!DimensionManager.isDimensionRegistered(GLITCH_DIM)) {
+            EagleMixins.LOGGER.error("Glitch dimension not registered.");
             return;
         }
 
@@ -39,114 +32,96 @@ public final class TeleportUnderneath {
             glitchWorld = DimensionManager.getWorld(GLITCH_DIM);
         }
 
-        WorldServer overworld = DimensionManager.getWorld(OVERWORLD_DIM);
-        if (overworld == null) {
-            DimensionManager.initDimension(OVERWORLD_DIM);
-            overworld = DimensionManager.getWorld(OVERWORLD_DIM);
-        }
-
-        if (glitchWorld == null || overworld == null) {
-            LOGGER.error("[EagleMixins] Could not access glitch or overworld dimension after init.");
+        if (glitchWorld == null) {
+            EagleMixins.LOGGER.error("Could not access glitch dimension after init.");
             return;
         }
 
-        if (!player.world.isRemote && player instanceof EntityPlayerMP) {
-            EntityPlayerMP mp = (EntityPlayerMP) player;
-            PacketHandler.sendTo(new PacketStartTeleportOverlay(true), mp);
+        if (!player.world.isRemote && player instanceof EntityPlayerMP && player.getServer() != null) {
+            EntityPlayerMP playerMP = (EntityPlayerMP) player;
+            PacketHandler.sendTo(new PacketStartTeleportOverlay(true), playerMP);
 
-            Objects.requireNonNull(mp.getServer()).getPlayerList().transferPlayerToDimension(mp, GLITCH_DIM, new NullPortalTeleporter(glitchWorld));
+            playerMP.getServer().getPlayerList().transferPlayerToDimension(playerMP, GLITCH_DIM, new GlitchedPortalTeleporter(glitchWorld));
 
-            boolean firstTime = !getPersist(mp).getBoolean("glitchDone");
-            getPersist(mp).setBoolean("glitchDone", true);
+            NBTTagCompound persistedData = TeleportService.getPlayerPersistedData(player);
+            boolean isFirstTime = !persistedData.getBoolean(TeleportNBTKeys.NOT_FIRST_TIME);
+            persistedData.setBoolean(TeleportNBTKeys.NOT_FIRST_TIME, true);
 
-            long stayTicks = firstTime ? 140 : 140 + player.world.rand.nextInt(260);
-            getPersist(mp).setLong("glitchEndTime", player.world.getTotalWorldTime() + stayTicks);
+            long stayTicks = ForgeConfigHandler.teleporter.glitchDurationMin;
+            if(!isFirstTime)
+                stayTicks = MathHelper.getInt(player.getRNG(),
+                        ForgeConfigHandler.teleporter.glitchDurationMin,
+                        ForgeConfigHandler.teleporter.glitchDurationMax
+                );
+            stayTicks *= 20; // seconds to ticks
 
-            mp.capabilities.disableDamage = true;
-            mp.sendPlayerAbilities();
+            persistedData.setLong(TeleportNBTKeys.RETURN_TIME, DimensionManager.getWorld(0).getTotalWorldTime() + stayTicks);
+
+            toggleInvincibility(playerMP, true); // Eagle is playing dangerous games
         }
     }
 
-    /** Called from player tick: returns the player to stored finalPos and removes overlay/immunity. */
-    public static void tryReturn(EntityPlayer player) {
-        if (!(player instanceof EntityPlayerMP)) return;
-        EntityPlayerMP mp = (EntityPlayerMP) player;
+    /** Called from player tick: teleports the player back to stored finalPos and removes immunity. */
+    public static void returnToTeleporter(EntityPlayerMP player) {
+        NBTTagCompound persistedData = TeleportService.getPlayerPersistedData(player);
+        if (!persistedData.hasKey(TeleportNBTKeys.RETURN_TIME)) return;
+        if (DimensionManager.getWorld(0).getTotalWorldTime() < persistedData.getLong(TeleportNBTKeys.RETURN_TIME)) return;
 
-        NBTTagCompound p = getPersist(mp);
-        if (!p.hasKey("glitchEndTime")) return;
-        if (player.world.getTotalWorldTime() < p.getLong("glitchEndTime")) return;
+        toggleInvincibility(player, false);
 
-        int originDim = p.getInteger("glitchOriginDim");
+        int originDim = persistedData.getInteger(TeleportNBTKeys.RETURN_DIM);
         if (!DimensionManager.isDimensionRegistered(originDim)) {
-            LOGGER.error("[EagleMixins] Glitch return failed: dimension {} not registered.", originDim);
+            EagleMixins.LOGGER.error("Glitch return failed: dimension {} not registered.", originDim);
             return;
         }
 
-        double x = p.getDouble("glitchReturnX");
-        double y = p.getDouble("glitchReturnY");
-        double z = p.getDouble("glitchReturnZ");
+        double x = persistedData.getDouble(TeleportNBTKeys.RETURN_X);
+        double y = persistedData.getDouble(TeleportNBTKeys.RETURN_Y);
+        double z = persistedData.getDouble(TeleportNBTKeys.RETURN_Z);
 
         WorldServer target = DimensionManager.getWorld(originDim);
         if (target == null) return;
 
-        mp.capabilities.disableDamage = false;
-        mp.sendPlayerAbilities();
+        if(player.dimension != target.provider.getDimension())
+            player.getServer().getPlayerList().transferPlayerToDimension(player, originDim, new GlitchedPortalTeleporter(target));
+        TeleportService.teleportWithSickness(player, x, y, z);
 
-        PacketHandler.sendTo(new PacketStartTeleportOverlay(true), mp);
+        persistedData.removeTag(TeleportNBTKeys.RETURN_TIME);
+        persistedData.removeTag(TeleportNBTKeys.RETURN_DIM);
+        persistedData.removeTag(TeleportNBTKeys.RETURN_X);
+        persistedData.removeTag(TeleportNBTKeys.RETURN_Y);
+        persistedData.removeTag(TeleportNBTKeys.RETURN_Z);
+    }
 
-        Objects.requireNonNull(mp.getServer()).getPlayerList().transferPlayerToDimension(mp, originDim, new NullPortalTeleporter(target));
-        MinecraftServer server = mp.getServer();
-        if (server != null) {
-            server.addScheduledTask(() -> {
-                mp.setPositionAndUpdate(x + 0.5, y, z + 0.5);
-                mp.addPotionEffect(new PotionEffect(PotionTeleportationSickness.INSTANCE, 200, 0));
-            });
+    private static void toggleInvincibility(EntityPlayerMP player, boolean setToInvincible){
+        if(!player.capabilities.isCreativeMode && !player.isSpectator()) {
+            player.capabilities.disableDamage = setToInvincible;
+            player.sendPlayerAbilities();
         }
-
-        PacketHandler.sendTo(new PacketStopTeleportOverlay(), mp);
-
-        p.removeTag("glitchEndTime");
-        p.removeTag("glitchOriginDim");
-        p.removeTag("glitchReturnX");
-        p.removeTag("glitchReturnY");
-        p.removeTag("glitchReturnZ");
-        setPersist(mp, p);
     }
 
     public static BlockPos findSafeGlitchPosition(WorldServer world) {
-        Random rand = new Random();
-        for (int attempt = 0; attempt < 100; attempt++) {
-            int x = (rand.nextBoolean() ? 1 : -1) * (5000 + rand.nextInt(10000));
-            int z = (rand.nextBoolean() ? 1 : -1) * (5000 + rand.nextInt(10000));
+        // Random position in a square ring between 5k and 15k from 0,0
+        int x = (world.rand.nextBoolean() ? 1 : -1) * (5000 + world.rand.nextInt(10000));
+        int z = (world.rand.nextBoolean() ? 1 : -1) * (5000 + world.rand.nextInt(10000));
 
-            for (int y = 150; y > 10; y--) {
-                BlockPos floor = new BlockPos(x, y, z);
-                BlockPos a1 = floor.up();
-                BlockPos a2 = floor.up(2);
+        for (int y = 150; y > 10; y--) {
+            BlockPos floorPos = new BlockPos(x, y, z);
+            BlockPos feetPos = floorPos.up();
+            BlockPos headPos = floorPos.up(2);
 
-                if (world.getBlockState(floor).isOpaqueCube() &&
-                        (world.isAirBlock(a1) || world.getBlockState(a1).getMaterial().isLiquid()) &&
-                        (world.isAirBlock(a2) || world.getBlockState(a2).getMaterial().isLiquid())) {
-                    return a1;
-                }
+            if (world.getBlockState(floorPos).isOpaqueCube() &&
+                    (world.isAirBlock(feetPos) || world.getBlockState(feetPos).getMaterial().isLiquid()) &&
+                    (world.isAirBlock(headPos) || world.getBlockState(headPos).getMaterial().isLiquid())) {
+                return feetPos;
             }
-
-            BlockPos top = world.getTopSolidOrLiquidBlock(new BlockPos(x, 0, z));
-            if (top != null) return top.up();
         }
-        return new BlockPos(0, 250, 0);
+
+        return world.getTopSolidOrLiquidBlock(new BlockPos(x, 255, z)); // Let them fall, they don't take dmg anyway
     }
 
-    private static NBTTagCompound getPersist(EntityPlayer player) {
-        return player.getEntityData().getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
-    }
-
-    private static void setPersist(EntityPlayer player, NBTTagCompound tag) {
-        player.getEntityData().setTag(EntityPlayer.PERSISTED_NBT_TAG, tag);
-    }
-
-    public static final class NullPortalTeleporter extends net.minecraft.world.Teleporter {
-        public NullPortalTeleporter(WorldServer worldIn) { super(worldIn); }
+    public static final class GlitchedPortalTeleporter extends Teleporter {
+        public GlitchedPortalTeleporter(WorldServer worldIn) { super(worldIn); }
 
         @Override public void placeInPortal(Entity entity, float rotationYaw) {
             BlockPos pos = TeleportUnderneath.findSafeGlitchPosition(this.world);

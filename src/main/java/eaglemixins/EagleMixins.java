@@ -1,5 +1,6 @@
 package eaglemixins;
 
+import eaglemixins.client.gui.TeleportOverlayHandler;
 import eaglemixins.client.particles.ParticlesClientRunner;
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.debug.BO3_ChunkGen_Debug;
@@ -7,6 +8,8 @@ import eaglemixins.handlers.*;
 import eaglemixins.init.ModStats;
 import eaglemixins.init.RadiationResistanceRegistry;
 import eaglemixins.network.PacketHandler;
+import eaglemixins.teleport.entity.EntitySpawnListener;
+import eaglemixins.handlers.TeleportEventHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
@@ -69,7 +72,7 @@ public class EagleMixins {
         MinecraftForge.EVENT_BUS.register(AbyssalGateHandler.class);
         if(ForgeConfigHandler.irradiated.enabled) registerIfModsPresent(new String[]{"nuclearcraft"}, IrradiatedParasitesHandler.class);
         registerIfModsPresent(new String[]{"cookingforblockheads"}, TileCounterHandler.class);
-        MinecraftForge.EVENT_BUS.register(new TeleportEvents());
+        if(ForgeConfigHandler.teleporter.enableTeleporters) MinecraftForge.EVENT_BUS.register(new TeleportEventHandler());
         ForgeConfigHandler.refreshDrinkableBlockCache();
 
         if(debugEnabled) {
@@ -88,11 +91,12 @@ public class EagleMixins {
         BiomeTagHandler.init();
         RadiationResistanceRegistry.reloadFromConfig();
         if(Loader.isModLoaded("enhancedvisuals") && Loader.isModLoaded("nuclearcraft")) EnhancedVisualsHandler.init();
-        EntitySpawnListener.init();
+        if(ForgeConfigHandler.teleporter.enableTeleporters) EntitySpawnListener.init();
         ModStats.init();
 
         if (event.getSide().isClient()) {
             ForgeConfigHandler.loadParticleRulesFromConfig();
+            if(ForgeConfigHandler.teleporter.enableTeleporters) MinecraftForge.EVENT_BUS.register(TeleportOverlayHandler.class);
             registerIfModsPresent(new String[]{"nuclearcraft"}, ContainerNBTRadHandler.Tooltip.class);
         }
 

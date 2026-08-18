@@ -23,22 +23,7 @@ public class PotionTeleportationSickness extends PotionBase {
     }
 
     @Override
-    public boolean shouldRender(PotionEffect effect) {
-        return true;
-    }
-
-    @Override
-    public boolean shouldRenderHUD(PotionEffect effect) {
-        return true;
-    }
-
-    @Override
-    public boolean shouldRenderInvText(PotionEffect effect) {
-        return true;
-    }
-
-    @Override
     public boolean isReady(int duration, int amplifier) {
-        return true;
+        return duration % 20 == 0;
     }
 }

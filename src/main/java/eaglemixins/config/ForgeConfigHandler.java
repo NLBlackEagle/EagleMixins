@@ -64,12 +64,11 @@ public class ForgeConfigHandler {
 	@Config.Name("Mob Equipment")
 	public static MobEquipmentConfig mobequipment = new MobEquipmentConfig();
 
-	public static class ServerConfig {
-		@Config.Comment("Chance of teleporting player to Underneath for exotic teleportation (through the concrete teleporters)")
-		@Config.Name("Teleportation Underneath chance 0 to 100")
-		@Config.RangeInt(min = 0, max = 100)
-		public int teleportation_chance = 1;
+	@Config.Comment("Modify teleporter behavior")
+	@Config.Name("Teleporter")
+	public static TeleporterConfig teleporter = new TeleporterConfig();
 
+	public static class ServerConfig {
 		@Config.Comment("Add Blocks you can drink from, will be treated like water blocks")
 		@Config.Name("Additional Water Blocks:")
 		public String[] waterblockListdrinkables = {
@@ -215,6 +214,7 @@ public class ForgeConfigHandler {
 				srparasites.reset();
 				abyssal.reset();
 				mobequipment.reset();
+				teleporter.reset();
 				refreshDrinkableBlockCache();
 				loadParticleRulesFromConfig();
 			}
