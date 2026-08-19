@@ -49,7 +49,8 @@ public class AbyssalConfig {
             "enderPearl",
             "chorusFruit",
             "wallDmg",
-            "enderCrown"
+            "enderCrown",
+            "enderTalisman"
     };
 
     public void reset(){

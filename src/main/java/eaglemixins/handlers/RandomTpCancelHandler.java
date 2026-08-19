@@ -32,6 +32,7 @@ public class RandomTpCancelHandler {
 
         EntityLivingBase entity = event.getEntityLiving();
         if(entity.world.isRemote) return;
+        if(!isTpMethodEnabled("enderTalisman")) return;
 
         if (!Ref.entityIsInAbyssalRift(entity) && !Ref.entityIsInAbyssalGate(entity)) return;
 
