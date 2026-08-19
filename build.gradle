@@ -61,7 +61,7 @@ dependencies {
 
     implementation fg.deobf("curse.maven:fermiumbooter-${fermiumbooter_version}")
 
-    compileOnly fg.deobf("libs:SRParasites:${srparasites_version}") // Third party distro disabled
+    compileOnly fg.deobf("curse.maven:srparasites-${srparasites_version}")
     compileOnly fg.deobf("curse.maven:reskillable-${reskillable_version}")
     compileOnly fg.deobf("curse.maven:legendarytooltips-${legendarytooltips_version}")
     compileOnly fg.deobf("curse.maven:sereneseasons-${sereneseasons_version}")
