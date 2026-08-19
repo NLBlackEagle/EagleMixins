@@ -1,10 +1,11 @@
 package eaglemixins.handlers;
 
 import com.google.common.collect.Lists;
+import eaglemixins.util.LootGenerationContext;
+import eaglemixins.util.LootTableSetter;
 import net.blay09.mods.cookingforblockheads.tile.TileCounter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -63,39 +64,28 @@ public class TileCounterHandler  {
 
 
     private static void fillCounterWithLoot(World world, TileCounter counter, EntityPlayer player) {
-        ResourceLocation lootTable = ((ILootContainer) counter).getLootTable();
+        ResourceLocation tableId = ((ILootContainer) counter).getLootTable();
+        if (tableId == null) return;
+        LootGenerationContext.push(tableId);
 
-        if (lootTable == null) {
-            // No loot table, nothing to fill
-            return;
-        }
-
-        LootTable loottable = world.getLootTableManager().getLootTableFromLocation(lootTable);
+        LootTable loottable = world.getLootTableManager().getLootTableFromLocation(tableId);
         Random random = new Random();
         LootContext.Builder lootcontext$builder = new LootContext.Builder((WorldServer) world);
 
-        if (player != null) {
+        if (player != null)
             lootcontext$builder.withLuck(player.getLuck()).withPlayer(player);
-        }
 
         List<ItemStack> stacks = loottable.generateLootForPools(random, lootcontext$builder.build());
         List<Integer> emptySlots = getEmptySlotsRandomized(counter, random);
 
         for (ItemStack stack : stacks) {
             if (emptySlots.isEmpty()) break;
-
-            // Add loot table metadata to the stack
-            NBTTagCompound tag = stack.hasTagCompound() ? stack.getTagCompound() : new NBTTagCompound();
-            assert tag != null;
-            tag.setString("EagleMixinsLootTable", lootTable.toString());
-            stack.setTagCompound(tag);
-
             int slot = emptySlots.remove(emptySlots.size() - 1);
             counter.getItemHandler().insertItem(slot, stack, false);
         }
 
-        // Add loot table to the counter if it's not null
-        ((eaglemixins.util.LootTableSetter) counter).eaglemixins$addLootTable(lootTable);
+        ((LootTableSetter) counter).eaglemixins$setOrAddLootTable(null);
+        LootGenerationContext.pop();
 
         counter.markDirty();
         BlockPos pos = counter.getPos();
