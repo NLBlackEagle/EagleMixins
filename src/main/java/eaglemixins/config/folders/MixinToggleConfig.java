@@ -364,7 +364,7 @@ public class MixinToggleConfig {
     @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.nbtnamespaceenchants.json", defaultValue = true)
     public boolean enableNamespaceNBT = true;
 
-    @Config.Comment("Stops spawners from rendering mobs inside")
+    @Config.Comment("Restricts mob spawner rendering (spinning mob model) for performance. Occluded spawners and spawners too far away won't render the mob inside.")
     @Config.Name("Spawner Render Limiter (Vanilla)")
     @Config.RequiresMcRestart
     @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.spawnerrendercancel.json", defaultValue = true)

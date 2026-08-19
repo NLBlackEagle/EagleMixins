@@ -1,6 +1,5 @@
 package eaglemixins.mixin.vanilla;
 
-import eaglemixins.config.ForgeConfigHandler;
 import net.minecraft.client.renderer.tileentity.TileEntityMobSpawnerRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.MobSpawnerBaseLogic;
@@ -28,25 +27,15 @@ public abstract class TileEntityMobSpawnerRendererMixin {
             float partialTicks,
             CallbackInfo ci
     ) {
-        if (!ForgeConfigHandler.client.cullSpawnerRendering) {
-            return; // feature off, vanilla behavior
-        }
-
-        if (!ForgeConfigHandler.client.cullEnclosedSpawners) {
-            return;
-        }
-
         World world = mobSpawnerLogic.getSpawnerWorld();
         BlockPos pos = mobSpawnerLogic.getSpawnerPosition();
 
-        if (eagleMixins$isOccluded(world, pos)) {
-            ci.cancel();
-        }
+        if (eagleMixins$isOccluded(world, pos)) ci.cancel();
     }
 
     /**
      * Only checks the up-to-3 faces that could actually be facing the camera,
-     * instead of blindly requiring all 6 neighbours to be opaque.
+     * instead of blindly requiring all 6 neighbors to be opaque.
      */
     @Unique
     private static boolean eagleMixins$isOccluded(World world, BlockPos pos) {
