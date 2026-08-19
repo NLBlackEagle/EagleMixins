@@ -152,18 +152,4 @@ jar {
     }
 }
 
-tasks.register("copyReobfJar", Copy) {
-    dependsOn("reobfJar")
-
-    from(layout.buildDirectory.file("reobfJar/output.jar"))
-    into(layout.projectDirectory.dir("run/mods"))
-    rename("output.jar", "${mod_name}-${mod_version}.jar")
-}
-
-afterEvaluate {
-    tasks.matching { it.name.startsWith("reobfJar") }.configureEach {
-        finalizedBy("copyReobfJar")
-    }
-}
-
 jar.finalizedBy('reobfJar')
