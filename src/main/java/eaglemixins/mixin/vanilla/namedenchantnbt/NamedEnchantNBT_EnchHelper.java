@@ -1,14 +1,14 @@
-package eaglemixins.mixin.vanilla;
+package eaglemixins.mixin.vanilla.namedenchantnbt;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import net.minecraft.enchantment.Enchantment;
+import eaglemixins.util.NamespacedEnchantNBTUtil;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(EnchantmentHelper.class)
-public class NamespacedEnchantNBT {
+public class NamedEnchantNBT_EnchHelper {
 
     // intercepts before reading "id",
     // checks if the enchant entry instead has "name"
@@ -19,14 +19,6 @@ public class NamespacedEnchantNBT {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/NBTTagList;getCompoundTagAt(I)Lnet/minecraft/nbt/NBTTagCompound;", ordinal = 0)
     )
     private static NBTTagCompound eaglemixins$getLevelNameAware(NBTTagCompound nbt) {
-        if(!nbt.hasKey("name")) return nbt;
-
-        Enchantment ench = Enchantment.getEnchantmentByLocation(nbt.getString("name"));
-        if(ench == null) return nbt;
-
-        //Swap name for id
-        nbt.setInteger("id", Enchantment.getEnchantmentID(ench));
-        nbt.removeTag("name");
-        return nbt;
+        return NamespacedEnchantNBTUtil.modifyEnchNBT(nbt);
     }
 }
