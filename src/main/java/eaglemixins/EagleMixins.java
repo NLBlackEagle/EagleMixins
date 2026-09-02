@@ -45,6 +45,7 @@ public class EagleMixins {
         //MinecraftForge.EVENT_BUS.register(BlockNoclipHandler.class); //let ppl suffocate
         MinecraftForge.EVENT_BUS.register(NuclearCraftInteractions.class);
         registerIfModsPresent(new String[]{"srparasites", "playerbosses"}, AbyssalRiftHandler.class);
+        MinecraftForge.EVENT_BUS.register(AngryWolfHandler.class);
         MinecraftForge.EVENT_BUS.register(BarrierBlockHandler.class);
         MinecraftForge.EVENT_BUS.register(BerianHandler.class);
         registerIfModsPresent(new String[]{"biomesoplenty"}, BerryDebuffHandler.class);

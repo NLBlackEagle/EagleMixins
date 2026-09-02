@@ -72,6 +72,10 @@ public class ForgeConfigHandler {
 	@Config.Name("Weapon Damage Modifiers")
 	public static WeaponDamageConfig weapondamage = new WeaponDamageConfig();
 
+	@Config.Comment("Chance for some mobs (currently wolves) to turn hostile toward players")
+	@Config.Name("Angry Mobs")
+	public static AngryMobConfig angrymobs = new AngryMobConfig();
+
 	public static class ServerConfig {
 		@Config.Comment("Add Blocks you can drink from, will be treated like water blocks")
 		@Config.Name("Additional Water Blocks:")
@@ -239,6 +243,7 @@ public class ForgeConfigHandler {
 				mobequipment.reset();
 				teleporter.reset();
 				weapondamage.reset();
+				angrymobs.reset();
 				refreshDrinkableBlockCache();
 				loadParticleRulesFromConfig();
 			}
