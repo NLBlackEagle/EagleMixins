@@ -23,6 +23,20 @@ public class MixinToggleConfig {
     @MixinConfig.CompatHandling(modid = "sereneseasons", desired = true, reason = "Requires mod to properly function")
     public boolean dynamicTreesSeasonalGrowth = true;
 
+    @Config.Comment("Improves fog performance and makes render distance changes update fog immediately.")
+    @Config.Name("Faster Fog (Biomes O' Plenty)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.biomesoplenty.foghandler.json", defaultValue = true)
+    @MixinConfig.CompatHandling(modid = "biomesoplenty", desired = true, reason = "Requires mod to properly function")
+    public boolean biomesOPlentyFogHandlerCache = true;
+
+    @Config.Comment("Fixes broken fog colors after changing render distance.")
+    @Config.Name("Render Distance Fog Fix (Dynamic Surroundings)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.dynamicsurroundings.fogblendradius.json", defaultValue = true)
+    @MixinConfig.CompatHandling(modid = "dsurround", desired = true, reason = "Requires mod to properly function")
+    public boolean dynamicSurroundingsFogBlendRadiusFix = true;
+
     @Config.Comment("Will stop disarming mobs with living/sentient or dragonbone gear using the BS Disarm or the SME Disarmament enchantment.")
     @Config.Name("Stop disarming some gear (BS/SME/RLCombat)")
     @Config.RequiresMcRestart

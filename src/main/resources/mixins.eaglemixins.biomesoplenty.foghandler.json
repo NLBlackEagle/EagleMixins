@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "eaglemixins.mixin.biomesoplenty",
+  "refmap": "mixins.eaglemixins.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "target": "@env(CLIENT)",
+  "minVersion": "0.8",
+  "client": [
+    "FogEventHandlerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1,
+    "maxShiftBy": 10
+  }
+}
