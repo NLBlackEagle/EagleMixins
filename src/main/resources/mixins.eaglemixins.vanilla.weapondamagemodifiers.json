@@ -1,12 +1,13 @@
 {
   "required": true,
-  "package": "eaglemixins.mixin.bettercombatmod",
+  "package": "eaglemixins.mixin.vanilla",
   "refmap": "mixins.eaglemixins.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "target": "@env(DEFAULT)",
   "minVersion": "0.8",
   "mixins": [
-    "Helpers_IsCritFlagMixin"
+    "DamageSource_IsCritFlagMixin",
+    "EntityPlayer_IsCritFlagMixin"
   ],
   "injectors": {
     "maxShiftBy": 10

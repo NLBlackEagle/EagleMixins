@@ -103,12 +103,25 @@ public class MixinToggleConfig {
     @MixinConfig.CompatHandling(modid = "dynamictreespalebloom", disableMixin = false, desired = true, reason = "Harmless without PaleBloom, just never matches", warnIngame = false)
     public boolean blockPaleLungAdaptation = true;
 
-    @Config.Comment("Enables the per-weapon critical-hit and range damage multipliers configured under \"Weapon Damage Modifiers\". Hooks RLCombat's melee pipeline. Ships with defaults for the SRP axe and lance; clear both lists to disable without a restart.")
-    @Config.Name("Weapon Damage Modifiers (RLCombat)")
+    @Config.Comment({
+            "Enables the per-weapon critical-hit and range damage multipliers configured under \"Weapon Damage Modifiers\".",
+            "This Mixin Toggle makes RLCombat flag the damage source as a critical hit in order to modify damage that is modified by other mods."
+    })
+    @Config.Name("Weapon Damage Modifiers (RLCombat/Vanilla)")
     @Config.RequiresMcRestart
-    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.bettercombatmod.weapondamagemodifiers.json", defaultValue = true)
+    @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.weapondamagemodifiers.json", lateMixin = "mixins.eaglemixins.bettercombatmod.weapondamagemodifiers.json", defaultValue = true)
     @MixinConfig.CompatHandling(modid = "bettercombatmod", desired = true, reason = "Requires RLCombat to properly function")
-    public boolean weaponDamageModifiers = true;
+    public boolean weaponDamageModifiersRLCombat = true;
+
+    @Config.Comment({
+            "Enables the per-weapon critical-hit and range damage multipliers configured under \"Weapon Damage Modifiers\".",
+            "This Mixin Toggle makes Vanilla flag the damage source as a critical hit in order to modify damage that is modified by other mods.",
+            "This is safe to have enabled while using the RLCombat version."
+    })
+    @Config.Name("Weapon Damage Modifiers (Vanilla)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.weapondamagemodifiers.json", defaultValue = true)
+    public boolean weaponDamageModifiersVanilla = true;
 
     @Config.Comment("Lets the \"Nunchaku Combo Damage Multiplier\" option override Better Survival's nunchaku combo damage bonus. With the default multiplier of 1.0 this removes the combo damage ramp entirely.")
     @Config.Name("Nunchaku Combo Multiplier Override (BetterSurvival)")

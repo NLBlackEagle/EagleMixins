@@ -34,6 +34,9 @@ public class EagleMixins {
 	@Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
 
+        if(ForgeConfigHandler.mixintoggles.weaponDamageModifiersVanilla || ForgeConfigHandler.mixintoggles.weaponDamageModifiersRLCombat)
+            MinecraftForge.EVENT_BUS.register(WeaponDamageHandler.class);
+
         if(event.getSide() == Side.CLIENT) registerIfModsPresent(new String[]{"nuclearcraft"}, ParticlesClientRunner.class);
 
         MinecraftForge.EVENT_BUS.register(ProjectileImmunityHandler.class);
