@@ -58,6 +58,48 @@ public class WeaponDamageConfig {
     @Config.RangeDouble(min = 0.0D)
     public float nunchakuComboMultiplier = 1.0F;
 
+    @Config.Comment({
+            "Starting Modifier for Nunchaku (Damage * (1 + this))",
+            "\t0.0 is the default, meaning no bonus damage or penalty and matches the damage amount listed on the tooltip.",
+            "\tA negative amount, such as -0.5 (-50% damage), can be provided.",
+            "\tA negative amount can be used to have Nunchaku start dealing damage less than the listed tooltip amount.",
+            "Requires the \"Nunchaku Combo Mechanic Configuration (BetterSurvival)\" mixin toggle."
+    })
+    @Config.Name("Nunchaku Combo Starting Amount (BetterSurvival)")
+    @Config.RangeDouble(min = -1.0D)
+    public float nunchakuComboStartAmount = 0.0F;
+
+    @Config.Comment({
+            "Maximum Modifier for Nunchaku (Damage * (1 + this))",
+            "\t1.0 is the default, meaning up to +100% damage dealt",
+            "\t0.0 means up to +0% and the mechanic would be disabled if the starting amount was +0% also.",
+            "\t0.0 would be exactly the damage amount listed on the tooltip.",
+            "Requires the \"Nunchaku Combo Mechanic Configuration (BetterSurvival)\" mixin toggle."
+    })
+    @Config.Name("Nunchaku Combo Capped Amount (BetterSurvival)")
+    @Config.RangeDouble(min = -1.0D)
+    public float nunchakuComboCapAmount = 1.0F;
+
+    @Config.Comment({
+            "The bonus damage amount that is gained per hit AT MINIMUM.",
+            "\t0.0 means no bonus is gained",
+            "\t0.1 is the default, meaning +10% combo damage is gained until it reaches the capped bonus",
+            "Requires the \"Nunchaku Combo Mechanic Configuration (BetterSurvival)\" mixin toggle."
+    })
+    @Config.Name("Nunchaku Combo Base Increase Rate (BetterSurvival)")
+    @Config.RangeDouble(min = 0.0D)
+    public float nunchakuComboBaseRate = 0.1F;
+
+    @Config.Comment({
+            "The bonus damage amount that is gained per hit from the Combo Enchantment.",
+            "\t0.0 means no bonus is gained",
+            "\t0.05 is the default, meaning +5% combo damage per level of combo, up to 15% with combo 3, is gained.",
+            "Requires the \"Nunchaku Combo Mechanic Configuration (BetterSurvival)\" mixin toggle."
+    })
+    @Config.Name("Nunchaku Combo Enchantment Increase Rate (BetterSurvival)")
+    @Config.RangeDouble(min = 0.0D)
+    public float nunchakuComboEnchantmentRate = 0.05F;
+
     public static final class CritEntry {
         public final boolean afterCrit;
         public final float multiplier;

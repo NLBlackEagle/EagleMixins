@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "eaglemixins.mixin.bettersurvival",
+  "refmap": "mixins.eaglemixins.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "mixins": [
+    "ItemNunchaku_ComboRateMixin",
+    "NunchakuCombo_ComboCapMixin"
+  ],
+  "injectors": {
+    "maxShiftBy": 10
+  }
+}
