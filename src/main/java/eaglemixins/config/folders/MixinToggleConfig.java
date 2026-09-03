@@ -110,13 +110,6 @@ public class MixinToggleConfig {
     @MixinConfig.CompatHandling(modid = "bettercombatmod", desired = true, reason = "Requires RLCombat to properly function")
     public boolean weaponDamageModifiers = true;
 
-    @Config.Comment("Lets the \"Nunchaku Combo Damage Multiplier\" option override Better Survival's nunchaku combo damage bonus. With the default multiplier of 1.0 this removes the combo damage ramp entirely.")
-    @Config.Name("Nunchaku Combo Multiplier Override (BetterSurvival)")
-    @Config.RequiresMcRestart
-    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.bettersurvival.nunchakucombomultiplier.json", defaultValue = true)
-    @MixinConfig.CompatHandling(modid = "mujmajnkraftsbettersurvival", desired = true, reason = "Requires mod to properly function")
-    public boolean overrideNunchakuComboMultiplier = true;
-
     @Config.Comment("Allow NuclearCraft blocks with a Reskillable level requirement to still be right click interactable.")
     @Config.Name("Override Block Interaction Lock (Reskillable)")
     @Config.RequiresMcRestart

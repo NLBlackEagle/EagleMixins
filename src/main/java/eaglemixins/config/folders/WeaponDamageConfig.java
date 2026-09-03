@@ -47,17 +47,6 @@ public class WeaponDamageConfig {
             "srparasites:weapon_lance_sentient, dynamic, 4, 1.35, 1.0"
     };
 
-    @Config.Comment({
-            "Replaces Better Survival's nunchaku combo damage multiplier with a flat value.",
-            "Better Survival normally multiplies nunchaku hits by (1.0 + combo power), ramping up to 2.0x as the combo builds.",
-            "This overrides that with a fixed multiplier; combo power no longer affects damage.",
-            "1.0 = nunchaku hits deal normal weapon damage (combo damage bonus disabled).",
-            "Requires the \"Nunchaku Combo Multiplier Override (BetterSurvival)\" mixin toggle."
-    })
-    @Config.Name("Nunchaku Combo Damage Multiplier (BetterSurvival)")
-    @Config.RangeDouble(min = 0.0D)
-    public float nunchakuComboMultiplier = 1.0F;
-
     public static final class CritEntry {
         public final boolean afterCrit;
         public final float multiplier;
