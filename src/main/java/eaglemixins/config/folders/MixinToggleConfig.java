@@ -123,13 +123,6 @@ public class MixinToggleConfig {
     @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.weapondamagemodifiers.json", defaultValue = true)
     public boolean weaponDamageModifiersVanilla = true;
 
-    @Config.Comment("Lets the \"Nunchaku Combo Damage Multiplier\" option override Better Survival's nunchaku combo damage bonus. With the default multiplier of 1.0 this removes the combo damage ramp entirely.")
-    @Config.Name("Nunchaku Combo Multiplier Override (BetterSurvival)")
-    @Config.RequiresMcRestart
-    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.bettersurvival.nunchakucombomultiplier.json", defaultValue = true)
-    @MixinConfig.CompatHandling(modid = "mujmajnkraftsbettersurvival", desired = true, reason = "Requires mod to properly function")
-    public boolean overrideNunchakuComboMultiplier = true;
-
     @Config.Comment({
             "Allows for modifying the Nunchaku combo mechanic, where you normally gain bonus extra damage per hit.",
             "\tStarting Combo Multiplier",
