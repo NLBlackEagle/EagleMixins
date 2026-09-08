@@ -355,6 +355,13 @@ public class MixinToggleConfig {
     @MixinConfig.CompatHandling(modid = "spartanweaponry", desired = true, reason = "Requires mod to properly function")
     public boolean enableSpartanRangedSkeletons = true;
 
+    @Config.Comment("Adds an inverse buff to Spartan Weaponry's Two-Handed I/II debuff: wielding the weapon with an empty off-hand (i.e. the debuff isn't active) increases final damage by a percentage (see \"Weapon Damage\" config for the amount, default +25%/+50%). Also documents the buff on the weapon's tooltip alongside the existing debuff description.")
+    @Config.Name("Two-Handed Weapon Buff (SpartanWeaponry)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.spartanweaponry.twohandedbuff.json", defaultValue = true)
+    @MixinConfig.CompatHandling(modid = "spartanweaponry", desired = true, reason = "Requires mod to properly function")
+    public boolean enableSpartanTwoHandedBuff = true;
+
     @Config.Comment("Allows all AbstractSkeletons (stray, wither skellie, FUR forsaken etc) to use offhand special arrows like tipped arrows, spectral arrows etc. This is also needed for the \"Tipped Arrows\" section to work.")
     @Config.Name("Modded Arrow Skeletons (Vanilla)")
     @Config.RequiresMcRestart

@@ -89,6 +89,26 @@ public class WeaponDamageConfig {
     @Config.RangeDouble(min = 0.0D)
     public float nunchakuComboEnchantmentRate = 0.05F;
 
+    @Config.Comment({
+            "Final damage multiplier for Two-Handed I weapons when the off-hand is empty (i.e. the Two-Handed debuff is NOT active).",
+            "\t0.25 is the default, meaning +25% final damage (Damage * (1 + this)).",
+            "\t0.0 disables the buff for Two-Handed I weapons.",
+            "Requires the \"Two-Handed Weapon Buff (SpartanWeaponry)\" mixin toggle."
+    })
+    @Config.Name("Two-Handed Buff Multiplier - Level 1 (SpartanWeaponry)")
+    @Config.RangeDouble(min = 0.0D)
+    public float spartanTwoHandedBuffLevel1 = 0.25F;
+
+    @Config.Comment({
+            "Final damage multiplier for Two-Handed II weapons when the off-hand is empty (i.e. the Two-Handed debuff is NOT active).",
+            "\t0.5 is the default, meaning +50% final damage (Damage * (1 + this)).",
+            "\t0.0 disables the buff for Two-Handed II weapons.",
+            "Requires the \"Two-Handed Weapon Buff (SpartanWeaponry)\" mixin toggle."
+    })
+    @Config.Name("Two-Handed Buff Multiplier - Level 2 (SpartanWeaponry)")
+    @Config.RangeDouble(min = 0.0D)
+    public float spartanTwoHandedBuffLevel2 = 0.50F;
+
     public static final class CritEntry {
         public final boolean afterCrit;
         public final float multiplier;
