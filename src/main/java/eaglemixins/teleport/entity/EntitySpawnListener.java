@@ -8,12 +8,14 @@ import eaglemixins.teleport.TeleportService;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import svenhjol.charm.world.feature.EndPortalRunes;
+import svenhjol.charm.world.tile.TileRunePortal;
 
 public class EntitySpawnListener extends Entity {
 
@@ -88,6 +90,13 @@ public class EntitySpawnListener extends Entity {
                 if (Math.abs(dx) <= 1 && Math.abs(dz) <= 1) continue;
                 if (Math.abs(dx) == 2 && Math.abs(dz) == 2) continue;
                 EndPortalRunes.activate(world, center.add(dx, 0, dz));
+            }
+        }
+        if("charm:rune_portal".equals(world.getBlockState(center).getBlock().getRegistryName().toString())) {
+            TileEntity tile = world.getTileEntity(center);
+            if(tile instanceof TileRunePortal){
+                TileRunePortal runePortal = (TileRunePortal) tile;
+                runePortal.portal = center;
             }
         }
     }
