@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -43,7 +44,8 @@ public class SpartanTwoHandedBuffHandler {
         tooltip.add(findInsertionIndex(tooltip, level), line);
     }
 
-    private static int findTwoHandedLevel(List<WeaponProperty> props) {
+    private static int findTwoHandedLevel(@Nullable List<WeaponProperty> props) {
+        if(props == null) return 0;
         for (WeaponProperty prop : props) {
             if (prop.getLevel() > 0) return prop.getLevel();
         }
