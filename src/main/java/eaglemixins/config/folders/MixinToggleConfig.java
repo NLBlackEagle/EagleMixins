@@ -129,20 +129,6 @@ public class MixinToggleConfig {
     @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.weapondamagemodifiers.json", defaultValue = true)
     public boolean weaponDamageModifiersVanilla = true;
 
-    @Config.Comment({
-            "Allows for modifying the Nunchaku combo mechanic, where you normally gain bonus extra damage per hit.",
-            "\tStarting Combo Multiplier",
-            "\tCapped Maximum Combo Multiplier",
-            "\tGained Minimum Amount Per Hit",
-            "\tGained Amount From Combo Enchantment Per Hit",
-            "Config options are found in the \"Weapon Damage Modifiers\" config."
-    })
-    @Config.Name("Nunchaku Combo Mechanic Configuration (BetterSurvival)")
-    @Config.RequiresMcRestart
-    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.bettersurvival.nunchakucomborate.json", defaultValue = true)
-    @MixinConfig.CompatHandling(modid = "mujmajnkraftsbettersurvival", desired = true, reason = "Requires mod to properly function")
-    public boolean modifyNunchakuComboMechanic = true;
-
     @Config.Comment("Allow NuclearCraft blocks with a Reskillable level requirement to still be right click interactable.")
     @Config.Name("Override Block Interaction Lock (Reskillable)")
     @Config.RequiresMcRestart
