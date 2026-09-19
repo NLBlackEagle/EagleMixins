@@ -32,7 +32,7 @@ public class EagleMixins {
     public static final String NAME = "EagleMixins";
     public static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final boolean debugEnabled = false;
-    public static final String CFG_VERSION = "1.0.0";
+    public static final String CFG_VERSION = "1.0";
 
     @Mod.Instance(value = MODID)
     public static EagleMixins INSTANCE;
