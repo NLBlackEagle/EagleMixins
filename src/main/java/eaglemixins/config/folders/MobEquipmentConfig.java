@@ -9,7 +9,9 @@ import net.minecraft.item.Item;
 import net.minecraft.util.WeightedRandom;
 import net.minecraftforge.common.config.Config;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class MobEquipmentConfig {

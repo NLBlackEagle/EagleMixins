@@ -1,9 +1,8 @@
 package eaglemixins.util.sereneseasons;
 
+import eaglemixins.mixin.sereneseasons.FertilityAccessor;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import eaglemixins.mixin.sereneseasons.FertilityAccessor;
 import sereneseasons.init.ModFertility;
 
 /**

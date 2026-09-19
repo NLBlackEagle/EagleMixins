@@ -7,8 +7,8 @@
   "minVersion": "0.8",
   "mixins": [
     "QualityItemMixin",
-    "QualityToolsHelperMixin",
-    "QualityItemSerializerMixin"
+    "QualityItemSerializerMixin",
+    "QualityToolsHelperMixin"
   ],
   "injectors": {
     "maxShiftBy": 10

@@ -6,9 +6,9 @@
   "target": "@env(DEFAULT)",
   "minVersion": "0.8",
   "mixins": [
+    "FertilityAccessor",
     "FertilityMixins",
-    "SeasonalCropHandlerMixins",
-    "FertilityAccessor"
+    "SeasonalCropHandlerMixins"
   ],
   "injectors": {
     "maxShiftBy": 10

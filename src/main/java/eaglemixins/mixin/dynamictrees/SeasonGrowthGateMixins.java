@@ -1,22 +1,19 @@
 package eaglemixins.mixin.dynamictrees;
 
-import java.util.Random;
-
 import com.ferreusveritas.dynamictrees.api.treedata.ITreePart;
 import com.ferreusveritas.dynamictrees.blocks.BlockRooty;
 import com.ferreusveritas.dynamictrees.items.Seed;
 import com.ferreusveritas.dynamictrees.trees.Species;
-
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 import sereneseasons.config.FertilityConfig;
 import sereneseasons.init.ModFertility;
+
+import java.util.Random;
 
 /**
  * Makes Dynamic Trees respect a hard seasonal gate, matching vanilla sapling

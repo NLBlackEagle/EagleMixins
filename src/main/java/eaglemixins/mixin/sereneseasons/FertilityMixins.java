@@ -1,8 +1,5 @@
 package eaglemixins.mixin.sereneseasons;
 
-import java.util.HashMap;
-import java.util.HashSet;
-
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -17,6 +14,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import sereneseasons.init.ModFertility;
+
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Adds metadata-aware fertility lookups to ModFertility.

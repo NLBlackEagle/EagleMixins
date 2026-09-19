@@ -6,10 +6,10 @@
   "target": "@env(DEFAULT)",
   "minVersion": "0.8",
   "mixins": [
-    "NamedEnchantNBT_EnchHelper",
     "NamedEnchantNBT_EnchBook",
-    "NamedEnchantNBT_ItemStack",
-    "NamedEnchantNBT_EnchCommand"
+    "NamedEnchantNBT_EnchCommand",
+    "NamedEnchantNBT_EnchHelper",
+    "NamedEnchantNBT_ItemStack"
   ],
   "injectors": {
     "maxShiftBy": 10

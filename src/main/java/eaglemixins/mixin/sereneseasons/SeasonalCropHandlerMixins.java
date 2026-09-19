@@ -1,11 +1,12 @@
 package eaglemixins.mixin.sereneseasons;
 
+import eaglemixins.util.sereneseasons.FertilityMetaHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockGrass;
 import net.minecraft.block.BlockReed;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.world.World;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -15,8 +16,6 @@ import org.spongepowered.asm.mixin.Overwrite;
 import sereneseasons.api.SSBlocks;
 import sereneseasons.config.FertilityConfig;
 import sereneseasons.handler.season.SeasonalCropGrowthHandler;
-
-import eaglemixins.util.sereneseasons.FertilityMetaHelper;
 
 @Mixin(value = SeasonalCropGrowthHandler.class, remap = false)
 public abstract class SeasonalCropHandlerMixins

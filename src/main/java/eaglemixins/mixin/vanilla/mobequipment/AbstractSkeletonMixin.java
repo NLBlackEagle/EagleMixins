@@ -2,7 +2,6 @@ package eaglemixins.mixin.vanilla.mobequipment;
 
 import eaglemixins.config.folders.MobEquipmentConfig;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.AbstractSkeleton;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;

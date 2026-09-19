@@ -1,11 +1,10 @@
 package eaglemixins.mixin.sereneseasons;
 
-import java.util.HashSet;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
-
 import sereneseasons.init.ModFertility;
+
+import java.util.HashSet;
 
 /**
  * Read-only access to ModFertility's private static allListedPlants field.

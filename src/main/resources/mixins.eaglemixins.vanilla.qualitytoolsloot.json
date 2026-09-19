@@ -6,9 +6,9 @@
   "target": "@env(DEFAULT)",
   "minVersion": "0.8",
   "mixins": [
-    "LootEntryTableMixin",
+    "FillChestWithLootMixin",
     "LootEntryItemMixin",
-    "FillChestWithLootMixin"
+    "LootEntryTableMixin"
   ],
   "injectors": {
     "defaultRequire": 1,
