@@ -418,5 +418,6 @@ public class MixinToggleConfig {
     @Config.Name("Remove Effects Aggressively (SetBonus)")
     @Config.RequiresMcRestart
     @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.setbonus.effectremoval.json", defaultValue = true)
+    @MixinConfig.CompatHandling(modid = "setbonus", desired = true, reason = "Tweak for SetBonus requires SetBonus to apply.")
     public boolean removeSetBonusEffectsCorrectly = true;
 }
