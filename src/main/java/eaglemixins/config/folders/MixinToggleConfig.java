@@ -432,4 +432,13 @@ public class MixinToggleConfig {
     @Config.RequiresMcRestart
     @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.spawnerrendercancel.json", defaultValue = true)
     public boolean limitSpawnerRendering = true;
+
+    @Config.Comment({
+            "This restores old set bonus behavior of removing set bonus potion effects when losing the bonus (removing armor etc) no matter the duration or amplifier of the current effect on the player.",
+            "This counteracts players using wine/wildberry wine to avoid getting the effect removed."
+    })
+    @Config.Name("Remove Effects Aggressively (SetBonus)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.setbonus.effectremoval.json", defaultValue = true)
+    public boolean removeSetBonusEffectsCorrectly = true;
 }

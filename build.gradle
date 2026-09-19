@@ -96,6 +96,8 @@ dependencies {
     compileOnly fg.deobf("curse.maven:lycanitesmobs-${lycanitesmobs_version}")
     compileOnly fg.deobf("curse.maven:icenfire-${iceandfire_version}")
     implementation fg.deobf("curse.maven:tool-belt-${toolbelt_version}")
+    implementation fg.deobf("curse.maven:set-bonus-${setbonus_version}")
+    implementation fg.deobf("curse.maven:fantastic-lib-${fantasticlib_version}")
 
     compileOnly fg.deobf("CraftTweaker2:CraftTweaker2-${crafttweaker_version}")
     compileOnly fg.deobf("CraftTweaker2:ZenScript:${zs_version}")
