@@ -1,38 +1,33 @@
 package eaglemixins.mixin.spartanweaponry;
 
-import com.oblivioussp.spartanweaponry.api.ToolMaterialEx;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.oblivioussp.spartanweaponry.api.weaponproperty.WeaponProperty;
 import com.oblivioussp.spartanweaponry.api.weaponproperty.WeaponPropertyTwoHanded;
 import eaglemixins.config.ForgeConfigHandler;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(WeaponPropertyTwoHanded.class)
-public abstract class WeaponPropertyTwoHanded_BuffMixin {
+public abstract class WeaponPropertyTwoHanded_BuffMixin extends WeaponProperty {
+    public WeaponPropertyTwoHanded_BuffMixin(String propType, String propModId, int propLevel, float propMagnitude) {
+        super(propType, propModId, propLevel, propMagnitude);
+    }
 
-    /**
-     * Inverse of the Two-Handed debuff: an empty off-hand (the debuff not being active) grants a final damage buff instead.
-     */
-    @Inject(
-            method = "modifyDamageDealt",
-            at = @At("RETURN"),
-            cancellable = true,
-            remap = false
-    )
-    private void eagleMixins_spartanWeaponryWeaponPropertyTwoHanded_modifyDamageDealt(ToolMaterialEx material, float baseDamage, DamageSource source, EntityLivingBase attacker, EntityLivingBase victim, CallbackInfoReturnable<Float> cir) {
-        ItemStack mainHand = attacker.getHeldItemMainhand();
-        ItemStack offHand = attacker.getHeldItemOffhand();
-        if (!mainHand.isEmpty() && !offHand.isEmpty()) return; // debuff branch already handled it, leave as-is
+    //Inverse of the Two-Handed debuff: an empty off-hand (the debuff not being active) grants a final damage buff instead.
+    @ModifyReturnValue(method = "modifyDamageDealt", at = @At("RETURN"), remap = false)
+    private float eagleMixins_spartanWeaponryWeaponPropertyTwoHanded_modifyDamageDealt(float original, @Local(name = "attacker") EntityLivingBase attacker) {
+        // already debuffed
+        if (!attacker.getHeldItemMainhand().isEmpty() && !attacker.getHeldItemOffhand().isEmpty()) return original;
 
-        int level = ((WeaponProperty) (Object) this).getLevel();
-        float buff = level >= 2 ? ForgeConfigHandler.weapondamage.spartanTwoHandedBuffLevel2 : ForgeConfigHandler.weapondamage.spartanTwoHandedBuffLevel1;
-        if (buff <= 0.0F) return;
+        float buff;
+        switch(this.getLevel()){
+            case 0: return original;
+            case 1: buff = ForgeConfigHandler.weapondamage.spartanTwoHandedBuffLevel1; break;
+            default: buff = ForgeConfigHandler.weapondamage.spartanTwoHandedBuffLevel2; break;
+        }
 
-        cir.setReturnValue(cir.getReturnValueF() * (1.0F + buff));
+        return original * (1.0F + buff);
     }
 }

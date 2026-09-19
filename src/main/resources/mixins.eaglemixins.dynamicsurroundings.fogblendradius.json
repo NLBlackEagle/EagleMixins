@@ -9,7 +9,6 @@
     "BiomeFogColorCalculatorMixin"
   ],
   "injectors": {
-    "defaultRequire": 1,
-    "maxShiftBy": 10
+    "defaultRequire": 1
   }
 }

@@ -25,7 +25,8 @@ public class StructureGeneratorPixieVillageMixin {
 
     @WrapOperation(
             method = "generate",
-            at = @At(value = "INVOKE", target = "Lcom/github/alexthe666/iceandfire/world/village/MapGenPixieVillage;generate(Lnet/minecraft/world/World;Ljava/util/Random;Lnet/minecraft/util/math/BlockPos;)Z")
+            at = @At(value = "INVOKE", target = "Lcom/github/alexthe666/iceandfire/world/village/MapGenPixieVillage;generate(Lnet/minecraft/world/World;Ljava/util/Random;Lnet/minecraft/util/math/BlockPos;)Z"),
+            remap = false
     )
     private boolean eagleMixins_maybeGeneratePixieVillage(
             MapGenPixieVillage instance, World world, Random rand, BlockPos pos,
