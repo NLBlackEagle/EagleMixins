@@ -109,14 +109,6 @@ public class MixinToggleConfig {
     @MixinConfig.CompatHandling(modid = "srpmixins", disableMixin = false, desired = true, reason = "Optional compat", warnIngame = false)
     public boolean customSRPGearEvolution = true;
 
-    @Config.Comment("Stops Scape and Run: Parasites' adaptation system from ever letting parasites build resistance to Pale Lung's damage tick.")
-    @Config.Name("Block Pale Lung Adaptation (SRP/PaleBloom)")
-    @Config.RequiresMcRestart
-    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.srparasites.blockpalelungadaptation.json", defaultValue = true)
-    @MixinConfig.CompatHandling(modid = "srparasites", desired = true, reason = "Requires mod to properly function")
-    @MixinConfig.CompatHandling(modid = "dynamictreespalebloom", disableMixin = false, desired = true, reason = "Harmless without PaleBloom, just never matches", warnIngame = false)
-    public boolean blockPaleLungAdaptation = true;
-
     @Config.Comment({
             "Enables the per-weapon critical-hit and range damage multipliers configured under \"Weapon Damage Modifiers\".",
             "This Mixin Toggle makes RLCombat flag the damage source as a critical hit in order to modify damage that is modified by other mods."
