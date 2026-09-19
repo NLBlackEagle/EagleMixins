@@ -44,8 +44,8 @@ public class WeaponDamageHandler {
 
         if(event.getResult() == Event.Result.DENY) return;
         if(event.getResult() == Event.Result.ALLOW || (event.isVanillaCritical() && event.getResult() == Event.Result.DEFAULT)) {
-            WeaponDamageConfig.CritEntry entry = ForgeConfigHandler.weapondamage.getCritEntry(stack);
-            if (entry != null && !entry.afterCrit) {
+            WeaponDamageConfig.CritEntry entry = ForgeConfigHandler.weapondamage.critMultipliers.get(stack.getItem().getRegistryName());
+            if (entry != null && !entry.applyLate) {
                 event.setDamageModifier(event.getDamageModifier() * entry.multiplier);
             }
         }
@@ -65,15 +65,15 @@ public class WeaponDamageHandler {
         if(stack.isEmpty()) return;
 
         if(damageSource instanceof IDamageSource_IsCritFlagMixin && ((IDamageSource_IsCritFlagMixin) damageSource).eagleMixins$isCrit()) {
-            WeaponDamageConfig.CritEntry crit = ForgeConfigHandler.weapondamage.getCritEntry(stack);
-            if (crit != null && crit.afterCrit) {
+            WeaponDamageConfig.CritEntry crit = ForgeConfigHandler.weapondamage.critMultipliers.get(stack.getItem().getRegistryName());
+            if (crit != null && crit.applyLate) {
                 event.setAmount(event.getAmount() * crit.multiplier);
             }
         }
 
-        WeaponDamageConfig.RangeEntry range = ForgeConfigHandler.weapondamage.getRangeEntry(stack);
+        WeaponDamageConfig.RangeEntry range = ForgeConfigHandler.weapondamage.rangeMultipliers.get(stack.getItem().getRegistryName());
         if (range != null) {
-            event.setAmount(event.getAmount() * range.compute(attacker.getDistance(victim)));
+            event.setAmount(event.getAmount() * range.calcDmgMultiplier(attacker.getDistance(victim)));
         }
     }
 }

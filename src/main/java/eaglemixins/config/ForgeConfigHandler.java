@@ -5,83 +5,103 @@ import eaglemixins.client.particles.ParticleRule;
 import eaglemixins.client.particles.ParticlesClientRunner;
 import eaglemixins.client.particles.ParticlesRuleParser;
 import eaglemixins.config.folders.*;
+import meldexun.betterconfig.api.BetterConfig;
+import meldexun.betterconfig.api.BetterConfigManager;
+import meldexun.betterconfig.api.Order;
+import meldexun.betterconfig.api.tree.IConfigCategory;
+import meldexun.betterconfig.api.tree.IConfigContext;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import javax.annotation.Nullable;
+import java.util.*;
 
-@Config(modid = EagleMixins.MODID)
+@BetterConfig(
+		modid = EagleMixins.MODID,
+		version = EagleMixins.CFG_VERSION,
+		addDefaultsToComments = false
+)
 public class ForgeConfigHandler {
 
 	@Config.Comment("Server-Side Options")
 	@Config.Name("Server Options")
+	@Order(0)
 	public static ServerConfig server = new ServerConfig();
 
 	@Config.Comment("Client-Side Options")
 	@Config.Name("Client Options")
+	@Order(1)
 	public static ClientConfig client = new ClientConfig();
-
-	@Config.Comment("Abyssal Rift Options")
-	@Config.Name("Abyssal Rift Options")
-	public static AbyssalConfig abyssal = new AbyssalConfig();
 
 	@Config.Comment("Irradiated Options")
 	@Config.Name("Irradiated Options")
+	@Order(2)
 	public static IrradiatedConfig irradiated = new IrradiatedConfig();
 
 	@Config.Comment("Conductivity Options")
 	@Config.Name("Conductivity Options")
+	@Order(3)
 	public static ConductivityConfig conductivity = new ConductivityConfig();
 
 	@Config.Comment("Tipped Arrow Options")
 	@Config.Name("Tipped Arrow Options")
+	@Order(4)
 	public static TippedArrowConfig tippedarrows = new TippedArrowConfig();
 
 	@Config.Comment("Berian Options")
 	@Config.Name("Berian Options")
+	@Order(5)
 	public static BerianConfig berian = new BerianConfig();
 
 	@Config.Comment("SRParasites Options")
 	@Config.Name("SRParasites Options")
+	@Order(6)
 	public static SRParasiteConfig srparasites = new SRParasiteConfig();
+
+	@Config.Comment("Abyssal Rift Options")
+	@Config.Name("Abyssal Rift Options")
+	@Order(7)
+	public static AbyssalConfig abyssal = new AbyssalConfig();
 
 	@Config.Comment("Disable to not modify any code")
 	@Config.Name("Mixin Toggles")
+	@Order(8)
 	@SuppressWarnings("unused")
 	public static MixinToggleConfig mixintoggles = new MixinToggleConfig();
 
 	@Config.Comment("NuclearCraft Options")
 	@Config.Name("NuclearCraft Options")
+	@Order(9)
 	public static NuclearConfig nuclear = new NuclearConfig();
 
 	@Config.Comment("Modify Gear of some Mobs")
 	@Config.Name("Mob Equipment")
+	@Order(10)
 	public static MobEquipmentConfig mobequipment = new MobEquipmentConfig();
 
 	@Config.Comment("Modify teleporter behavior")
 	@Config.Name("Teleporter")
+	@Order(11)
 	public static TeleporterConfig teleporter = new TeleporterConfig();
 
 	@Config.Comment("Per-weapon critical-hit and range damage multipliers")
 	@Config.Name("Weapon Damage Modifiers")
+	@Order(12)
 	public static WeaponDamageConfig weapondamage = new WeaponDamageConfig();
 
 	@Config.Comment("Chance for some mobs (currently wolves) to turn hostile toward players")
 	@Config.Name("Angry Mobs")
+	@Order(13)
 	public static AngryMobConfig angrymobs = new AngryMobConfig();
 
 	public static class ServerConfig {
 		@Config.Comment("Add Blocks you can drink from, will be treated like water blocks")
 		@Config.Name("Additional Water Blocks:")
-		public String[] waterblockListdrinkables = {
-				"cookingforblockheads:sink"
-		};
+		public Set<String> waterblockListdrinkables = new LinkedHashSet<>(Collections.singletonList("cookingforblockheads:sink"));
 
 		@Config.Comment("Give Dismounting entities the ability to dismount players when they target a player in Abyssal Rift or Parasite biomes")
 		@Config.Name("Dismount on target:")
@@ -105,9 +125,7 @@ public class ForgeConfigHandler {
 
 		@Config.Comment("Taking any amount of damage from these sources will automatically dismount any riding entity")
 		@Config.Name("Dismounting Damage Types")
-		public String[] dismountDamageTypes = {
-				"lightningBolt"
-		};
+		public Set<String> dismountDamageTypes = new LinkedHashSet<>(Collections.singletonList("lightningBolt"));
 
 		@Config.Comment("Cannot rename Player Bosses with or to these names")
 		@Config.Name("Blacklisted Name Change Player Bosses")
@@ -152,16 +170,13 @@ public class ForgeConfigHandler {
 		@Config.Comment("Prevents Biomes O Plenty doors from dropping twice when broken")
 		public boolean fixBOPDoorDupe = true;
 
-		@Config.Comment({
-				"Attaches BiomeDictionary tags to specific biomes.",
-				"Format: <biome_id>=<tag>",
-				"Example: palebloom:pale_garden=Pale",
-				"Add multiple lines targeting the same biome to attach more than one tag to it."
-		})
+		@Config.Comment("Attaches the given BiomeDictionary tags to the specified biome.")
 		@Config.Name("BiomeDictionary Tag List")
-		public String[] biomeDictionaryTagList = new String[] {
-				"nuclearcraft:nuclear_wasteland=NUCLEAR"
-		};
+		@Config.RequiresMcRestart
+		public Map<ResourceLocation, ArrayList<String>> biomeDictionaryTagList = new LinkedHashMap<>();
+		private void initBiomeDictTagList(){
+			biomeDictionaryTagList.put(new ResourceLocation("nuclearcraft:nuclear_wasteland"), new ArrayList<>(Collections.singletonList("NUCLEAR")));
+		}
 
 		@Config.Comment({
 				"Stops Lycanites Mobs' fluid lake generation (ooze/poison/acid/moglava lakes) from generating in biomes carrying any of these BiomeDictionary tags.",
@@ -169,7 +184,7 @@ public class ForgeConfigHandler {
 				"Example: NUCLEAR"
 		})
 		@Config.Name("Lycanites Mobs Fluid Lake Disabled Biome Tags")
-		public String[] lycanitesGenerationDisabledBiomeTags = new String[0];
+		public Set<String> lycanitesGenerationDisabledBiomeTags = new LinkedHashSet<>();
 
 		@Config.Comment({
 				"Stops Ice and Fire's Pixie Village structure from generating in biomes carrying any of these BiomeDictionary tags.",
@@ -177,7 +192,11 @@ public class ForgeConfigHandler {
 				"Example: NUCLEAR"
 		})
 		@Config.Name("Pixie Village Disabled Biome Tags")
-		public String[] pixieVillageDisabledBiomeTags = new String[0];
+		public Set<String> pixieVillageDisabledBiomeTags = new LinkedHashSet<>();
+
+		public ServerConfig(){
+			initBiomeDictTagList();
+		}
 	}
 
 	public static class ClientConfig {
@@ -213,18 +232,10 @@ public class ForgeConfigHandler {
         public double spawnerRenderDistance = 32;
 	}
 
-	@Config.Ignore public static final Set<String> cachedDrinkableBlocks = new HashSet<>();
-	@Config.Ignore public static Set<String> dismountDamageTypes = null;
-
-	public static void refreshDrinkableBlockCache() {
-		cachedDrinkableBlocks.clear();
-		cachedDrinkableBlocks.addAll(Arrays.asList(server.waterblockListdrinkables));
-	}
-
-	public static boolean isDismountDamageType(String damageType) {
-		if(dismountDamageTypes == null)
-			dismountDamageTypes = new HashSet<>(Arrays.asList(server.dismountDamageTypes));
-		return dismountDamageTypes.contains(damageType);
+	@BetterConfig.AfterRead
+	@SuppressWarnings("unused")
+	public static <T extends IConfigContext<T>> void migrateConfigs(IConfigCategory<T> config, T context, @Nullable ArtifactVersion version) {
+		ConfigMigrator.handleMigration(config, context, version);
 	}
 
 	@Mod.EventBusSubscriber
@@ -233,18 +244,13 @@ public class ForgeConfigHandler {
 		@SubscribeEvent
 		public static void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
 			if(event.getModID().equals(EagleMixins.MODID)) {
-				ConfigManager.sync(EagleMixins.MODID, Config.Type.INSTANCE);
+				BetterConfigManager.sync(EagleMixins.MODID);
 				tippedarrows.reset();
 				berian.reset();
 				conductivity.reset();
-				irradiated.reset();
-				srparasites.reset();
 				abyssal.reset();
 				mobequipment.reset();
 				teleporter.reset();
-				weapondamage.reset();
-				angrymobs.reset();
-				refreshDrinkableBlockCache();
 				loadParticleRulesFromConfig();
 			}
 		}

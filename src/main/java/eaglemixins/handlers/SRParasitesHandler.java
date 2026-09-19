@@ -33,7 +33,7 @@ public class SRParasitesHandler {
         String id = biomeId.toString();
         String modWildcard = biomeId.getNamespace() + ":*";
 
-        boolean isInList = ForgeConfigHandler.srparasites.getAllowedBiomeList().stream()
+        boolean isInList = ForgeConfigHandler.srparasites.biomeList.stream()
                 .anyMatch(entry -> matchesEntry(entry, id, modWildcard, dimensionId));
 
         //true (allowed) if in list and whitelist, or not in list and blacklist
@@ -142,7 +142,7 @@ public class SRParasitesHandler {
 
         //But not to ones that have special names
         if (entity.hasCustomName() &&
-                ForgeConfigHandler.srparasites.getAllowedParasiteNamesLoot().stream().anyMatch(entity.getName()::contains))
+                ForgeConfigHandler.srparasites.keepLootNames.stream().anyMatch(entity.getName()::contains))
             return;
 
         ResourceLocation biomeReg = entity.world.getBiome(entity.getPosition()).getRegistryName();

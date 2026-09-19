@@ -31,7 +31,7 @@ public class RandomTippedArrowHandler {
         if (entity == null || entity.world.isRemote) return;
 
         ResourceLocation entityId = EntityList.getKey(entity);
-        if (entityId == null || !ForgeConfigHandler.tippedarrows.getTippedArrowAllowedEntities().contains(entityId)) return;
+        if (entityId == null || !ForgeConfigHandler.tippedarrows.tippedArrowEntities.contains(entityId)) return;
 
         boolean hasBow = entity.getHeldItemMainhand().getItem() instanceof ItemBow;
         boolean hasCrossbow = !hasBow && ModLoadedUtil.spartanweaponry.isLoaded() && SpartanWeaponryUtil.isSpartanCrossbow(entity.getHeldItemMainhand().getItem());

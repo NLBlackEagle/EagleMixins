@@ -1,6 +1,6 @@
 package eaglemixins.handlers;
 
-import eaglemixins.init.RadiationResistanceRegistry;
+import eaglemixins.config.ForgeConfigHandler;
 import nc.capability.radiation.entity.IEntityRads;
 import nc.radiation.RadiationHelper;
 import net.minecraft.entity.EntityList;
@@ -20,7 +20,7 @@ public class RadiationResistanceApplier {
         ResourceLocation id = EntityList.getKey(living);
         if (id == null) return;
 
-        double resistance = RadiationResistanceRegistry.get(id);
+        double resistance = ForgeConfigHandler.nuclear.radiationResistanceList.get(id);
         if (resistance <= 0.0D) return;
 
         IEntityRads rads = RadiationHelper.getEntityRadiation(living);

@@ -2,8 +2,8 @@ package eaglemixins.config.folders;
 
 import net.minecraftforge.common.config.Config;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class SRParasiteConfig {
 
@@ -20,7 +20,7 @@ public class SRParasiteConfig {
             "The dimension prefix can be combined with the wildcard biome, example: 1@biomesoplenty:*"
     )
     @Config.Name("SRParasites allowed biomes")
-    public String[] biomeList = {
+    public ArrayList<String> biomeList = new ArrayList<>(Arrays.asList(
             "0@biomesoplenty:heath",
             "0@biomesoplenty:steppe",
             "0@biomesoplenty:wasteland",
@@ -33,7 +33,7 @@ public class SRParasiteConfig {
             "3@*",
             "-1@*",
             "111@*"
-    };
+    ));
 
     @Config.Comment({
             "EagleMixins modifies parasite loot in the overworld.",
@@ -52,14 +52,14 @@ public class SRParasiteConfig {
             "Requires 'Modify Parasite Loot' to be enabled."
     })
     @Config.Name("Parasite full loot-drop enabler")
-    public String[] keepLootNames = {
+    public ArrayList<String> keepLootNames = new ArrayList<>(Arrays.asList(
             "Sentient Horror",
             "Degrading Overseer",
             "Malformed Observer",
             "Shivaxi",
             "Corrupted Carrier",
             "Necrotic Blight"
-    };
+    ));
 
     @Config.Comment("All Beckons near one beckon will be killed")
     @Config.Name("Kill Beckon nearby")
@@ -76,23 +76,4 @@ public class SRParasiteConfig {
     @Config.Comment("Parasite drops in the overworld have a chance to instead drop as corrupted ashes. This is the chance for that to happen.")
     @Config.Name("Corrupted Ashes chance")
     public float chanceCorruptedAshes = 0.375f;
-
-    List<String> allowedBiomeList = null;
-    public List<String> getAllowedBiomeList(){
-        if(allowedBiomeList == null)
-            allowedBiomeList = Arrays.asList(biomeList);
-        return allowedBiomeList;
-    }
-
-    List<String> allowedParasiteNamesLoot = null;
-    public List<String> getAllowedParasiteNamesLoot(){
-        if(allowedParasiteNamesLoot == null)
-            allowedParasiteNamesLoot = Arrays.asList(keepLootNames);
-        return allowedParasiteNamesLoot;
-    }
-
-    public void reset(){
-        allowedBiomeList = null;
-        allowedParasiteNamesLoot = null;
-    }
 }

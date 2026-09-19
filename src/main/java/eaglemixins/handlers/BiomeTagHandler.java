@@ -7,36 +7,24 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 public class BiomeTagHandler {
 
     public static void init() {
-        String[] entries = ForgeConfigHandler.server.biomeDictionaryTagList;
-        if (entries == null) return;
-
-        for (String raw : entries) {
-            if (raw == null) continue;
-            String s = raw.trim();
-            if (s.isEmpty()) continue;
-
-            int sep = s.indexOf('=');
-            if (sep <= 0 || sep >= s.length() - 1) {
-                EagleMixins.LOGGER.error("[EagleMixins] BiomeTag Invalid entry '{}', expected <biome_id>=<tag>", s);
-                continue;
-            }
-
-            String biomeIdStr = s.substring(0, sep).trim();
-            String tagStr = s.substring(sep + 1).trim();
-
+        for (Map.Entry<ResourceLocation, ArrayList<String>> entry : ForgeConfigHandler.server.biomeDictionaryTagList.entrySet()) {
             try {
-                Biome biome = ForgeRegistries.BIOMES.getValue(new ResourceLocation(biomeIdStr));
+                Biome biome = ForgeRegistries.BIOMES.getValue(entry.getKey());
                 if (biome == null) {
-                    EagleMixins.LOGGER.warn("[EagleMixins] BiomeTag: biome '{}' not found, skipping tag '{}'", biomeIdStr, tagStr);
+                    EagleMixins.LOGGER.warn("[EagleMixins] BiomeTag: biome '{}' not found, skipping", entry.getKey().toString());
                     continue;
                 }
-
-                BiomeDictionary.addTypes(biome, BiomeDictionary.Type.getType(tagStr));
+                entry.getValue().forEach(tag ->
+                        BiomeDictionary.addTypes(biome, BiomeDictionary.Type.getType(tag))
+                );
             } catch (Exception e) {
-                EagleMixins.LOGGER.error("[EagleMixins] BiomeTag Failed to parse '{}': {}", s, e.toString());
+                EagleMixins.LOGGER.error("[EagleMixins] BiomeTag Failed to parse '{}': {}", entry.getKey(), e.toString());
             }
         }
     }

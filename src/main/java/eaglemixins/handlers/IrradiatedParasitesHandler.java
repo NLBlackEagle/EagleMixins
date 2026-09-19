@@ -28,8 +28,8 @@ public class IrradiatedParasitesHandler {
         String entityId = loc.toString();
         String modId = loc.getNamespace() + ":*";
         boolean isInWhitelist =
-                ForgeConfigHandler.irradiated.getIrradiatedEntityList().contains(entityId) ||
-                ForgeConfigHandler.irradiated.getIrradiatedEntityList().contains(modId);
+                ForgeConfigHandler.irradiated.irradiatedEntities.contains(entityId) ||
+                ForgeConfigHandler.irradiated.irradiatedEntities.contains(modId);
         if(isInWhitelist == ForgeConfigHandler.irradiated.irradiatedEntitiesIsBlacklist) return;
 
         World world = entity.world;

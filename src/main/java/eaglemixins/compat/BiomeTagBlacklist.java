@@ -5,23 +5,16 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 
+import java.util.Set;
+
 public class BiomeTagBlacklist {
 
-    public static boolean isChunkBiomeBlacklisted(World world, int chunkX, int chunkZ, String[] tags) {
-        if (tags == null || tags.length == 0) return false;
+    public static boolean isChunkBiomeBlacklisted(World world, int chunkX, int chunkZ, Set<String> tags) {
+        if (tags == null || tags.isEmpty()) return false;
 
         Biome biome = world.getBiome(new BlockPos((chunkX << 4) + 8, 0, (chunkZ << 4) + 8));
         if (biome == null) return false;
 
-        for (String tag : tags) {
-            if (tag == null) continue;
-            String trimmed = tag.trim();
-            if (trimmed.isEmpty()) continue;
-
-            if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.getType(trimmed))) {
-                return true;
-            }
-        }
-        return false;
+        return tags.stream().anyMatch(tag -> BiomeDictionary.hasType(biome, BiomeDictionary.Type.getType(tag)));
     }
 }

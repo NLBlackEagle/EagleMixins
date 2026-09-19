@@ -6,7 +6,9 @@ import eaglemixins.EagleMixins;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class BO3_ChunkGen_Debug {
     public static Multimap<String, Integer> ticksPerStructSuccess = ArrayListMultimap.create();

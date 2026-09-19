@@ -2,9 +2,9 @@ package eaglemixins.config.folders;
 
 import net.minecraftforge.common.config.Config;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class IrradiatedConfig {
     @Config.Comment("Set this to false to fully disable the effect of parasites getting their stats reduced due to getting irradiated.")
@@ -37,23 +37,9 @@ public class IrradiatedConfig {
 
     @Config.Comment("What kind of entities will be affected by the irradiation stat reduction. Use modid:* to have all entities(livingbase) of that mob be affected.")
     @Config.Name("Irradiated Entities Whitelist")
-    public String[] irradiatedEntities = {
-            "srparasites:*"
-    };
+    public Set<String> irradiatedEntities = new LinkedHashSet<>(Collections.singletonList("srparasites:*"));
 
     @Config.Comment("Make the irradiated entities whitelist act as a blacklist, so all entitylivingbase will be affected except for the config named ones.")
     @Config.Name("Irradiated Entities Whitelist is Blacklist")
     public boolean irradiatedEntitiesIsBlacklist = false;
-
-    private final List<String> irradiatedEntityList = new ArrayList<>();
-
-    public List<String> getIrradiatedEntityList(){
-        if(irradiatedEntityList.isEmpty() && irradiatedEntities.length > 0)
-            irradiatedEntityList.addAll(Arrays.asList(this.irradiatedEntities));
-        return irradiatedEntityList;
-    }
-
-    public void reset(){
-        irradiatedEntityList.clear();
-    }
 }

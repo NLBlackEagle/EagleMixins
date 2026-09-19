@@ -13,6 +13,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Config;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TippedArrowConfig {
     @Config.Comment("Chance for an entity to have its arrow replaced with a tipped arrow")
@@ -22,12 +24,12 @@ public class TippedArrowConfig {
 
     @Config.Comment("List of entities to allow randomly adding tipped arrows")
     @Config.Name("Tipped Arrow Replacement Allowed Entities")
-    public String[] tippedArrowEntities = {
+    public Set<ResourceLocation> tippedArrowEntities = new LinkedHashSet<>(Stream.of(
             "minecraft:skeleton",
             "minecraft:stray",
             "minecraft:wither_skeleton",
             "mod_lavacow:forsaken"
-    };
+    ).map(ResourceLocation::new).collect(Collectors.toList()));
 
     @Config.Comment("List of long potion types to be used for tipped arrows randomly added to entities")
     @Config.Name("Tipped Arrow Replacement Allowed PotionTypes Long")
@@ -131,18 +133,6 @@ public class TippedArrowConfig {
             "xat:goblin"
     };
 
-    private Set<ResourceLocation> tippedArrowAllowedEntities = null;
-    public Set<ResourceLocation> getTippedArrowAllowedEntities() {
-        if(tippedArrowAllowedEntities == null) {
-            Set<ResourceLocation> set = new HashSet<>();
-            for(String entity : this.tippedArrowEntities) {
-                set.add(new ResourceLocation(entity));
-            }
-            tippedArrowAllowedEntities = set;
-        }
-        return tippedArrowAllowedEntities;
-    }
-
     private boolean arraysAreSetup = false;
     private final Set<PotionType> tippedArrowTypes = new HashSet<>();
     private final List<ItemStack> tippedArrowArrayLong = new ArrayList<>();
@@ -189,7 +179,6 @@ public class TippedArrowConfig {
     }
 
     public void reset(){
-        tippedArrowAllowedEntities = null;
         tippedArrowTypes.clear();
         tippedArrowArrayLong.clear();
         tippedArrowArray.clear();

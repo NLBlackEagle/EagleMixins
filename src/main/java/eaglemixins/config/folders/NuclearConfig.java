@@ -1,8 +1,9 @@
 package eaglemixins.config.folders;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Config;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class NuclearConfig {
@@ -20,27 +21,29 @@ public class NuclearConfig {
             "Example: minecraft:sheep=1.0"
     })
     @Config.Name("RadiationResistanceList")
-    public String[] radiationResistanceList = new String[] {
-            "iceandfire:firedragon=1000.0",
-            "iceandfire:icedragon=1000.0",
-            "iceandfire:lightningdragon=1000.0"
-    };
+    public Map<ResourceLocation, Double> radiationResistanceList = new LinkedHashMap<>();
 
     @Config.Comment("Unopened containers with the given loot tables will radiate the given amount of radiation into their subchunk")
     @Config.Name("Radiating Loot Tables")
-    public Map<String, Double> lootTableRadiation = new HashMap<String, Double>(){{
-        put("dregora:ruins/nuclear", 0.1000); //value is average of such a loot table
-        put("dregora:ruins/starter", 0.0361); //value is average of such a loot table
-    }};
+    public Map<String, Double> lootTableRadiation = new LinkedHashMap<>();
 
     @Config.Comment("Remove entries to have them not count for irradiating the player and the chunks around it. Or set to false to not check sub-inventories like contents of shulkerboxes, crates and toolbelts")
     @Config.Name("Radiating Inventories")
-    public Map<String, Boolean> inventoryRadiation = new HashMap<String, Boolean>(){{
-        put("enderChest", true);
-        put("inventoryCrafting", true);
-        put("mouseItem", true);
-        put("itemEntity", true);
-        put("backpack", true);
-        put("toolbeltSlot", true);
-    }};
+    public Map<String, Boolean> inventoryRadiation = new LinkedHashMap<>();
+
+    public NuclearConfig(){
+        radiationResistanceList.put(new ResourceLocation("iceandfire:firedragon"), 1000.);
+        radiationResistanceList.put(new ResourceLocation("iceandfire:icedragon"), 1000.);
+        radiationResistanceList.put(new ResourceLocation("iceandfire:lightningdragon"), 1000.);
+
+        lootTableRadiation.put("dregora:ruins/nuclear", 0.1000); //value is average of such a loot table
+        lootTableRadiation.put("dregora:ruins/starter", 0.0361); //value is average of such a loot table
+
+        inventoryRadiation.put("enderChest", true);
+        inventoryRadiation.put("inventoryCrafting", true);
+        inventoryRadiation.put("mouseItem", true);
+        inventoryRadiation.put("itemEntity", true);
+        inventoryRadiation.put("backpack", true);
+        inventoryRadiation.put("toolbeltSlot", true);
+    }
 }

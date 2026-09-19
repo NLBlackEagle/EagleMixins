@@ -6,10 +6,8 @@ import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.debug.BO3_ChunkGen_Debug;
 import eaglemixins.handlers.*;
 import eaglemixins.init.ModStats;
-import eaglemixins.init.RadiationResistanceRegistry;
 import eaglemixins.network.PacketHandler;
 import eaglemixins.teleport.entity.EntitySpawnListener;
-import eaglemixins.handlers.TeleportEventHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
@@ -19,7 +17,14 @@ import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = EagleMixins.MODID, version = EagleMixins.VERSION, name = EagleMixins.NAME, dependencies = "required-after:fermiumbooter@[1.3.2,)")
+@Mod(
+        modid = EagleMixins.MODID,
+        version = EagleMixins.VERSION,
+        name = EagleMixins.NAME,
+        dependencies =
+                "required-after:fermiumbooter@[1.3.2,);" +
+                "required-after:betterconfig@[1.2.0,);"
+)
 public class EagleMixins {
 
     public static final String MODID = "eaglemixins";
@@ -27,6 +32,7 @@ public class EagleMixins {
     public static final String NAME = "EagleMixins";
     public static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final boolean debugEnabled = false;
+    public static final String CFG_VERSION = "1.0.0";
 
     @Mod.Instance(value = MODID)
     public static EagleMixins INSTANCE;
@@ -48,7 +54,7 @@ public class EagleMixins {
         //MinecraftForge.EVENT_BUS.register(BlockNoclipHandler.class); //let ppl suffocate
         MinecraftForge.EVENT_BUS.register(NuclearCraftInteractions.class);
         registerIfModsPresent(new String[]{"srparasites", "playerbosses"}, AbyssalRiftHandler.class);
-        MinecraftForge.EVENT_BUS.register(AngryWolfHandler.class);
+        MinecraftForge.EVENT_BUS.register(AngryMobHandler.class);
         MinecraftForge.EVENT_BUS.register(BarrierBlockHandler.class);
         MinecraftForge.EVENT_BUS.register(BerianHandler.class);
         registerIfModsPresent(new String[]{"biomesoplenty"}, BerryDebuffHandler.class);
@@ -78,7 +84,6 @@ public class EagleMixins {
         if(ForgeConfigHandler.irradiated.enabled) registerIfModsPresent(new String[]{"nuclearcraft"}, IrradiatedParasitesHandler.class);
         registerIfModsPresent(new String[]{"cookingforblockheads"}, TileCounterHandler.class);
         if(ForgeConfigHandler.teleporter.enableTeleporters) MinecraftForge.EVENT_BUS.register(new TeleportEventHandler());
-        ForgeConfigHandler.refreshDrinkableBlockCache();
 
         if(debugEnabled) {
             registerIfModsPresent(new String[]{"openterraingenerator"}, BO3_ChunkGen_Debug.class);
@@ -94,7 +99,6 @@ public class EagleMixins {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         BiomeTagHandler.init();
-        RadiationResistanceRegistry.reloadFromConfig();
         if(Loader.isModLoaded("enhancedvisuals") && Loader.isModLoaded("nuclearcraft")) EnhancedVisualsHandler.init();
         if(ForgeConfigHandler.teleporter.enableTeleporters) EntitySpawnListener.init();
         ModStats.init();

@@ -20,6 +20,6 @@ public class ThirstBlockMixin {
         if (original != null) return original; //already returned purified water
 
         if(traceBlock.getRegistryName() == null) return null;
-        return ForgeConfigHandler.cachedDrinkableBlocks.contains(traceBlock.getRegistryName().toString()) ? new ThirstEnumBlockPos(ThirstEnum.NORMAL, trace.getBlockPos()) : null;
+        return ForgeConfigHandler.server.waterblockListdrinkables.contains(traceBlock.getRegistryName().toString()) ? new ThirstEnumBlockPos(ThirstEnum.NORMAL, trace.getBlockPos()) : null;
     }
 }
