@@ -2,13 +2,15 @@ package eaglemixins.mixin.iceandfire;
 
 import com.github.alexthe666.iceandfire.event.StructureGenerator;
 import com.github.alexthe666.iceandfire.world.village.MapGenPixieVillage;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import eaglemixins.compat.BiomeTagBlacklist;
 import eaglemixins.config.ForgeConfigHandler;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.Random;
 
@@ -18,23 +20,22 @@ import java.util.Random;
  * (FOREST && (SPOOKY || MAGICAL)), bypassing it entirely. Redirect that call instead so the biome tag
  * blacklist actually has an effect.
  */
-@Mixin(value = StructureGenerator.class, remap = false)
+@Mixin(StructureGenerator.class)
 public class StructureGeneratorPixieVillageMixin {
 
-    @Redirect(
+    @WrapOperation(
             method = "generate",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lcom/github/alexthe666/iceandfire/world/village/MapGenPixieVillage;func_180709_b(Lnet/minecraft/world/World;Ljava/util/Random;Lnet/minecraft/util/math/BlockPos;)Z",
-                    remap = false
-            )
+            at = @At(value = "INVOKE", target = "Lcom/github/alexthe666/iceandfire/world/village/MapGenPixieVillage;generate(Lnet/minecraft/world/World;Ljava/util/Random;Lnet/minecraft/util/math/BlockPos;)Z")
     )
-    private boolean eagleMixins$maybeGeneratePixieVillage(MapGenPixieVillage instance, World world, Random rand, BlockPos pos) {
-        int chunkX = pos.getX() >> 4;
-        int chunkZ = pos.getZ() >> 4;
+    private boolean eagleMixins_maybeGeneratePixieVillage(
+            MapGenPixieVillage instance, World world, Random rand, BlockPos pos,
+            Operation<Boolean> original,
+            @Local(ordinal = 0, argsOnly = true) int chunkX,
+            @Local(ordinal = 1, argsOnly = true) int chunkZ
+    ) {
         if (BiomeTagBlacklist.isChunkBiomeBlacklisted(world, chunkX, chunkZ, ForgeConfigHandler.server.pixieVillageDisabledBiomeTags)) {
             return false;
         }
-        return instance.generate(world, rand, pos);
+        return original.call(instance, world, rand, pos);
     }
 }
