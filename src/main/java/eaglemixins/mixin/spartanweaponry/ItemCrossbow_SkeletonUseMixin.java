@@ -29,7 +29,7 @@ public abstract class ItemCrossbow_SkeletonUseMixin extends ItemSW {
      * Spartan Fire injects at HEAD of the same method and cancels it for every entity,
      * so we need to WrapMethod to be earlier.
      *
-     * By Fresh-glitch
+     * By cdstk, fixed by Fresh-glitch
      */
     @WrapMethod(method = "onItemUseFinish")
     private ItemStack eagleMixins_spartanWeaponryItemCrossbow_onItemUseFinishMob(ItemStack stack, World worldIn, EntityLivingBase entityLiving, Operation<ItemStack> original){
