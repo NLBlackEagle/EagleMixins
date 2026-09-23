@@ -3,7 +3,7 @@ package eaglemixins.config;
 import eaglemixins.EagleMixins;
 import meldexun.betterconfig.api.ConfigMigrationHelper;
 import meldexun.betterconfig.api.tree.*;
-import net.minecraftforge.fml.common.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
 
 public class ConfigMigrator {
     public static <T extends IConfigContext<T>> void handleMigration(IConfigCategory<T> general, T context, ArtifactVersion fileVersion) {

@@ -23,7 +23,7 @@ import org.apache.logging.log4j.Logger;
         name = EagleMixins.NAME,
         dependencies =
                 "required-after:fermiumbooter@[1.3.2,);" +
-                "required-after:betterconfig@[1.2.0,);"
+                "required-after:betterconfig@[1.3.0,);"
 )
 public class EagleMixins {
 
