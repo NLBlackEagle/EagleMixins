@@ -63,7 +63,8 @@ public abstract class SeasonGrowthGateMixins
             // behavior. Deliberately not respecting crops_break here - there's
             // no sensible single-block equivalent of "destroy the crop" for
             // an entire multi-block tree structure.
-            cir.setReturnValue(false);
+            // true: BlockRooty.updateTree treats false as a dead tree and turns the rooty dirt into dirt
+            cir.setReturnValue(true);
         }
     }
 }
