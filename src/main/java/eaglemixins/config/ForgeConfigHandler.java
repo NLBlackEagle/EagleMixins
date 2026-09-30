@@ -4,6 +4,8 @@ import eaglemixins.EagleMixins;
 import eaglemixins.client.particles.ParticleRule;
 import eaglemixins.client.particles.ParticlesClientRunner;
 import eaglemixins.client.particles.ParticlesRuleParser;
+import eaglemixins.compat.ForgottenItemsUtil;
+import eaglemixins.compat.ModLoadedUtil;
 import eaglemixins.config.folders.*;
 import meldexun.betterconfig.api.BetterConfig;
 import meldexun.betterconfig.api.BetterConfigManager;
@@ -194,6 +196,15 @@ public class ForgeConfigHandler {
 		@Config.Name("Pixie Village Disabled Biome Tags")
 		public Set<String> pixieVillageDisabledBiomeTags = new LinkedHashSet<>();
 
+		@Config.Comment({
+				"Forgotten Item Crafting Rune Recipe Overrides for the guaranteed core item.",
+				"This will not affect the other 8 items in the recipe.",
+				"For example:",
+				"    \"forgottenitems:golem_helmet\" can have \"rlmixins:steel_helmet\" replace \"minecraft:diamond_chestplate\""
+		})
+		@Config.Name("Crafting Rune's Recipe Core Item")
+		public Map<ResourceLocation, ResourceLocation> forgottenItemsRecipeCoreItems = new LinkedHashMap<>();
+
 		public ServerConfig(){
 			initBiomeDictTagList();
 		}
@@ -252,6 +263,8 @@ public class ForgeConfigHandler {
 				mobequipment.reset();
 				teleporter.reset();
 				loadParticleRulesFromConfig();
+
+				if(ModLoadedUtil.forgottenitems.isLoaded()) ForgottenItemsUtil.remapRecipeCoreItems();
 			}
 		}
 	}

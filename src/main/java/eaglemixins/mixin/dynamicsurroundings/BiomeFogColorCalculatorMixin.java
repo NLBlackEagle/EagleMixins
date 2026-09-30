@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BiomeFogColorCalculator.class)
 public abstract class BiomeFogColorCalculatorMixin {
-    @Shadow protected boolean doScan;
+    @Shadow(remap = false) protected boolean doScan;
 
     @Unique private int eaglemixins$blendRadius = Integer.MIN_VALUE;
 
