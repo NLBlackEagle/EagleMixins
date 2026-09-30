@@ -2,6 +2,8 @@ package eaglemixins;
 
 import eaglemixins.client.gui.TeleportOverlayHandler;
 import eaglemixins.client.particles.ParticlesClientRunner;
+import eaglemixins.compat.ForgottenItemsUtil;
+import eaglemixins.compat.ModLoadedUtil;
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.debug.BO3_ChunkGen_Debug;
 import eaglemixins.handlers.*;
@@ -99,6 +101,7 @@ public class EagleMixins {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         BiomeTagHandler.init();
+        if(ModLoadedUtil.forgottenitems.isLoaded()) ForgottenItemsUtil.remapRecipeCoreItems();
         if(Loader.isModLoaded("enhancedvisuals") && Loader.isModLoaded("nuclearcraft")) EnhancedVisualsHandler.init();
         if(ForgeConfigHandler.teleporter.enableTeleporters) EntitySpawnListener.init();
         ModStats.init();
