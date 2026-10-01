@@ -4,14 +4,18 @@ import biomesoplenty.api.item.BOPItems;
 import com.dhanantry.scapeandrunparasites.entity.ai.misc.EntityPStationaryArchitect;
 import com.dhanantry.scapeandrunparasites.entity.ai.misc.EntityParasiteBase;
 import com.dhanantry.scapeandrunparasites.entity.monster.deterrent.nexus.*;
+import com.dhanantry.scapeandrunparasites.init.SRPBlocks;
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.util.Ref;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -22,6 +26,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class SRParasitesHandler {
 
@@ -75,13 +80,61 @@ public class SRParasitesHandler {
         return corruptedAshes.copy();
     }
 
-    private static boolean isBeckon(Entity entity){
+    public static boolean isBeckon(Entity entity){
         if(!(entity instanceof EntityPStationaryArchitect)) return false;
         return entity instanceof EntityVenkrol ||
                 entity instanceof EntityVenkrolSII ||
                 entity instanceof EntityVenkrolSIII ||
                 entity instanceof EntityVenkrolSIV ||
                 entity instanceof EntityVenkrolSV;
+    }
+
+    //Moves a Beckon summoned by a Stage IV Beckon to a random spot within the configured range
+    //Returns false if no valid spot was found or too many Beckons are nearby, in which case the Beckon should not spawn
+    public static boolean relocateSpreadBeckon(World world, EntityParasiteBase summoner, Entity beckon) {
+        int minRange = Math.min(ForgeConfigHandler.srparasites.beckonSpreadMinRange, ForgeConfigHandler.srparasites.beckonSpreadMaxRange);
+        int maxRange = Math.max(ForgeConfigHandler.srparasites.beckonSpreadMinRange, ForgeConfigHandler.srparasites.beckonSpreadMaxRange);
+        Random rand = summoner.getRNG();
+
+        double maxRangeSq = maxRange * maxRange;
+        int nearbyBeckons = world.getEntitiesWithinAABB(EntityPStationaryArchitect.class, summoner.getEntityBoundingBox().grow(maxRange),
+                nearby -> nearby != summoner && isBeckon(nearby) && nearby.getDistanceSq(summoner) <= maxRangeSq).size();
+        if (nearbyBeckons >= ForgeConfigHandler.srparasites.beckonSpreadMaxNearby) return false;
+
+        for (int attempt = 0; attempt < 10; attempt++) {
+            double angle = rand.nextDouble() * Math.PI * 2;
+            double distance = minRange + rand.nextDouble() * (maxRange - minRange);
+            int x = MathHelper.floor(summoner.posX + Math.cos(angle) * distance);
+            int z = MathHelper.floor(summoner.posZ + Math.sin(angle) * distance);
+
+            BlockPos pos = findBeckonGround(world, x, MathHelper.floor(summoner.posY), z);
+            if (pos == null || !canBeckonSpreadTo(world, pos)) continue;
+
+            beckon.setLocationAndAngles(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, beckon.rotationYaw, beckon.rotationPitch);
+            return true;
+        }
+        return false;
+    }
+
+    //Searches top-down around the summoners height for a free spot on solid ground
+    private static BlockPos findBeckonGround(World world, int x, int y, int z) {
+        if (!world.isBlockLoaded(new BlockPos(x, y, z))) return null;
+        for (int dy = 8; dy >= -8; dy--) {
+            BlockPos pos = new BlockPos(x, y + dy, z);
+            BlockPos below = pos.down();
+            if (!world.isAirBlock(pos) || !world.isAirBlock(pos.up())) continue;
+            IBlockState stateBelow = world.getBlockState(below);
+            //SRP doesn't let Beckons spawn on Infested Stain either
+            if (stateBelow.getBlock() == SRPBlocks.InfestedStain) continue;
+            if (stateBelow.isSideSolid(world, below, EnumFacing.UP)) return pos;
+        }
+        return null;
+    }
+
+    private static boolean canBeckonSpreadTo(World world, BlockPos pos) {
+        ResourceLocation biomeReg = world.getBiome(pos).getRegistryName();
+        if (biomeReg == null || !isBiomeAllowed(biomeReg, world.provider.getDimension())) return false;
+        return !ForgeConfigHandler.abyssal.killAbyssalNexus || !biomeReg.equals(Ref.abyssalRiftReg);
     }
 
     // SRParasites in overworld Script Biome Whitelist, kill Beckons
@@ -94,14 +147,8 @@ public class SRParasitesHandler {
         if (!(entity instanceof EntityParasiteBase)) return;
 
         //Kill all Beckons and Dispatchers in Abyssal Rift
-        if (ForgeConfigHandler.abyssal.killAbyssalNexus && Ref.entityIsInAbyssalRift(entity)) {
-            if (entity instanceof EntityPStationaryArchitect)
-                entity.setDead();
-            //Otherwise kill all other beckons around one beckon
-        } else if (ForgeConfigHandler.srparasites.killNearbyBeckon && isBeckon(entity))
-            for (Entity entityNearby : entity.world.getEntitiesWithinAABB(EntityPStationaryArchitect.class, new AxisAlignedBB(entity.getPosition()).grow(ForgeConfigHandler.srparasites.killNearbyBeckonRange)))
-                if (entityNearby != entity && isBeckon(entityNearby))
-                    entityNearby.setDead();
+        if (ForgeConfigHandler.abyssal.killAbyssalNexus && Ref.entityIsInAbyssalRift(entity) && entity instanceof EntityPStationaryArchitect)
+            entity.setDead();
 
         //Only if enabled
         if(!ForgeConfigHandler.srparasites.killEscapedParasites) return;

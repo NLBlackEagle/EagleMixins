@@ -110,6 +110,16 @@ public class MixinToggleConfig {
     public boolean customSRPGearEvolution = true;
 
     @Config.Comment({
+            "Makes the distance at which Stage IV Beckons spawn their Beckons, the max amount of nearby Beckons and whether those Beckons can grow configurable under \"SRParasites Options\".",
+            "The spawn is cancelled if the position is not in an allowed parasite biome or is in a biome where Nexus parasites get killed."
+    })
+    @Config.Name("Stage IV Beckon Spread (SRP)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.srparasites.beckonspread.json", defaultValue = true)
+    @MixinConfig.CompatHandling(modid = "srparasites", desired = true, reason = "Requires mod to properly function")
+    public boolean stageIVBeckonSpread = true;
+
+    @Config.Comment({
             "Enables the per-weapon critical-hit and range damage multipliers configured under \"Weapon Damage Modifiers\".",
             "This Mixin Toggle makes RLCombat flag the damage source as a critical hit in order to modify damage that is modified by other mods."
     })

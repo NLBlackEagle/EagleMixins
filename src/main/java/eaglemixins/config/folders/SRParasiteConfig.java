@@ -21,9 +21,7 @@ public class SRParasiteConfig {
     )
     @Config.Name("SRParasites allowed biomes")
     public ArrayList<String> biomeList = new ArrayList<>(Arrays.asList(
-            "0@biomesoplenty:heath",
             "0@biomesoplenty:steppe",
-            "0@biomesoplenty:wasteland",
             "0@openterraingenerator:overworld_abyssal_rift",
             "0@srparasites:biome_parasite",
             "0@openterraingenerator:overworld_lair_of_the_thing",
@@ -61,13 +59,36 @@ public class SRParasiteConfig {
             "Necrotic Blight"
     ));
 
-    @Config.Comment("All Beckons near one beckon will be killed")
-    @Config.Name("Kill Beckon nearby")
-    public boolean killNearbyBeckon = true;
+    @Config.Comment({
+            "Minimum distance in blocks from a Stage IV Beckon at which it spawns new Beckons.",
+            "Requires the \"Stage IV Beckon Spread (SRP)\" mixin toggle."
+    })
+    @Config.Name("Stage IV Beckon Spread min range")
+    @Config.RangeInt(min = 0, max = 64)
+    public int beckonSpreadMinRange = 3;
 
-    @Config.Comment("Range in radius blocks searched around the beckon for nearby beckons")
-    @Config.Name("Kill Beckon nearby range")
-    public int killNearbyBeckonRange = 32;
+    @Config.Comment({
+            "Maximum distance in blocks from a Stage IV Beckon at which it spawns new Beckons.",
+            "Requires the \"Stage IV Beckon Spread (SRP)\" mixin toggle."
+    })
+    @Config.Name("Stage IV Beckon Spread max range")
+    @Config.RangeInt(min = 0, max = 64)
+    public int beckonSpreadMaxRange = 6;
+
+    @Config.Comment({
+            "A Stage IV Beckon will not spawn another Beckon if this many Beckons are already within the max range around it (not counting itself).",
+            "Requires the \"Stage IV Beckon Spread (SRP)\" mixin toggle."
+    })
+    @Config.Name("Stage IV Beckon Spread max nearby Beckons")
+    @Config.RangeInt(min = 0)
+    public int beckonSpreadMaxNearby = 3;
+
+    @Config.Comment({
+            "SRP prevents Beckons spawned by a Stage IV Beckon from ever growing. Set to true to allow them to grow.",
+            "Requires the \"Stage IV Beckon Spread (SRP)\" mixin toggle."
+    })
+    @Config.Name("Stage IV Beckon Spread Beckons can grow")
+    public boolean beckonSpreadCanGrow = false;
 
     @Config.Comment("All SRParasites outside of the allowed biomes in the allowed biome whitelist will automatically be killed")
     @Config.Name("Kill Parasites outside alllowed biomes")
