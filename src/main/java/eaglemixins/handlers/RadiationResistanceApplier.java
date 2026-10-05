@@ -20,7 +20,7 @@ public class RadiationResistanceApplier {
         ResourceLocation id = EntityList.getKey(living);
         if (id == null) return;
 
-        double resistance = ForgeConfigHandler.nuclear.radiationResistanceList.get(id);
+        double resistance = ForgeConfigHandler.nuclear.radiationResistanceList.getOrDefault(id, 0.0D);
         if (resistance <= 0.0D) return;
 
         IEntityRads rads = RadiationHelper.getEntityRadiation(living);
