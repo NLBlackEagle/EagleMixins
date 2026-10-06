@@ -1,6 +1,5 @@
 package eaglemixins.handlers;
 
-import biomesoplenty.api.item.BOPItems;
 import com.dhanantry.scapeandrunparasites.entity.ai.misc.EntityPStationaryArchitect;
 import com.dhanantry.scapeandrunparasites.entity.ai.misc.EntityParasiteBase;
 import com.dhanantry.scapeandrunparasites.entity.monster.deterrent.nexus.*;
@@ -69,15 +68,6 @@ public class SRParasitesHandler {
         }
 
         return biomePart.equals("*") || biomePart.equalsIgnoreCase(biomeWildcard) || biomePart.equalsIgnoreCase(biomeId);
-    }
-
-    private static ItemStack corruptedAshes = null;
-    private static ItemStack getCorruptedAshes(){
-        if(corruptedAshes == null){
-            corruptedAshes = new ItemStack(BOPItems.ash,1);
-            corruptedAshes.setTranslatableName("eaglemixins.tooltip.corruptedashes");
-        }
-        return corruptedAshes.copy();
     }
 
     public static boolean isBeckon(Entity entity){
@@ -202,9 +192,11 @@ public class SRParasitesHandler {
                 if(itemId == null) continue;
                 if(itemId.getNamespace().equals(Ref.SRPMODID)) {
                     //default 0.375 based of healthmultiplier 0.5 & damagemultiplier 0.25 averaged out on 0.625 the overall strength of ow parasites compared to LC parasites.
-                    if (entity.getRNG().nextFloat() < ForgeConfigHandler.srparasites.chanceCorruptedAshes) {
+                    if (entity.getRNG().nextFloat() < ForgeConfigHandler.srparasites.replacementDropChance) {
                         itemsToRemove.add(drop);
-                        itemsToAdd.add(new EntityItem(entity.getEntityWorld(), entity.posX, entity.posY, entity.posZ, getCorruptedAshes()));
+                        ItemStack replacement = ForgeConfigHandler.srparasites.getReplacementDrop();
+                        if (!replacement.isEmpty())
+                            itemsToAdd.add(new EntityItem(entity.getEntityWorld(), entity.posX, entity.posY, entity.posZ, replacement));
                     }
                 }
             }

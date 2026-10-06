@@ -261,6 +261,7 @@ public class ForgeConfigHandler {
 				abyssal.reset();
 				mobequipment.reset();
 				teleporter.reset();
+				srparasites.reset();
 				loadParticleRulesFromConfig();
 			}
 		}
