@@ -144,7 +144,82 @@ public class SRParasiteConfig {
         return replacementDrop.copy();
     }
 
+    @Config.Comment({
+            "Dimension IDs in which parasites drop the \"Tear Swap Replacement\" instead of the \"Tear Swap Original\".",
+            "Leave empty to disable the swap."
+    })
+    @Config.Name("Tear Swap Dimensions")
+    public int[] tearSwapDimensions = {3};
+
+    @Config.Comment({
+            "Item dropped by parasites that gets swapped out in the \"Tear Swap Dimensions\".",
+            "Format: modid:item or modid:item metadata. Without metadata, any metadata matches."
+    })
+    @Config.Name("Tear Swap Original")
+    public String tearSwapOriginalItem = "contenttweaker:blood_tear";
+
+    @Config.Comment({
+            "Item that parasites drop instead of the \"Tear Swap Original\" in the \"Tear Swap Dimensions\". Keeps the stack size.",
+            "Format: modid:item or modid:item metadata."
+    })
+    @Config.Name("Tear Swap Replacement")
+    public String tearSwapReplacementItem = "eaglemixins:tainted_tear";
+
+    private Item tearSwapOriginal = null;
+    private int tearSwapOriginalMeta = -1;
+    private ItemStack tearSwapReplacement = null;
+
+    public boolean isTearSwapDimension(int dimensionId) {
+        return Arrays.stream(tearSwapDimensions).anyMatch(dim -> dim == dimensionId);
+    }
+
+    public boolean isTearSwapOriginal(ItemStack stack) {
+        if (tearSwapOriginal == null) {
+            String[] split = tearSwapOriginalItem.trim().split(" ");
+            try {
+                tearSwapOriginal = Item.getByNameOrId(split[0].trim());
+                tearSwapOriginalMeta = split.length > 1 ? Integer.parseInt(split[1].trim()) : -1;
+            } catch (Exception exception) {
+                EagleMixins.LOGGER.error("Failed parsing tear swap original ({})", tearSwapOriginalItem);
+            }
+            if (tearSwapOriginal == null || tearSwapOriginal == Items.AIR) {
+                EagleMixins.LOGGER.error("Tear swap original not found ({}), tear swap disabled", tearSwapOriginalItem);
+                tearSwapOriginal = Items.AIR;
+            }
+        }
+        if (tearSwapOriginal == Items.AIR) return false;
+        return stack.getItem() == tearSwapOriginal && (tearSwapOriginalMeta == -1 || stack.getMetadata() == tearSwapOriginalMeta);
+    }
+
+    // Returns an empty stack if the replacement item can't be found
+    public ItemStack getTearSwapReplacement(int count) {
+        if (tearSwapReplacement == null) {
+            Item item = null;
+            int metadata = 0;
+            String[] split = tearSwapReplacementItem.trim().split(" ");
+            try {
+                item = Item.getByNameOrId(split[0].trim());
+                if (split.length > 1)
+                    metadata = Integer.parseInt(split[1].trim());
+            } catch (Exception exception) {
+                EagleMixins.LOGGER.error("Failed parsing tear swap replacement ({})", tearSwapReplacementItem);
+            }
+            if (item == null || item == Items.AIR) {
+                EagleMixins.LOGGER.error("Tear swap replacement not found ({}), original drop is kept", tearSwapReplacementItem);
+                item = Items.AIR;
+                metadata = 0;
+            }
+            tearSwapReplacement = new ItemStack(item, 1, metadata);
+        }
+        ItemStack stack = tearSwapReplacement.copy();
+        if (!stack.isEmpty()) stack.setCount(count);
+        return stack;
+    }
+
     public void reset() {
         replacementDrop = null;
+        tearSwapOriginal = null;
+        tearSwapOriginalMeta = -1;
+        tearSwapReplacement = null;
     }
 }

@@ -1,5 +1,6 @@
 package eaglemixins.handlers;
 
+import eaglemixins.EagleMixins;
 import eaglemixins.compat.ModLoadedUtil;
 import eaglemixins.compat.RLCombatUtil;
 import eaglemixins.config.ForgeConfigHandler;
@@ -63,6 +64,7 @@ public class WeaponDamageHandler {
         if(victim == null) return;
         ItemStack stack = attacker.getHeldItemMainhand();
         if(stack.isEmpty()) return;
+        float incoming = event.getAmount();
 
         if(damageSource instanceof IDamageSource_IsCritFlagMixin && ((IDamageSource_IsCritFlagMixin) damageSource).eagleMixins$isCrit()) {
             WeaponDamageConfig.CritEntry crit = ForgeConfigHandler.weapondamage.critMultipliers.get(stack.getItem().getRegistryName());
@@ -73,7 +75,13 @@ public class WeaponDamageHandler {
 
         WeaponDamageConfig.RangeEntry range = ForgeConfigHandler.weapondamage.rangeMultipliers.get(stack.getItem().getRegistryName());
         if (range != null) {
-            event.setAmount(event.getAmount() * range.calcDmgMultiplier(attacker.getDistance(victim)));
+            float distance = attacker.getDistance(victim);
+            float multi = range.calcDmgMultiplier(distance);
+            float before = event.getAmount();
+            event.setAmount(before * multi);
+            // TODO: remove debug logging
+            EagleMixins.LOGGER.info("[RangeDebug] item={} victim={} dist={} multi={} incoming={} (pre-crit={}) final={}",
+                    stack.getItem().getRegistryName(), victim.getName(), distance, multi, before, incoming, event.getAmount());
         }
     }
 }

@@ -1,8 +1,10 @@
 package eaglemixins.init;
 
 import eaglemixins.blocks.BlockDeepslate;
+import eaglemixins.items.ItemTaintedTear;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ResourceLocation;
@@ -35,6 +37,13 @@ public final class Registration {
         ItemBlock ib = new ItemBlock(b);
         ib.setRegistryName(b.getRegistryName()); // MUST exactly match the block’s registry name
         e.getRegistry().register(ib);
+
+        e.getRegistry().register(
+                new ItemTaintedTear()
+                        .setRegistryName("eaglemixins", "tainted_tear")
+                        .setTranslationKey("eaglemixins.tainted_tear")
+                        .setCreativeTab(CreativeTabs.MATERIALS)
+        );
     }
 
     @SideOnly(Side.CLIENT)
@@ -43,6 +52,10 @@ public final class Registration {
         ModelLoader.setCustomModelResourceLocation(
                 Item.getItemFromBlock(ModBlocks.DEEPSLATE), 0,
                 new ModelResourceLocation("eaglemixins:deepslate", "inventory")
+        );
+        ModelLoader.setCustomModelResourceLocation(
+                ModItems.TAINTED_TEAR, 0,
+                new ModelResourceLocation("eaglemixins:tainted_tear", "inventory")
         );
     }
 }

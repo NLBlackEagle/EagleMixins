@@ -165,6 +165,23 @@ public class SRParasitesHandler {
             event.setResult(Event.Result.DENY);
     }
 
+    // Parasites in the tear swap dimensions (Underneath) drop Tainted Tears instead of Blood Tears
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public static void onLivingDropsTearSwap(LivingDropsEvent event) {
+        if (event.getDrops().isEmpty()) return;
+        EntityLivingBase entity = event.getEntityLiving();
+        if (!(entity instanceof EntityParasiteBase)) return;
+        if (!ForgeConfigHandler.srparasites.isTearSwapDimension(entity.dimension)) return;
+
+        for (EntityItem drop : event.getDrops()) {
+            ItemStack stack = drop.getItem();
+            if (!ForgeConfigHandler.srparasites.isTearSwapOriginal(stack)) continue;
+            ItemStack replacement = ForgeConfigHandler.srparasites.getTearSwapReplacement(stack.getCount());
+            if (!replacement.isEmpty())
+                drop.setItem(replacement);
+        }
+    }
+
     // OW SRParasites cancel loot if not in whitelisted biome
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onLivingDrops(LivingDropsEvent event){

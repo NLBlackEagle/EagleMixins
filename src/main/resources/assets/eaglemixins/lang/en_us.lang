@@ -38,5 +38,7 @@ eaglemixins.message.block_break_denied=The ground seems hardened here, you fail 
 
 tile.eaglemixins.deepslate.name=Deepslate
 block.eaglemixins.deepslate.name=Deepslate
+item.eaglemixins.tainted_tear.name=Tainted Tear
+eaglemixins.tainted_tear.tooltip=Tainted Tears, dropped instead of Blood Tears by weakened parasites in the Underneath
 
 attribute.name.eaglemixins.radiationResistance=Rads/t Resistance
