@@ -40,5 +40,11 @@ tile.eaglemixins.deepslate.name=Deepslate
 block.eaglemixins.deepslate.name=Deepslate
 item.eaglemixins.tainted_tear.name=Tainted Tear
 eaglemixins.tainted_tear.tooltip=Tainted Tears, dropped instead of Blood Tears by weakened parasites in the Underneath
+item.eaglemixins.void_tear.name=Void Tear
+eaglemixins.void_tear.tooltip=Remnants of Astaroth, found in the end
+item.eaglemixins.enigmoth_eye.name=Enigmoth Eye
+eaglemixins.enigmoth_eye.tooltip=Torn from an Enigmoth, found in the end
+item.eaglemixins.ghostly_gills.name=Ghostly Gills
+eaglemixins.ghostly_gills.tooltip=Gills from a Void Ray, found in the end
 
 attribute.name.eaglemixins.radiationResistance=Rads/t Resistance

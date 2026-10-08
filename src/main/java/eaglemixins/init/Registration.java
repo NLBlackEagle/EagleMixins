@@ -1,6 +1,8 @@
 package eaglemixins.init;
 
 import eaglemixins.blocks.BlockDeepslate;
+import eaglemixins.config.ForgeConfigHandler;
+import eaglemixins.items.ItemLore;
 import eaglemixins.items.ItemTaintedTear;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -19,6 +21,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Mod.EventBusSubscriber(modid = "eaglemixins")
 public final class Registration {
+
+    // Replacements for the Brutal Coins in Asmodeus' summoning recipe (RLCraft Dregora)
+    private static final String[] ASMODEUS_CRAFTING_ITEMS = {"void_tear", "enigmoth_eye", "ghostly_gills"};
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> e) {
@@ -44,6 +49,15 @@ public final class Registration {
                         .setTranslationKey("eaglemixins.tainted_tear")
                         .setCreativeTab(CreativeTabs.MATERIALS)
         );
+
+        if (ForgeConfigHandler.server.asmodeusCraftingItems) for (String name : ASMODEUS_CRAFTING_ITEMS) {
+            e.getRegistry().register(
+                    new ItemLore(name)
+                            .setRegistryName("eaglemixins", name)
+                            .setTranslationKey("eaglemixins." + name)
+                            .setCreativeTab(CreativeTabs.MATERIALS)
+            );
+        }
     }
 
     @SideOnly(Side.CLIENT)
@@ -57,6 +71,12 @@ public final class Registration {
                 ModItems.TAINTED_TEAR, 0,
                 new ModelResourceLocation("eaglemixins:tainted_tear", "inventory")
         );
+        if (ForgeConfigHandler.server.asmodeusCraftingItems) for (String name : ASMODEUS_CRAFTING_ITEMS) {
+            ModelLoader.setCustomModelResourceLocation(
+                    Item.getByNameOrId("eaglemixins:" + name), 0,
+                    new ModelResourceLocation("eaglemixins:" + name, "inventory")
+            );
+        }
     }
 }
 

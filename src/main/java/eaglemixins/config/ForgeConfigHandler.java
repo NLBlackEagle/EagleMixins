@@ -166,6 +166,15 @@ public class ForgeConfigHandler {
 		@Config.RequiresMcRestart
 		public Integer[] undergroundMimicDimensions = {0};
 
+		@Config.Comment({
+				"Registers the End crafting items Void Tear, Enigmoth Eye and Ghostly Gills.",
+				"These items are meant to replace the Brutal Coins in Asmodeus' summoning recipe in RLCraft Dregora.",
+				"This changes the item registry, so it must be set the same on the server and on every client."
+		})
+		@Config.Name("Asmodeus crafting items")
+		@Config.RequiresMcRestart
+		public boolean asmodeusCraftingItems = true;
+
 		@Config.Name("Fix Biomes O Plenty Door Duplication")
 		@Config.Comment("Prevents Biomes O Plenty doors from dropping twice when broken")
 		public boolean fixBOPDoorDupe = true;

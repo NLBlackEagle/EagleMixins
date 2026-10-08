@@ -71,6 +71,7 @@ public class EagleMixins {
         MinecraftForge.EVENT_BUS.register(FallDamageHandler.class);
         MinecraftForge.EVENT_BUS.register(FallDamageNegation.class);
         registerIfModsPresent(new String[]{"bettercombatmod", "mod_lavacow"}, FURHandler.class);
+        if(ForgeConfigHandler.server.asmodeusCraftingItems) registerIfModsPresent(new String[]{"mod_lavacow"}, AsmodeusDropsHandler.class);
         registerIfModsPresent(new String[]{"firstaid"}, HealthValidationHandler.class);
         MinecraftForge.EVENT_BUS.register(PotionEffectsByFluidsHandler.class);
         registerIfModsPresent(new String[]{"nuclearcraft"},RadiationResistanceApplier.class);
