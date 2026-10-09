@@ -83,6 +83,7 @@ public class EagleMixins {
         registerIfModsPresent(new String[]{"srparasites", "biomesoplenty"}, SRParasitesHandler.class);
 
         MinecraftForge.EVENT_BUS.register(PotionRadiationFatigueHandler.class);
+        MinecraftForge.EVENT_BUS.register(RadiationPotionBlockHandler.class);
         registerIfModsPresent(new String[]{"nuclearcraft", "biomesoplenty"}, DoorDupeHandler.class);
         MinecraftForge.EVENT_BUS.register(AbyssalGateHandler.class);
         if(ForgeConfigHandler.irradiated.enabled) registerIfModsPresent(new String[]{"nuclearcraft"}, IrradiatedParasitesHandler.class);

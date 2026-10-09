@@ -1,5 +1,6 @@
 package eaglemixins.config.folders;
 
+import eaglemixins.handlers.RadiationPotionBlockHandler;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Config;
 
@@ -31,6 +32,16 @@ public class NuclearConfig {
     @Config.Name("Radiating Inventories")
     public Map<String, Boolean> inventoryRadiation = new LinkedHashMap<>();
 
+    @Config.Comment({
+            "Potion effects that players can't have while they have Radiation Sickness.",
+            "New applications are denied, already active effects are left to run out.",
+            "Format: modid:potion_id"
+    })
+    @Config.Name("Potions Blocked By Radiation Sickness")
+    public String[] radiationBlockedPotions = {
+            "srparasites:coth"
+    };
+
     public NuclearConfig(){
         radiationResistanceList.put(new ResourceLocation("iceandfire:firedragon"), 1000.);
         radiationResistanceList.put(new ResourceLocation("iceandfire:icedragon"), 1000.);
@@ -45,5 +56,9 @@ public class NuclearConfig {
         inventoryRadiation.put("itemEntity", true);
         inventoryRadiation.put("backpack", true);
         inventoryRadiation.put("toolbeltSlot", true);
+    }
+
+    public void reset(){
+        RadiationPotionBlockHandler.refreshConfig();
     }
 }

@@ -271,6 +271,7 @@ public class ForgeConfigHandler {
 				mobequipment.reset();
 				teleporter.reset();
 				srparasites.reset();
+				nuclear.reset();
 				loadParticleRulesFromConfig();
 			}
 		}
