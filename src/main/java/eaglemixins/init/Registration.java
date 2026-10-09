@@ -3,7 +3,6 @@ package eaglemixins.init;
 import eaglemixins.blocks.BlockDeepslate;
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.items.ItemLore;
-import eaglemixins.items.ItemTaintedTear;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -44,7 +43,7 @@ public final class Registration {
         e.getRegistry().register(ib);
 
         e.getRegistry().register(
-                new ItemTaintedTear()
+                new ItemLore("tainted_tear")
                         .setRegistryName("eaglemixins", "tainted_tear")
                         .setTranslationKey("eaglemixins.tainted_tear")
                         .setCreativeTab(CreativeTabs.MATERIALS)

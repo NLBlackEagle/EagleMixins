@@ -38,13 +38,14 @@ eaglemixins.message.block_break_denied=The ground seems hardened here, you fail 
 
 tile.eaglemixins.deepslate.name=Deepslate
 block.eaglemixins.deepslate.name=Deepslate
+# Item tooltips: formatting is set here with § codes (§e = yellow, §o = italic, §7 = gray)
 item.eaglemixins.tainted_tear.name=Tainted Tear
-eaglemixins.tainted_tear.tooltip=Tainted Tears, dropped instead of Blood Tears by weakened parasites in the Underneath
+eaglemixins.tainted_tear.tooltip=§eTainted Tears, dropped instead of Blood Tears by weakened parasites in the Underneath
 item.eaglemixins.void_tear.name=Void Tear
-eaglemixins.void_tear.tooltip=Remnants of Astaroth, found in the end
+eaglemixins.void_tear.tooltip=§eRemnants of Astaroth, found in the end
 item.eaglemixins.enigmoth_eye.name=Enigmoth Eye
-eaglemixins.enigmoth_eye.tooltip=Torn from an Enigmoth, found in the end
+eaglemixins.enigmoth_eye.tooltip=§eTorn from an Enigmoth, found in the end
 item.eaglemixins.ghostly_gills.name=Ghostly Gills
-eaglemixins.ghostly_gills.tooltip=Gills from a Void Ray, found in the end
+eaglemixins.ghostly_gills.tooltip=§eGills from a Void Ray, found in the end
 
 attribute.name.eaglemixins.radiationResistance=Rads/t Resistance
