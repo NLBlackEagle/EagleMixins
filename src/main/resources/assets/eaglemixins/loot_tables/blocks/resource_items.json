@@ -44,11 +44,6 @@
               "function": "minecraft:set_data",
               "data": 5,
               "conditions": [{"condition": "random_chance","chance": 0.3}]
-            },
-            {
-              "function": "minecraft:set_data",
-              "data": 6,
-              "conditions": [{"condition": "random_chance","chance": 0.01}]
             }
           ]
         }
