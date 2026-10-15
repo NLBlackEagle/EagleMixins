@@ -213,6 +213,12 @@ public class MixinToggleConfig {
     @MixinConfig.CompatHandling(modid = "toolbelt", desired = true, reason = "Requires mod to properly function")
     public boolean inventoryRadiation = true;
 
+    @Config.Comment("Caps potion effect levels to the values in Server Options > Potion Level Caps.")
+    @Config.Name("Potion Level Caps (Vanilla)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.potionlevelcap.json", defaultValue = true)
+    public boolean potionLevelCaps = true;
+
     @Config.Comment("Make players regain their air slowly when resurfacing from submerged - instead of regaining it instantly.")
     @Config.Name("Slow Air Refill (Vanilla)")
     @Config.RequiresMcRestart

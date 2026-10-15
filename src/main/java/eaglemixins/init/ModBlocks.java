@@ -7,5 +7,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 public final class ModBlocks {
     @ObjectHolder("deepslate")
     public static final Block DEEPSLATE = null; // injected after registration
+    @ObjectHolder("nether_thorium_ore")
+    public static final Block NETHER_THORIUM_ORE = null;
     private ModBlocks() {}
 }

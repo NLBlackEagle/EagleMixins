@@ -5,6 +5,7 @@ import eaglemixins.client.particles.ParticleRule;
 import eaglemixins.client.particles.ParticlesClientRunner;
 import eaglemixins.client.particles.ParticlesRuleParser;
 import eaglemixins.config.folders.*;
+import eaglemixins.util.PotionLevelCaps;
 import meldexun.betterconfig.api.BetterConfig;
 import meldexun.betterconfig.api.BetterConfigManager;
 import meldexun.betterconfig.api.Order;
@@ -97,6 +98,11 @@ public class ForgeConfigHandler {
 	@Config.Name("Angry Mobs")
 	@Order(13)
 	public static AngryMobConfig angrymobs = new AngryMobConfig();
+
+	@Config.Comment("Thorium ore generation in the nether")
+	@Config.Name("Nether Thorium Ore")
+	@Order(14)
+	public static NetherThoriumConfig netherthorium = new NetherThoriumConfig();
 
 	public static class ServerConfig {
 		@Config.Comment("Add Blocks you can drink from, will be treated like water blocks")
@@ -213,8 +219,23 @@ public class ForgeConfigHandler {
 		@Config.RequiresMcRestart
 		public Map<ResourceLocation, ResourceLocation> forgottenItemsRecipeCoreItems = new LinkedHashMap<>();
 
+		@Config.Comment({
+				"Caps the level of potion effects. Any effect applied above its cap is lowered to the cap.",
+				"Levels are as displayed in game (1 = level I, 3 = level III).",
+				"Requires the \"Potion Level Caps (Vanilla)\" mixin toggle.",
+				"Format: <potion_id>=<max level>",
+				"Example: minecraft:resistance=3"
+		})
+		@Config.Name("Potion Level Caps")
+		public Map<ResourceLocation, Integer> potionLevelCaps = new LinkedHashMap<>();
+		private void initPotionLevelCaps(){
+			potionLevelCaps.put(new ResourceLocation("minecraft:resistance"), 3);
+			potionLevelCaps.put(new ResourceLocation("bountifulbaubles:sinful"), 4);
+		}
+
 		public ServerConfig(){
 			initBiomeDictTagList();
+			initPotionLevelCaps();
 		}
 	}
 
@@ -272,6 +293,7 @@ public class ForgeConfigHandler {
 				teleporter.reset();
 				srparasites.reset();
 				nuclear.reset();
+				PotionLevelCaps.refreshConfig();
 				loadParticleRulesFromConfig();
 			}
 		}

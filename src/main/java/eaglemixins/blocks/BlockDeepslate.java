@@ -1,5 +1,6 @@
 package eaglemixins.blocks;
 
+import eaglemixins.init.ModSounds;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -13,6 +14,7 @@ public class BlockDeepslate extends Block {
         setHardness(3.0F);
         setResistance(6.0F);
         setHarvestLevel("pickaxe", 1);
+        setSoundType(ModSounds.DEEPSLATE);
         setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
     }
 
