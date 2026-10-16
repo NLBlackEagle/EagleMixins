@@ -1,6 +1,5 @@
 package eaglemixins.init;
 
-import eaglemixins.blocks.BlockDeepslate;
 import eaglemixins.blocks.BlockNetherThoriumOre;
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.items.ItemLore;
@@ -32,11 +31,6 @@ public final class Registration {
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> e) {
         e.getRegistry().register(
-                new BlockDeepslate()
-                        .setRegistryName("eaglemixins", "deepslate")
-                        .setTranslationKey("eaglemixins.deepslate")
-        );
-        e.getRegistry().register(
                 new BlockNetherThoriumOre()
                         .setRegistryName("eaglemixins", "nether_thorium_ore")
                         .setTranslationKey("eaglemixins.nether_thorium_ore")
@@ -45,13 +39,6 @@ public final class Registration {
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> e) {
-        Block b = ForgeRegistries.BLOCKS.getValue(new ResourceLocation("eaglemixins","deepslate"));
-        if (b == null) throw new IllegalStateException("Block not registered: eaglemixins:deepslate");
-
-        ItemBlock ib = new ItemBlock(b);
-        ib.setRegistryName(b.getRegistryName()); // MUST exactly match the block’s registry name
-        e.getRegistry().register(ib);
-
         Block thoriumOre = ForgeRegistries.BLOCKS.getValue(new ResourceLocation("eaglemixins", "nether_thorium_ore"));
         if (thoriumOre == null) throw new IllegalStateException("Block not registered: eaglemixins:nether_thorium_ore");
         e.getRegistry().register(new ItemBlock(thoriumOre).setRegistryName(thoriumOre.getRegistryName()));
@@ -75,10 +62,7 @@ public final class Registration {
 
     /** Ore dictionary, smelting and world gen. Called from init, after all mods registered their items. */
     public static void init() {
-        // Deepslate works like stone, cobbled deepslate like cobblestone (vanilla recipes use these ore dict entries)
-        OreDictionary.registerOre("stone", ModBlocks.DEEPSLATE);
-        Item cobbledDeepslate = ForgeRegistries.ITEMS.getValue(new ResourceLocation("contenttweaker", "cobbled_deepslate"));
-        if (cobbledDeepslate != null) OreDictionary.registerOre("cobblestone", cobbledDeepslate);
+        DeepslateBlocks.init();
 
         OreDictionary.registerOre("oreThorium", ModBlocks.NETHER_THORIUM_ORE);
         Item ncIngot = ForgeRegistries.ITEMS.getValue(new ResourceLocation("nuclearcraft", "ingot"));
@@ -90,10 +74,6 @@ public final class Registration {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent e) {
-        ModelLoader.setCustomModelResourceLocation(
-                Item.getItemFromBlock(ModBlocks.DEEPSLATE), 0,
-                new ModelResourceLocation("eaglemixins:deepslate", "inventory")
-        );
         ModelLoader.setCustomModelResourceLocation(
                 Item.getItemFromBlock(ModBlocks.NETHER_THORIUM_ORE), 0,
                 new ModelResourceLocation("eaglemixins:nether_thorium_ore", "inventory")

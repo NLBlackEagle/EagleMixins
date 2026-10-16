@@ -1,0 +1,27 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "minecraft:half_slab",
+    "textures": {
+      "bottom": "eaglemixins:blocks/deepslate_top",
+      "top": "eaglemixins:blocks/deepslate_top",
+      "side": "eaglemixins:blocks/deepslate",
+      "particle": "eaglemixins:blocks/deepslate"
+    },
+    "transform": "forge:default-block"
+  },
+  "variants": {
+    "half": {
+      "bottom": {},
+      "top": {
+        "model": "minecraft:upper_slab"
+      }
+    },
+    "variant": {
+      "normal": {}
+    },
+    "inventory": [
+      {}
+    ]
+  }
+}

@@ -16,7 +16,6 @@ import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,13 +44,6 @@ public class BlockDropsHandler {
                 event.getDrops().clear();
                 event.getDrops().add(new ItemStack(item, 1, 0));
             }
-            return;
-        }
-
-        if (blockId.equals("eaglemixins:deepslate")) {
-            if(event.isSilkTouching()) return;
-            event.getDrops().clear();
-            addDrop(event.getDrops(), harvesterRNG, "contenttweaker:cobbled_deepslate", 1.0F);
             return;
         }
 
@@ -111,41 +103,6 @@ public class BlockDropsHandler {
             event.getDrops().clear();
             addDrop(event.getDrops(), harvesterRNG, "contentcreator:iron_plate_slab_reinforced", 1.0F);
             addDrop(event.getDrops(), harvesterRNG, "contentcreator:iron_plate_slab_reinforced", 1.0F);
-            return;
-        }
-
-        if (blockId.equals("contentcreator:deepslate_tile_slab_double")) {
-            event.getDrops().clear();
-            addDrop(event.getDrops(), harvesterRNG, "contentcreator:deepslate_tile_slab", 1.0F);
-            addDrop(event.getDrops(), harvesterRNG, "contentcreator:deepslate_tile_slab", 1.0F);
-            return;
-        }
-
-        if (blockId.equals("contentcreator:polished_deepslate_slab_double")) {
-            event.getDrops().clear();
-            addDrop(event.getDrops(), harvesterRNG, "contentcreator:polished_deepslate_slab", 1.0F);
-            addDrop(event.getDrops(), harvesterRNG, "contentcreator:polished_deepslate_slab", 1.0F);
-            return;
-        }
-
-        if (blockId.equals("contentcreator:deepslate_brick_slab_double")) {
-            event.getDrops().clear();
-            addDrop(event.getDrops(), harvesterRNG, "contentcreator:deepslate_brick_slab", 1.0F);
-            addDrop(event.getDrops(), harvesterRNG, "contentcreator:deepslate_brick_slab", 1.0F);
-            return;
-        }
-
-        if (blockId.equals("contentcreator:deepslate_slab_double")) {
-            event.getDrops().clear();
-            addDrop(event.getDrops(), harvesterRNG, "contentcreator:deepslate_slab", 1.0F);
-            addDrop(event.getDrops(), harvesterRNG, "contentcreator:deepslate_slab", 1.0F);
-            return;
-        }
-
-        if (blockId.equals("contentcreator:cobbled_deepslate_slab_double")) {
-            event.getDrops().clear();
-            addDrop(event.getDrops(), harvesterRNG, "contentcreator:cobbled_deepslate_slab", 1.0F);
-            addDrop(event.getDrops(), harvesterRNG, "contentcreator:cobbled_deepslate_slab", 1.0F);
             return;
         }
 
@@ -221,75 +178,6 @@ public class BlockDropsHandler {
             event.getDrops().clear();
             addDrop(event.getDrops(), harvesterRNG, new ItemStack(BOPItems.biome_essence), 1F);
         }
-
-        //Deepslate Blocks
-        if (DEEPSLATE_MAP.containsKey(blockId)) {
-
-            BlockSpec src = DEEPSLATE_MAP.get(blockId);
-            Block srcBlock = ForgeRegistries.BLOCKS.getValue(src.id);
-            if (srcBlock == null) return;
-
-            IBlockState srcState = (src.meta >= 0)
-                    ? srcBlock.getStateFromMeta(src.meta)
-                    : srcBlock.getDefaultState();
-
-            event.getDrops().clear();
-
-            if (event.isSilkTouching()) {
-                // mimic silk-touch: drop the source block itself (with meta if set)
-                Item item = Item.getItemFromBlock(srcBlock);
-                if (item != null) {
-                    event.getDrops().add(new ItemStack(item, 1, Math.max(0, src.meta)));
-                }
-                return;
-            }
-
-            // normal/fortune drops of the source block
-            List<ItemStack> newDrops = srcBlock.getDrops(
-                    event.getWorld(),
-                    event.getPos(),
-                    srcState,
-                    event.getFortuneLevel()
-            );
-            event.getDrops().addAll(newDrops);
-        }
-    }
-
-    private static final Map<String, BlockSpec> DEEPSLATE_MAP = new HashMap<>();
-    static {
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_copper_ore",  parseBlockSpec("contenttweaker:deepslate_copper_ore"));
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_silver_ore",  parseBlockSpec("contenttweaker:deepslate_silver_ore"));
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_diamond_ore", parseBlockSpec("minecraft:diamond_ore"));
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_emerald_ore", parseBlockSpec("minecraft:emerald_ore"));
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_lapis_ore",   parseBlockSpec("minecraft:lapis_ore"));
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_redstone_ore",parseBlockSpec("minecraft:redstone_ore"));
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_gold_ore",    parseBlockSpec("contenttweaker:deepslate_gold_ore"));
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_iron_ore",    parseBlockSpec("contenttweaker:deepslate_iron_ore"));
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_coal_ore",    parseBlockSpec("minecraft:coal_ore"));
-        // NuclearCraft meta variants:
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_lead_ore",    parseBlockSpec("contenttweaker:deepslate_lead_ore"));
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_thorium_ore", parseBlockSpec("contenttweaker:deepslate_thorium_ore"));
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_uranium_ore", parseBlockSpec("contenttweaker:deepslate_uranium_ore"));
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_boron_ore",   parseBlockSpec("contenttweaker:deepslate_boron_ore"));
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_lithium_ore", parseBlockSpec("contenttweaker:deepslate_lithium_ore"));
-        DEEPSLATE_MAP.put("contenttweaker:deepslate_crystal_ore", parseBlockSpec("scalinghealth:crystalore"));
-    }
-
-    private static final class BlockSpec {
-        final ResourceLocation id; final int meta; // meta < 0 => ignore
-        BlockSpec(ResourceLocation id, int meta) { this.id = id; this.meta = meta; }
-    }
-
-    private static BlockSpec parseBlockSpec(String spec) {
-        // "mod:block[:meta]"
-        String[] parts = spec.split(":");
-        String mod = parts[0];
-        String path = parts[1];
-        int meta = -1;
-        if (parts.length >= 3) {
-            try { meta = Integer.parseInt(parts[2]); } catch (NumberFormatException ignored) {}
-        }
-        return new BlockSpec(new ResourceLocation(mod, path), meta);
     }
 
     private static final Map<String, ItemStack> itemMap = new HashMap<>();

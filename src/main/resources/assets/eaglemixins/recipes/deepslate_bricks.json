@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": {
+      "item": "eaglemixins:deepslate"
+    }
+  },
+  "result": {
+    "item": "eaglemixins:deepslate_bricks",
+    "count": 4
+  }
+}
