@@ -67,6 +67,7 @@ public class EagleMixins {
         MinecraftForge.EVENT_BUS.register(ConductivityHandler.class);
         MinecraftForge.EVENT_BUS.register(DamageFalloffHandler.class);
         MinecraftForge.EVENT_BUS.register(DismountHandler.class);
+        MinecraftForge.EVENT_BUS.register(WildfireHandler.class);
         MinecraftForge.EVENT_BUS.register(DispelEntityHandler.class);
         registerIfModsPresent(new String[]{"srparasites", "playerbosses"}, EntityRenameCancelHandler.class);
         MinecraftForge.EVENT_BUS.register(FallDamageHandler.class);
@@ -115,6 +116,7 @@ public class EagleMixins {
             ForgeConfigHandler.loadParticleRulesFromConfig();
             if(ForgeConfigHandler.teleporter.enableTeleporters) MinecraftForge.EVENT_BUS.register(TeleportOverlayHandler.class);
             registerIfModsPresent(new String[]{"nuclearcraft"}, ContainerNBTRadHandler.Tooltip.class);
+            MinecraftForge.EVENT_BUS.register(WildfireHandler.Tooltip.class);
         }
 
         PacketHandler.init();

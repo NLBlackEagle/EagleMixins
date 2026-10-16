@@ -14,6 +14,7 @@ public class ModPotions {
         event.getRegistry().register(eaglemixins.potion.PotionRadiationFatigue.INSTANCE);
         event.getRegistry().register(eaglemixins.potion.PotionRadiationWeakness.INSTANCE);
         event.getRegistry().register(eaglemixins.potion.PotionTeleportationSickness.INSTANCE);
+        event.getRegistry().register(eaglemixins.potion.PotionWildfire.INSTANCE);
     }
 }
 

@@ -2,6 +2,7 @@ package eaglemixins.compat;
 
 import com.oblivioussp.spartanweaponry.entity.projectile.EntityBolt;
 import com.oblivioussp.spartanweaponry.entity.projectile.EntityBoltTipped;
+import com.oblivioussp.spartanweaponry.entity.projectile.EntityThrownWeapon;
 import com.oblivioussp.spartanweaponry.init.ItemRegistrySW;
 import com.oblivioussp.spartanweaponry.init.SoundRegistry;
 import com.oblivioussp.spartanweaponry.item.*;
@@ -9,6 +10,7 @@ import com.oblivioussp.spartanweaponry.util.NBTHelper;
 import com.oblivioussp.spartanweaponry.util.Quaternion;
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.mixin.spartanweaponry.IItemCrossbow_Invoker;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.item.Item;
@@ -127,5 +129,10 @@ public abstract class SpartanWeaponryUtil {
 
     public static SoundEvent getCrossbowFireSound() {
         return SoundRegistry.CROSSBOW_FIRE;
+    }
+
+    public static ItemStack getThrownWeaponStack(Entity entity) {
+        if (entity instanceof EntityThrownWeapon) return ((EntityThrownWeapon) entity).getWeaponStack();
+        return ItemStack.EMPTY;
     }
 }

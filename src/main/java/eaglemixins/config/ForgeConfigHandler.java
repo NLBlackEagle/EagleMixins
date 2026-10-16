@@ -104,6 +104,11 @@ public class ForgeConfigHandler {
 	@Order(14)
 	public static NetherThoriumConfig netherthorium = new NetherThoriumConfig();
 
+	@Config.Comment("Weapons that inflict the Wildfire effect")
+	@Config.Name("Wildfire")
+	@Order(15)
+	public static WildfireConfig wildfire = new WildfireConfig();
+
 	public static class ServerConfig {
 		@Config.Comment("Add Blocks you can drink from, will be treated like water blocks")
 		@Config.Name("Additional Water Blocks:")
