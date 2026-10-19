@@ -186,6 +186,15 @@ public class ForgeConfigHandler {
 		@Config.RequiresMcRestart
 		public boolean asmodeusCraftingItems = true;
 
+		@Config.Comment({
+				"OTG preset used for the overworld when a new world is created, regardless of the world's folder name (level-name).",
+				"This lets hosts name their world anything while still generating this preset.",
+				"Leave empty to keep OTG's default behavior (preset name = world folder name).",
+				"Only affects newly created worlds, existing worlds keep the preset saved in their OpenTerrainGenerator/Dimensions config."
+		})
+		@Config.Name("OTG Overworld Preset")
+		public String otgOverworldPreset = "DregoraRL";
+
 		@Config.Name("Fix Biomes O Plenty Door Duplication")
 		@Config.Comment("Prevents Biomes O Plenty doors from dropping twice when broken")
 		public boolean fixBOPDoorDupe = true;

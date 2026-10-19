@@ -23,6 +23,9 @@ public class EagleMixinsPlugin implements IFMLLoadingPlugin {
 		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.iceandfire.pixievillageblacklist.json", () -> Loader.isModLoaded("iceandfire"));
 		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.lycanitesmobs.disablegeneration.json", () -> Loader.isModLoaded("lycanitesmobs"));
 
+		// Decouples the OTG overworld preset from level-name, controlled by the "OTG Overworld Preset" server option
+		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.otg.overworldpreset.json", () -> Loader.isModLoaded("openterraingenerator"));
+
 		//Debug stuff
 		FermiumRegistryAPI.enqueueMixin(false, "mixins.eaglemixins.debug.vanilla.json", EagleMixins.debugEnabled);
 		FermiumRegistryAPI.enqueueMixin(true, "mixins.eaglemixins.debug.otg.json", () -> EagleMixins.debugEnabled && Loader.isModLoaded("openterraingenerator"));
