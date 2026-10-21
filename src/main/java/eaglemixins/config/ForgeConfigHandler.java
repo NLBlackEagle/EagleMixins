@@ -109,6 +109,11 @@ public class ForgeConfigHandler {
 	@Order(15)
 	public static WildfireConfig wildfire = new WildfireConfig();
 
+	@Config.Comment("Biome search used by /otg tp <biome> [radius]")
+	@Config.Name("OTG Biome Search")
+	@Order(16)
+	public static OTGBiomeSearchConfig otgbiomesearch = new OTGBiomeSearchConfig();
+
 	public static class ServerConfig {
 		@Config.Comment("Add Blocks you can drink from, will be treated like water blocks")
 		@Config.Name("Additional Water Blocks:")

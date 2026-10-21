@@ -91,6 +91,7 @@ public class EagleMixins {
         if(ForgeConfigHandler.irradiated.enabled) registerIfModsPresent(new String[]{"nuclearcraft"}, IrradiatedParasitesHandler.class);
         registerIfModsPresent(new String[]{"cookingforblockheads"}, TileCounterHandler.class);
         if(ForgeConfigHandler.teleporter.enableTeleporters) MinecraftForge.EVENT_BUS.register(new TeleportEventHandler());
+        if(ForgeConfigHandler.mixintoggles.otgBiomeSearch) registerIfModsPresent(new String[]{"openterraingenerator"}, OTGBiomeSearchHandler.class);
 
         if(debugEnabled) {
             registerIfModsPresent(new String[]{"openterraingenerator"}, BO3_ChunkGen_Debug.class);

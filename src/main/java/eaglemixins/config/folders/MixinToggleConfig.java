@@ -150,9 +150,9 @@ public class MixinToggleConfig {
     @Config.Comment("Change NuclearCraft chunk radiation to be variable over subchunks (16 blocks high slices of a chunk).")
     @Config.Name("SubChunk Radiation (NuclearCraft)")
     @Config.RequiresMcRestart
-    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.nuclearcraft.subchunkradiation.json", defaultValue = true)
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.nuclearcraft.subchunkradiation.json", defaultValue = false)
     @MixinConfig.CompatHandling(modid = "nuclearcraft", desired = true, reason = "Requires mod to properly function")
-    public boolean subchunkRadiation = true;
+    public boolean subchunkRadiation = false;
 
     @Config.Comment("Will multiply all rads by 1000 to make them better readable. Also will stop displaying negligible radiation in item tooltips.")
     @Config.Name("Change Rads Scale (NuclearCraft)")
@@ -394,6 +394,16 @@ public class MixinToggleConfig {
     @MixinConfig.CompatHandling(modid = "openterraingenerator", desired = true, reason = "Requires mod to properly function")
     @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.otg.tweakstronghold.json", defaultValue = true)
     public boolean limitOTGStrongholdGen = true;
+
+    @Config.Comment({
+            "Replaces the biome search of /otg tp with a nearest-first search spread over multiple ticks and adds a radius argument: /otg tp <biome> [radius] [-p player].",
+            "Avoids OTG's search freezing the server and permanently keeping hundreds of MB of biome arrays in memory. Radius limits are under \"OTG Biome Search\"."
+    })
+    @Config.Name("Better Biome Teleport Search (OTG)")
+    @Config.RequiresMcRestart
+    @MixinConfig.CompatHandling(modid = "openterraingenerator", desired = true, reason = "Requires mod to properly function")
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.otg.biomesearch.json", defaultValue = true)
+    public boolean otgBiomeSearch = true;
 
     @Config.Comment("Stops blocks affected by gravity from updating when they are generated during worldgen")
     @Config.Name("Blocks do not fall during world gen (Vanilla)")
