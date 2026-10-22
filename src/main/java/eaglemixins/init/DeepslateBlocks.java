@@ -13,7 +13,6 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemSlab;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -23,6 +22,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +30,7 @@ import java.util.List;
 
 /**
  * Deepslate and all its variants, ores, stairs and slabs (previously ContentTweaker/ContentCreator blocks in RLCraft Dregora).
+ * Registration is called from the registry events in ModBlocks and ModItems, only the legacy remapping subscribes here.
  * Crafting recipes are json in assets/eaglemixins/recipes.
  */
 @Mod.EventBusSubscriber
@@ -40,68 +41,66 @@ public final class DeepslateBlocks {
     private static final List<BlockDeepslateSlab.HalfSlab> SLABS = new ArrayList<>();
     private static final List<BlockDeepslateSlab.DoubleSlab> DOUBLE_SLABS = new ArrayList<>();
 
-    @SubscribeEvent
-    public static void registerBlocks(RegistryEvent.Register<Block> e) {
-        Block deepslate = register(e, new BlockDeepslate(3.0F), "deepslate");
-        Block cobbled = register(e, new BlockDeepslate(3.5F), "cobbled_deepslate");
-        Block polished = register(e, new BlockDeepslate(3.5F), "polished_deepslate");
-        Block bricks = register(e, new BlockDeepslate(3.5F), "deepslate_bricks");
-        Block tiles = register(e, new BlockDeepslate(3.5F), "deepslate_tiles");
-        register(e, new BlockDeepslate(3.5F), "cracked_deepslate_bricks");
-        register(e, new BlockDeepslate(3.5F), "cracked_deepslate_tiles");
-        register(e, new BlockDeepslate(3.5F), "chiseled_deepslate");
+    public static void registerBlocks(IForgeRegistry<Block> registry) {
+        Block deepslate = register(registry, new BlockDeepslate(3.0F), "deepslate");
+        Block cobbled = register(registry, new BlockDeepslate(3.5F), "cobbled_deepslate");
+        Block polished = register(registry, new BlockDeepslate(3.5F), "polished_deepslate");
+        Block bricks = register(registry, new BlockDeepslate(3.5F), "deepslate_bricks");
+        Block tiles = register(registry, new BlockDeepslate(3.5F), "deepslate_tiles");
+        register(registry, new BlockDeepslate(3.5F), "cracked_deepslate_bricks");
+        register(registry, new BlockDeepslate(3.5F), "cracked_deepslate_tiles");
+        register(registry, new BlockDeepslate(3.5F), "chiseled_deepslate");
 
-        registerStairsAndSlab(e, deepslate, "deepslate_stairs", "deepslate_slab");
-        registerStairsAndSlab(e, cobbled, "cobbled_deepslate_stairs", "cobbled_deepslate_slab");
-        registerStairsAndSlab(e, polished, "polished_deepslate_stairs", "polished_deepslate_slab");
-        registerStairsAndSlab(e, bricks, "deepslate_brick_stairs", "deepslate_brick_slab");
-        registerStairsAndSlab(e, tiles, "deepslate_tile_stairs", "deepslate_tile_slab");
+        registerStairsAndSlab(registry, deepslate, "deepslate_stairs", "deepslate_slab");
+        registerStairsAndSlab(registry, cobbled, "cobbled_deepslate_stairs", "cobbled_deepslate_slab");
+        registerStairsAndSlab(registry, polished, "polished_deepslate_stairs", "polished_deepslate_slab");
+        registerStairsAndSlab(registry, bricks, "deepslate_brick_stairs", "deepslate_brick_slab");
+        registerStairsAndSlab(registry, tiles, "deepslate_tile_stairs", "deepslate_tile_slab");
 
         // Ores with a drop source drop what that ore drops, the others drop themselves
-        register(e, new BlockDeepslateOre(0, "minecraft:coal_ore"), "deepslate_coal_ore");
-        register(e, new BlockDeepslateOre(1, null), "deepslate_iron_ore");
-        register(e, new BlockDeepslateOre(2, null), "deepslate_gold_ore");
-        register(e, new BlockDeepslateOre(2, "minecraft:redstone_ore"), "deepslate_redstone_ore");
-        register(e, new BlockDeepslateOre(1, "minecraft:lapis_ore"), "deepslate_lapis_ore");
-        register(e, new BlockDeepslateOre(2, "minecraft:emerald_ore"), "deepslate_emerald_ore");
-        register(e, new BlockDeepslateOre(2, "minecraft:diamond_ore"), "deepslate_diamond_ore");
-        register(e, new BlockDeepslateOre(2, null), "deepslate_silver_ore");
-        register(e, new BlockDeepslateOre(1, null), "deepslate_copper_ore");
-        register(e, new BlockDeepslateOre(1, null), "deepslate_lead_ore");
-        register(e, new BlockDeepslateOre(2, null), "deepslate_thorium_ore");
-        register(e, new BlockDeepslateOre(2, null), "deepslate_uranium_ore");
-        register(e, new BlockDeepslateOre(2, null), "deepslate_boron_ore");
-        register(e, new BlockDeepslateOre(2, null), "deepslate_lithium_ore");
-        register(e, new BlockDeepslateOre(1, "scalinghealth:crystalore"), "deepslate_crystal_ore");
+        register(registry, new BlockDeepslateOre(0, "minecraft:coal_ore"), "deepslate_coal_ore");
+        register(registry, new BlockDeepslateOre(1, null), "deepslate_iron_ore");
+        register(registry, new BlockDeepslateOre(2, null), "deepslate_gold_ore");
+        register(registry, new BlockDeepslateOre(2, "minecraft:redstone_ore"), "deepslate_redstone_ore");
+        register(registry, new BlockDeepslateOre(1, "minecraft:lapis_ore"), "deepslate_lapis_ore");
+        register(registry, new BlockDeepslateOre(2, "minecraft:emerald_ore"), "deepslate_emerald_ore");
+        register(registry, new BlockDeepslateOre(2, "minecraft:diamond_ore"), "deepslate_diamond_ore");
+        register(registry, new BlockDeepslateOre(2, null), "deepslate_silver_ore");
+        register(registry, new BlockDeepslateOre(1, null), "deepslate_copper_ore");
+        register(registry, new BlockDeepslateOre(1, null), "deepslate_lead_ore");
+        register(registry, new BlockDeepslateOre(2, null), "deepslate_thorium_ore");
+        register(registry, new BlockDeepslateOre(2, null), "deepslate_uranium_ore");
+        register(registry, new BlockDeepslateOre(2, null), "deepslate_boron_ore");
+        register(registry, new BlockDeepslateOre(2, null), "deepslate_lithium_ore");
+        register(registry, new BlockDeepslateOre(1, "scalinghealth:crystalore"), "deepslate_crystal_ore");
     }
 
-    private static Block register(RegistryEvent.Register<Block> e, Block block, String name) {
+    private static Block register(IForgeRegistry<Block> registry, Block block, String name) {
         block.setRegistryName("eaglemixins", name).setTranslationKey("eaglemixins." + name);
-        e.getRegistry().register(block);
+        registry.register(block);
         SIMPLE_BLOCKS.add(block);
         return block;
     }
 
-    private static void registerStairsAndSlab(RegistryEvent.Register<Block> e, Block base, String stairsName, String slabName) {
-        register(e, new BlockDeepslateStairs(base), stairsName);
+    private static void registerStairsAndSlab(IForgeRegistry<Block> registry, Block base, String stairsName, String slabName) {
+        register(registry, new BlockDeepslateStairs(base), stairsName);
 
         BlockDeepslateSlab.HalfSlab slab = new BlockDeepslateSlab.HalfSlab();
         slab.setRegistryName("eaglemixins", slabName).setTranslationKey("eaglemixins." + slabName);
         BlockDeepslateSlab.DoubleSlab doubleSlab = new BlockDeepslateSlab.DoubleSlab(slab);
         doubleSlab.setRegistryName("eaglemixins", slabName + "_double").setTranslationKey("eaglemixins." + slabName);
-        e.getRegistry().registerAll(slab, doubleSlab);
+        registry.registerAll(slab, doubleSlab);
         SLABS.add(slab);
         DOUBLE_SLABS.add(doubleSlab);
     }
 
-    @SubscribeEvent
-    public static void registerItems(RegistryEvent.Register<Item> e) {
+    public static void registerItems(IForgeRegistry<Item> registry) {
         for (Block block : SIMPLE_BLOCKS) {
-            e.getRegistry().register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
+            registry.register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
         }
         for (int i = 0; i < SLABS.size(); i++) {
             BlockDeepslateSlab.HalfSlab slab = SLABS.get(i);
-            e.getRegistry().register(new ItemSlab(slab, slab, DOUBLE_SLABS.get(i)).setRegistryName(slab.getRegistryName()));
+            registry.register(new ItemSlab(slab, slab, DOUBLE_SLABS.get(i)).setRegistryName(slab.getRegistryName()));
         }
     }
 
@@ -190,8 +189,7 @@ public final class DeepslateBlocks {
     }
 
     @SideOnly(Side.CLIENT)
-    @SubscribeEvent
-    public static void registerModels(ModelRegistryEvent e) {
+    public static void registerModels() {
         for (Block block : SIMPLE_BLOCKS) setItemModel(block);
         for (Block block : SLABS) setItemModel(block);
     }
