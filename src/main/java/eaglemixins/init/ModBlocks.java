@@ -41,6 +41,7 @@ public final class ModBlocks {
     public static BlockDeepslateSlab.HalfSlab POLISHED_DEEPSLATE_SLAB;
     public static BlockDeepslateSlab.HalfSlab DEEPSLATE_BRICK_SLAB;
     public static BlockDeepslateSlab.HalfSlab DEEPSLATE_TILE_SLAB;
+
     public static BlockDeepslateSlab.DoubleSlab DEEPSLATE_SLAB_DOUBLE;
     public static BlockDeepslateSlab.DoubleSlab COBBLED_DEEPSLATE_SLAB_DOUBLE;
     public static BlockDeepslateSlab.DoubleSlab POLISHED_DEEPSLATE_SLAB_DOUBLE;
@@ -83,7 +84,7 @@ public final class ModBlocks {
         if (ModLoadedUtil.nuclearcraft.isLoaded()) {
             OreDictionary.registerOre("oreThorium", NETHER_THORIUM_ORE);
             Item ncIngot = ForgeRegistries.ITEMS.getValue(new ResourceLocation("nuclearcraft", "ingot"));
-            if (ncIngot != null) GameRegistry.addSmelting(NETHER_THORIUM_ORE, new ItemStack(ncIngot, 1, 3), 0.1F); // meta 3 = thorium
+            if (ncIngot != null) GameRegistry.addSmelting(NETHER_THORIUM_ORE, new ItemStack(ncIngot, 1, 3), 0.5F);
 
             GameRegistry.registerWorldGenerator(new NetherThoriumGenerator(), 0);
         }

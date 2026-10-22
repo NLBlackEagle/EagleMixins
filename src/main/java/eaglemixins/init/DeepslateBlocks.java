@@ -176,20 +176,20 @@ public final class DeepslateBlocks {
         GameRegistry.addSmelting(ModBlocks.DEEPSLATE_TILES, new ItemStack(ModBlocks.CRACKED_DEEPSLATE_TILES), 0.0F);
 
         smelt(ModBlocks.DEEPSLATE_COAL_ORE, "minecraft:coal", 0, 0.1F);
-        smelt(ModBlocks.DEEPSLATE_IRON_ORE, "minecraft:iron_ingot", 0, 0.1F);
-        smelt(ModBlocks.DEEPSLATE_GOLD_ORE, "minecraft:gold_ingot", 0, 0.1F);
-        smelt(ModBlocks.DEEPSLATE_REDSTONE_ORE, "minecraft:redstone", 0, 0.1F);
-        smelt(ModBlocks.DEEPSLATE_LAPIS_ORE, "minecraft:dye", 4, 0.1F);
-        smelt(ModBlocks.DEEPSLATE_EMERALD_ORE, "minecraft:emerald", 0, 0.1F);
-        smelt(ModBlocks.DEEPSLATE_DIAMOND_ORE, "minecraft:diamond", 0, 0.1F);
-        smelt(ModBlocks.DEEPSLATE_SILVER_ORE, "iceandfire:silver_ingot", 0, 0.1F);
-        smelt(ModBlocks.DEEPSLATE_COPPER_ORE, "iceandfire:copper_ingot", 0, 0.1F);
-        smelt(ModBlocks.DEEPSLATE_LEAD_ORE, "nuclearcraft:ingot", 2, 0.1F);
-        smelt(ModBlocks.DEEPSLATE_THORIUM_ORE, "nuclearcraft:ingot", 3, 0.1F);
-        smelt(ModBlocks.DEEPSLATE_URANIUM_ORE, "nuclearcraft:ingot", 4, 0.1F);
-        smelt(ModBlocks.DEEPSLATE_BORON_ORE, "nuclearcraft:ingot", 5, 0.1F);
-        smelt(ModBlocks.DEEPSLATE_LITHIUM_ORE, "nuclearcraft:ingot", 6, 0.1F);
-        smelt(ModBlocks.DEEPSLATE_CRYSTAL_ORE, "scalinghealth:crystalshard", 0, 0.1F);
+        smelt(ModBlocks.DEEPSLATE_IRON_ORE, "minecraft:iron_ingot", 0, 0.7F);
+        smelt(ModBlocks.DEEPSLATE_GOLD_ORE, "minecraft:gold_ingot", 0, 1.0F);
+        smelt(ModBlocks.DEEPSLATE_REDSTONE_ORE, "minecraft:redstone", 0, 0.7F);
+        smelt(ModBlocks.DEEPSLATE_LAPIS_ORE, "minecraft:dye", 4, 0.2F);
+        smelt(ModBlocks.DEEPSLATE_EMERALD_ORE, "minecraft:emerald", 0, 1.0F);
+        smelt(ModBlocks.DEEPSLATE_DIAMOND_ORE, "minecraft:diamond", 0, 1.0F);
+        smelt(ModBlocks.DEEPSLATE_SILVER_ORE, "iceandfire:silver_ingot", 0, 1.0F);
+        smelt(ModBlocks.DEEPSLATE_COPPER_ORE, "iceandfire:copper_ingot", 0, 1.0F);
+        smelt(ModBlocks.DEEPSLATE_LEAD_ORE, "nuclearcraft:ingot", 2, 0.5F);
+        smelt(ModBlocks.DEEPSLATE_THORIUM_ORE, "nuclearcraft:ingot", 3, 0.5F);
+        smelt(ModBlocks.DEEPSLATE_URANIUM_ORE, "nuclearcraft:ingot", 4, 0.5F);
+        smelt(ModBlocks.DEEPSLATE_BORON_ORE, "nuclearcraft:ingot", 5, 0.5F);
+        smelt(ModBlocks.DEEPSLATE_LITHIUM_ORE, "nuclearcraft:ingot", 6, 0.5F);
+        smelt(ModBlocks.DEEPSLATE_CRYSTAL_ORE, "scalinghealth:crystalshard", 0, 1.0F);
     }
 
     // Output from another mod, skipped if that mod isn't loaded
