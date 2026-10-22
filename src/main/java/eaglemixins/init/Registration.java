@@ -1,6 +1,7 @@
 package eaglemixins.init;
 
 import eaglemixins.blocks.BlockNetherThoriumOre;
+import eaglemixins.compat.ModLoadedUtil;
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.items.ItemLore;
 import eaglemixins.world.NetherThoriumGenerator;
@@ -22,7 +23,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@Mod.EventBusSubscriber(modid = "eaglemixins")
+@Mod.EventBusSubscriber
 public final class Registration {
 
     // Replacements for the Brutal Coins in Asmodeus' summoning recipe (RLCraft Dregora)
@@ -30,7 +31,8 @@ public final class Registration {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> e) {
-        e.getRegistry().register(
+        // Nether thorium ore only smelts into NuclearCraft thorium, so it only exists with NuclearCraft
+        if (ModLoadedUtil.nuclearcraft.isLoaded()) e.getRegistry().register(
                 new BlockNetherThoriumOre()
                         .setRegistryName("eaglemixins", "nether_thorium_ore")
                         .setTranslationKey("eaglemixins.nether_thorium_ore")
@@ -39,9 +41,11 @@ public final class Registration {
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> e) {
-        Block thoriumOre = ForgeRegistries.BLOCKS.getValue(new ResourceLocation("eaglemixins", "nether_thorium_ore"));
-        if (thoriumOre == null) throw new IllegalStateException("Block not registered: eaglemixins:nether_thorium_ore");
-        e.getRegistry().register(new ItemBlock(thoriumOre).setRegistryName(thoriumOre.getRegistryName()));
+        if (ModLoadedUtil.nuclearcraft.isLoaded()) {
+            Block thoriumOre = ForgeRegistries.BLOCKS.getValue(new ResourceLocation("eaglemixins", "nether_thorium_ore"));
+            if (thoriumOre == null) throw new IllegalStateException("Block not registered: eaglemixins:nether_thorium_ore");
+            e.getRegistry().register(new ItemBlock(thoriumOre).setRegistryName(thoriumOre.getRegistryName()));
+        }
 
         e.getRegistry().register(
                 new ItemLore("tainted_tear")
@@ -64,17 +68,19 @@ public final class Registration {
     public static void init() {
         DeepslateBlocks.init();
 
-        OreDictionary.registerOre("oreThorium", ModBlocks.NETHER_THORIUM_ORE);
-        Item ncIngot = ForgeRegistries.ITEMS.getValue(new ResourceLocation("nuclearcraft", "ingot"));
-        if (ncIngot != null) GameRegistry.addSmelting(ModBlocks.NETHER_THORIUM_ORE, new ItemStack(ncIngot, 1, 3), 0.1F); // meta 3 = thorium
+        if (ModLoadedUtil.nuclearcraft.isLoaded()) {
+            OreDictionary.registerOre("oreThorium", ModBlocks.NETHER_THORIUM_ORE);
+            Item ncIngot = ForgeRegistries.ITEMS.getValue(new ResourceLocation("nuclearcraft", "ingot"));
+            if (ncIngot != null) GameRegistry.addSmelting(ModBlocks.NETHER_THORIUM_ORE, new ItemStack(ncIngot, 1, 3), 0.1F); // meta 3 = thorium
 
-        GameRegistry.registerWorldGenerator(new NetherThoriumGenerator(), 0);
+            GameRegistry.registerWorldGenerator(new NetherThoriumGenerator(), 0);
+        }
     }
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent e) {
-        ModelLoader.setCustomModelResourceLocation(
+        if (ModLoadedUtil.nuclearcraft.isLoaded()) ModelLoader.setCustomModelResourceLocation(
                 Item.getItemFromBlock(ModBlocks.NETHER_THORIUM_ORE), 0,
                 new ModelResourceLocation("eaglemixins:nether_thorium_ore", "inventory")
         );

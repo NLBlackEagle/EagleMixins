@@ -99,7 +99,7 @@ public class ForgeConfigHandler {
 	@Order(13)
 	public static AngryMobConfig angrymobs = new AngryMobConfig();
 
-	@Config.Comment("Thorium ore generation in the nether")
+	@Config.Comment("Thorium ore generation in the nether. Requires NuclearCraft")
 	@Config.Name("Nether Thorium Ore")
 	@Order(14)
 	public static NetherThoriumConfig netherthorium = new NetherThoriumConfig();

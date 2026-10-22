@@ -4,6 +4,7 @@ import net.minecraftforge.fml.common.Loader;
 
 public class ModLoadedUtil {
     public static final LoadedContainer forgottenitems = new LoadedContainer("forgottenitems");
+    public static final LoadedContainer nuclearcraft = new LoadedContainer("nuclearcraft");
     public static final LoadedContainer rlcombat = new LoadedContainer("bettercombatmod");
     public static final LoadedContainer spartanweaponry = new LoadedContainer("spartanweaponry");
 
