@@ -42,12 +42,16 @@ public abstract class BlockDeepslateSlab extends BlockSlab {
     @Override
     public IBlockState getStateFromMeta(int meta) {
         IBlockState state = getDefaultState();
-        if (!isDouble()) state = state.withProperty(HALF, (meta & 8) == 0 ? EnumBlockHalf.BOTTOM : EnumBlockHalf.TOP);
+        // old ContentCreator slabs had saved the top half as meta 1, so we have to account for that
+        // now the 8 bit and the 1 bit make it TOP, unset its BOTTOM. rest of the bits keeps doing nothing
+        // can also be removed a few versions down, but also doesnt matter if it stays
+        if (!isDouble()) state = state.withProperty(HALF, (meta & 9) == 0 ? EnumBlockHalf.BOTTOM : EnumBlockHalf.TOP);
         return state;
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
+        // for writing we only use the 8 bit
         return !isDouble() && state.getValue(HALF) == EnumBlockHalf.TOP ? 8 : 0;
     }
 

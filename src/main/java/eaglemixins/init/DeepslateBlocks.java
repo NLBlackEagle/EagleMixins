@@ -6,6 +6,7 @@ import eaglemixins.blocks.BlockDeepslateSlab;
 import eaglemixins.blocks.BlockDeepslateStairs;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -24,13 +25,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * Deepslate and all its variants, ores, stairs and slabs (previously ContentTweaker/ContentCreator blocks in RLCraft Dregora).
  * Crafting recipes are json in assets/eaglemixins/recipes.
  */
-@Mod.EventBusSubscriber(modid = "eaglemixins")
+@Mod.EventBusSubscriber
 public final class DeepslateBlocks {
 
     // Blocks that get a plain ItemBlock
@@ -101,6 +103,35 @@ public final class DeepslateBlocks {
             BlockDeepslateSlab.HalfSlab slab = SLABS.get(i);
             e.getRegistry().register(new ItemSlab(slab, slab, DOUBLE_SLABS.get(i)).setRegistryName(slab.getRegistryName()));
         }
+    }
+
+    // Namespaces of the old ContentTweaker/ContentCreator deepslate in RLCraft Dregora, same paths as here
+    private static final List<String> LEGACY_NAMESPACES = Arrays.asList("contenttweaker", "contentcreator");
+
+    // Converts deepslate blocks and items in old worlds once the ContentTweaker/ContentCreator scripts no longer register them
+    @SubscribeEvent
+    public static void remapLegacyBlocks(RegistryEvent.MissingMappings<Block> e) {
+        for (RegistryEvent.MissingMappings.Mapping<Block> mapping : e.getAllMappings()) {
+            ResourceLocation target = getLegacyTarget(mapping.key);
+            if (target == null) continue;
+            Block block = ForgeRegistries.BLOCKS.getValue(target);
+            if (block != null && block != Blocks.AIR) mapping.remap(block);
+        }
+    }
+
+    @SubscribeEvent
+    public static void remapLegacyItems(RegistryEvent.MissingMappings<Item> e) {
+        for (RegistryEvent.MissingMappings.Mapping<Item> mapping : e.getAllMappings()) {
+            ResourceLocation target = getLegacyTarget(mapping.key);
+            if (target == null) continue;
+            Item item = ForgeRegistries.ITEMS.getValue(target);
+            if (item != null && item != Items.AIR) mapping.remap(item);
+        }
+    }
+
+    private static ResourceLocation getLegacyTarget(ResourceLocation key) {
+        if (!LEGACY_NAMESPACES.contains(key.getNamespace()) || !key.getPath().contains("deepslate")) return null;
+        return new ResourceLocation("eaglemixins", key.getPath());
     }
 
     /** Ore dictionary and smelting. Called from init, after all mods registered their items. */
