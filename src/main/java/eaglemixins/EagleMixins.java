@@ -10,8 +10,8 @@ import eaglemixins.handlers.*;
 import eaglemixins.client.render.RenderPlayerBoss;
 import eaglemixins.entity.EntityPlayerBoss;
 import eaglemixins.init.ModEntities;
+import eaglemixins.init.ModBlocks;
 import eaglemixins.init.ModStats;
-import eaglemixins.init.Registration;
 import eaglemixins.network.PacketHandler;
 import eaglemixins.teleport.entity.EntitySpawnListener;
 import net.minecraftforge.common.MinecraftForge;
@@ -121,7 +121,7 @@ public class EagleMixins {
         if(Loader.isModLoaded("enhancedvisuals") && Loader.isModLoaded("nuclearcraft")) EnhancedVisualsHandler.init();
         if(ForgeConfigHandler.teleporter.enableTeleporters) EntitySpawnListener.init();
         ModStats.init();
-        Registration.init();
+        ModBlocks.init();
 
         if (event.getSide().isClient()) {
             ForgeConfigHandler.loadParticleRulesFromConfig();
