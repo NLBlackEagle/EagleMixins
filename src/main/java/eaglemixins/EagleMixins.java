@@ -7,11 +7,15 @@ import eaglemixins.compat.ModLoadedUtil;
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.debug.BO3_ChunkGen_Debug;
 import eaglemixins.handlers.*;
+import eaglemixins.client.render.RenderPlayerBoss;
+import eaglemixins.entity.EntityPlayerBoss;
+import eaglemixins.init.ModEntities;
 import eaglemixins.init.ModStats;
 import eaglemixins.init.Registration;
 import eaglemixins.network.PacketHandler;
 import eaglemixins.teleport.entity.EntitySpawnListener;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -49,6 +53,9 @@ public class EagleMixins {
 
         if(event.getSide() == Side.CLIENT) registerIfModsPresent(new String[]{"nuclearcraft"}, ParticlesClientRunner.class);
 
+        ModEntities.init();
+        if(event.getSide() == Side.CLIENT) RenderingRegistry.registerEntityRenderingHandler(EntityPlayerBoss.class, RenderPlayerBoss::new);
+
         MinecraftForge.EVENT_BUS.register(ProjectileImmunityHandler.class);
         registerIfModsPresent(new String[]{"firstaid"}, FirstAidRadiationHandler.class);
         registerIfModsPresent(new String[]{"nuclearcraft"}, ContainerNBTRadHandler.class);
@@ -68,6 +75,8 @@ public class EagleMixins {
         MinecraftForge.EVENT_BUS.register(DamageFalloffHandler.class);
         MinecraftForge.EVENT_BUS.register(DismountHandler.class);
         MinecraftForge.EVENT_BUS.register(WildfireHandler.class);
+        MinecraftForge.EVENT_BUS.register(LockVanishHandler.class);
+        MinecraftForge.EVENT_BUS.register(PlayerBossDamageHandler.class);
         MinecraftForge.EVENT_BUS.register(DispelEntityHandler.class);
         registerIfModsPresent(new String[]{"srparasites", "playerbosses"}, EntityRenameCancelHandler.class);
         MinecraftForge.EVENT_BUS.register(FallDamageHandler.class);

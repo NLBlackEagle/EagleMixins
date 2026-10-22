@@ -86,3 +86,15 @@ item.eaglemixins.ghostly_gills.name=Ghostly Gills
 eaglemixins.ghostly_gills.tooltip=§eGills from a Void Ray, found in the end
 
 attribute.name.eaglemixins.radiationResistance=Rads/t Resistance
+
+tile.eaglemixins.locked_block.name=Locked Block
+tile.eaglemixins.keyslave.name=Keyslave
+item.eaglemixins.lock_key.name=Key
+eaglemixins.lock.key_name=%s Key
+eaglemixins.lock.lock_name=%s Lock
+eaglemixins.lock.locked=It's locked. There must be a key for this somewhere.
+eaglemixins.lock.wrong_key=This key doesn't fit this lock.
+eaglemixins.lock.opened=As you insert the key and turn it, you hear a mechanism activating within the block.
+eaglemixins.lock.bound=Lock bound to LockId "%s"
+
+entity.eaglemixins.player_boss.name=Player Boss

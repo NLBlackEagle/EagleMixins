@@ -114,6 +114,16 @@ public class ForgeConfigHandler {
 	@Order(16)
 	public static OTGBiomeSearchConfig otgbiomesearch = new OTGBiomeSearchConfig();
 
+	@Config.Comment("Obsidian lock blocks that vanish when opened with their matching one-time key")
+	@Config.Name("Locked Blocks")
+	@Order(17)
+	public static LockedBlockConfig lockedblocks = new LockedBlockConfig();
+
+	@Config.Comment("Bosses that look like players, with skeleton AI, flight and optional dragon wings")
+	@Config.Name("Player Bosses")
+	@Order(18)
+	public static PlayerBossConfig playerbosses = new PlayerBossConfig();
+
 	public static class ServerConfig {
 		@Config.Comment("Add Blocks you can drink from, will be treated like water blocks")
 		@Config.Name("Additional Water Blocks:")
@@ -312,6 +322,7 @@ public class ForgeConfigHandler {
 				teleporter.reset();
 				srparasites.reset();
 				nuclear.reset();
+				lockedblocks.reset();
 				PotionLevelCaps.refreshConfig();
 				loadParticleRulesFromConfig();
 			}

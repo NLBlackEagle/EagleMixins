@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "normal": { "model": "eaglemixins:locked_block" },
+    "inventory": { "model": "eaglemixins:locked_block" }
+  }
+}
