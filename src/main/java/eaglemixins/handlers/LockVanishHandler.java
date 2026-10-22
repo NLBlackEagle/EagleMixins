@@ -15,7 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Makes the blocks of an opened lock vanish one by one, one every "Vanish Delay" ticks.
+ * Makes the blocks of an opened lock vanish one by one, one every vanish delay of its lock type
+ * (or the global "Vanish Delay"). Delays under a tick vanish several blocks per tick.
  * Pending blocks are not saved: if the server stops halfway, the rest of the door stays.
  */
 public class LockVanishHandler {
@@ -25,28 +26,31 @@ public class LockVanishHandler {
     private static class Sequence {
         final WorldServer world;
         final ArrayDeque<BlockPos> blocks;
-        int cooldown = 0;
+        final double delay; // ticks per block, fixed when the lock is opened
+        double progress = 0; // ticks waited towards the next block
 
-        Sequence(WorldServer world, List<BlockPos> blocks) {
+        Sequence(WorldServer world, List<BlockPos> blocks, double delay) {
             this.world = world;
             this.blocks = new ArrayDeque<>(blocks);
+            this.delay = delay;
         }
     }
 
     /** First block vanishes right away, the rest one per delay. */
-    public static void schedule(World world, List<BlockPos> blocks) {
+    public static void schedule(World world, List<BlockPos> blocks, String lockId) {
         if (!(world instanceof WorldServer) || blocks.isEmpty()) return;
-        Sequence sequence = new Sequence((WorldServer) world, blocks);
+        Sequence sequence = new Sequence((WorldServer) world, blocks, ForgeConfigHandler.lockedblocks.getVanishDelayTicks(lockId));
+        BlockLocked.vanish(sequence.world, sequence.blocks.poll());
         step(sequence);
         if (!sequence.blocks.isEmpty()) SEQUENCES.add(sequence);
     }
 
+    /** Vanishes every block whose delay has passed, all of them when the delay is 0. */
     private static void step(Sequence sequence) {
-        int delay = ForgeConfigHandler.lockedblocks.vanishDelay;
-        do {
+        while (!sequence.blocks.isEmpty() && (sequence.delay <= 0 || sequence.progress >= sequence.delay)) {
             BlockLocked.vanish(sequence.world, sequence.blocks.poll());
-        } while (delay == 0 && !sequence.blocks.isEmpty());
-        sequence.cooldown = delay;
+            sequence.progress -= sequence.delay;
+        }
     }
 
     @SubscribeEvent
@@ -56,7 +60,7 @@ public class LockVanishHandler {
         while (it.hasNext()) {
             Sequence sequence = it.next();
             if (sequence.world != event.world) continue;
-            if (--sequence.cooldown > 0) continue;
+            sequence.progress++;
             step(sequence);
             if (sequence.blocks.isEmpty()) it.remove();
         }

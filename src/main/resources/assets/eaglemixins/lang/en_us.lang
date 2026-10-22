@@ -3,6 +3,7 @@ eaglemixins.messages.potioncancel=You sense a mysterious force from below coming
 
 eaglemixins.messages.mountspooked=It seems something has your mount spooked, and will not cooperate.
 eaglemixins.messages.ominousfeeling=An ominous feeling overcomes you, as if you are being watched... Perhaps it's best to proceed on foot
+eaglemixins.messages.bedspooked=You lie down, but something out there is watching you. You will find no rest here.
 
 eaglemixins.conductivity.tooltip=Conductivity +%s
 eaglemixins.conductivity.0=Zzzrrt zzzap zskrt

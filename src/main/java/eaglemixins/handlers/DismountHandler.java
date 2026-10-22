@@ -13,6 +13,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -75,24 +76,31 @@ public class DismountHandler {
     private static final List<ResourceLocation> biomeNames = Arrays.asList(Ref.abyssalRiftReg, Ref.parasiteBiomeReg);
 
 
-    // Dismount if in Abyssal Rift/Parasite biome
+    // Deny mounting in Abyssal Rift/Parasite biome
     @SubscribeEvent
     public static void onEntityMount(EntityMountEvent event){
-        if (!ForgeConfigHandler.abyssal.abyssalMounts) {return;}
+        if (!ForgeConfigHandler.abyssal.denyMounting) {return;}
         if(!event.isMounting()) return;
         if(!(event.getEntityMounting() instanceof EntityPlayer)) return;
-        if(!(event.getEntityBeingMounted() instanceof EntityLivingBase)) return;
-        EntityLivingBase mount = (EntityLivingBase) event.getEntityBeingMounted();
-        ResourceLocation mountId = EntityList.getKey(mount);
-        if(mountId!=null)
-            for(String allowedMount : ForgeConfigHandler.abyssal.allowedAbyssalMounts)
-                if(allowedMount.equals(mountId.toString()))
-                    return;
-
         EntityPlayer player = (EntityPlayer) event.getEntityMounting();
+        //Rejoining while riding remounts the player, which is not denied
+        if(player.ticksExisted < 20) return;
+
         if (biomeNames.contains(player.world.getBiome(player.getPosition()).getRegistryName())){
             player.sendStatusMessage(new TextComponentTranslation("eaglemixins.messages.mountspooked"), true);
             event.setCanceled(true);
+        }
+    }
+
+    // Deny sleeping in Abyssal Rift/Parasite biome, which also stops the bed from setting the spawn point
+    @SubscribeEvent
+    public static void onSleepInBed(PlayerSleepInBedEvent event){
+        if (!ForgeConfigHandler.abyssal.denySleeping) {return;}
+        EntityPlayer player = event.getEntityPlayer();
+        if (player.world.isRemote) return;
+        if (biomeNames.contains(player.world.getBiome(event.getPos()).getRegistryName())){
+            player.sendStatusMessage(new TextComponentTranslation("eaglemixins.messages.bedspooked"), true);
+            event.setResult(EntityPlayer.SleepResult.OTHER_PROBLEM);
         }
     }
 
@@ -108,10 +116,9 @@ public class DismountHandler {
         if (worldTime % 40 != 0) return;
 
         if (!player.isRiding()) return;
-        if (!(player.getRidingEntity() instanceof EntityLivingBase)) return;
 
-        //Deadblood always dismounts
-        if(Ref.deadBloodReg.equals(world.getBlockState(player.getPosition()).getBlock().getRegistryName())) {
+        //Deadblood always dismounts from living mounts
+        if(player.getRidingEntity() instanceof EntityLivingBase && Ref.deadBloodReg.equals(world.getBlockState(player.getPosition()).getBlock().getRegistryName())) {
             event.player.removePassengers();
             event.player.dismountRidingEntity();
             return;

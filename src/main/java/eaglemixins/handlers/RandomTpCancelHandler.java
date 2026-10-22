@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemChorusFruit;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
@@ -55,8 +56,22 @@ public class RandomTpCancelHandler {
         if(!isTpMethodEnabled("wallDmg")) return;
         if (!Ref.entityIsInAbyssalRift(entity) && !Ref.entityIsInAbyssalGate(entity)) return;
 
-        applyTpCooldownDebuffs((EntityPlayer) entity);
+        // Only teleport after suffocating without a break for "Suffocation Teleport Delay" ticks
+        EntityPlayer player = (EntityPlayer) entity;
+        long now = player.world.getTotalWorldTime();
+        NBTTagCompound data = player.getEntityData();
+        // Suffocation hurts every 10 ticks, a longer gap means the player got out
+        if (!data.hasKey(suffocationStartKey) || now > data.getLong(suffocationLastKey) + 30L)
+            data.setLong(suffocationStartKey, now);
+        data.setLong(suffocationLastKey, now);
+
+        if (now - data.getLong(suffocationStartKey) < ForgeConfigHandler.abyssal.suffocationTpDelay) return;
+        data.setLong(suffocationStartKey, now);
+        applyTpDebuffs(player);
     }
+
+    private static final String suffocationStartKey = "SuffocationStart";
+    private static final String suffocationLastKey = "SuffocationLast";
 
     //when throwing enderpearl
     @SubscribeEvent
@@ -138,29 +153,32 @@ public class RandomTpCancelHandler {
             // Still on cooldown? bail
             if (now < last + 100L) return;
 
-            // Cooldown elapsed: update timestamp and continue to apply effects
-            player.getEntityData().setLong(tpCooldownKey, now);
-
-            if (tpCooldownPotions == null) {
-                tpCooldownPotions = new ArrayList<>();
-                for (String potionString : tpCooldownPotionStrings) {
-                    ResourceLocation location = new ResourceLocation(potionString);
-                    if (ForgeRegistries.POTIONS.containsKey(location))
-                        tpCooldownPotions.add(ForgeRegistries.POTIONS.getValue(location));
-                    else
-                        tpCooldownPotions.add(null);
-                }
-            }
-
-            // Potion Sickness
-            if (tpCooldownPotions.get(0) != null)
-                player.addPotionEffect(new PotionEffect(tpCooldownPotions.get(0), 200, 1));
-
-            // Surface Teleport
-            if (tpCooldownPotions.get(1) != null)
-                player.addPotionEffect(new PotionEffect(tpCooldownPotions.get(1), 1, 0));
-
+            applyTpDebuffs(player);
         }
+    }
+
+    /** Potion Sickness and Surface Teleport right away, and restarts the teleport cooldown */
+    public static void applyTpDebuffs(EntityPlayer player) {
+        player.getEntityData().setLong(tpCooldownKey, player.world.getTotalWorldTime());
+
+        if (tpCooldownPotions == null) {
+            tpCooldownPotions = new ArrayList<>();
+            for (String potionString : tpCooldownPotionStrings) {
+                ResourceLocation location = new ResourceLocation(potionString);
+                if (ForgeRegistries.POTIONS.containsKey(location))
+                    tpCooldownPotions.add(ForgeRegistries.POTIONS.getValue(location));
+                else
+                    tpCooldownPotions.add(null);
+            }
+        }
+
+        // Potion Sickness
+        if (tpCooldownPotions.get(0) != null)
+            player.addPotionEffect(new PotionEffect(tpCooldownPotions.get(0), 200, 1));
+
+        // Surface Teleport
+        if (tpCooldownPotions.get(1) != null)
+            player.addPotionEffect(new PotionEffect(tpCooldownPotions.get(1), 1, 0));
     }
 
     public static void refreshConfig(){

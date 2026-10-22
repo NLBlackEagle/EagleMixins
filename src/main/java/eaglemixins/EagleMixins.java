@@ -99,6 +99,7 @@ public class EagleMixins {
         MinecraftForge.EVENT_BUS.register(AbyssalGateHandler.class);
         if(ForgeConfigHandler.irradiated.enabled) registerIfModsPresent(new String[]{"nuclearcraft"}, IrradiatedParasitesHandler.class);
         registerIfModsPresent(new String[]{"cookingforblockheads"}, TileCounterHandler.class);
+        registerIfModsPresent(new String[]{"battletowers"}, GolemInfightingHandler.class);
         if(ForgeConfigHandler.teleporter.enableTeleporters) MinecraftForge.EVENT_BUS.register(new TeleportEventHandler());
         if(ForgeConfigHandler.mixintoggles.otgBiomeSearch) registerIfModsPresent(new String[]{"openterraingenerator"}, OTGBiomeSearchHandler.class);
 

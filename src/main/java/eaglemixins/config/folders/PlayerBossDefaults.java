@@ -155,7 +155,7 @@ final class PlayerBossDefaults {
 
         b = new PlayerBossConfig.BossEntry();
         b.name = "\u00a76\u2622 \u00a74\u00a7lBugging Ray\u00a7r \u00a76\u2622";
-        b.skin = "";
+        b.skin = "rayquazafallout";
         b.maxHealth = 750;
         b.armor = 60;
         b.armorToughness = 0.1;

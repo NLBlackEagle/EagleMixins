@@ -182,6 +182,10 @@ public class ForgeConfigHandler {
         @Config.Name("Blighted Shivaxi Damage Multiplier")
         public float blightedShivaxiDamageModifier = 3.0F;
 
+		@Config.Comment("If true, Battle Towers golems do not turn on each other when one golem damages another")
+		@Config.Name("Prevent Golem Infighting")
+		public boolean preventGolemInfighting = true;
+
 		@Config.Comment("Chance of an underground un-looted chest becoming a mimic")
 		@Config.Name("Underground Mimic Chance")
 		@Config.RangeDouble(min = 0D, max = 1D)

@@ -89,7 +89,7 @@ public class BlockLocked extends BlockLockFrame {
      * vanish one by one, nearest first, see LockVanishHandler.
      */
     private void open(World world, BlockPos origin, String lockId, EntityPlayer player, ItemStack held) {
-        LockVanishHandler.schedule(world, findConnected(world, origin, lockId));
+        LockVanishHandler.schedule(world, findConnected(world, origin, lockId), lockId);
         world.playSound(null, origin, SoundEvents.BLOCK_IRON_DOOR_OPEN, SoundCategory.BLOCKS, 1.0F, 0.6F);
         player.sendMessage(new TextComponentTranslation("eaglemixins.lock.opened"));
 
