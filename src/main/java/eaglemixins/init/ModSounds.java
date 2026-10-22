@@ -28,6 +28,4 @@ public final class ModSounds {
     public static void registerSounds(RegistryEvent.Register<SoundEvent> e) {
         e.getRegistry().registerAll(DEEPSLATE_BREAK, DEEPSLATE_STEP, DEEPSLATE_PLACE, DEEPSLATE_HIT, DEEPSLATE_FALL);
     }
-
-    private ModSounds() {}
 }
