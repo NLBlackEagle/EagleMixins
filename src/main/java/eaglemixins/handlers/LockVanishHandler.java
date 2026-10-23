@@ -26,12 +26,14 @@ public class LockVanishHandler {
     private static class Sequence {
         final WorldServer world;
         final ArrayDeque<BlockPos> blocks;
+        final String lockId; // picks the replacement blocks
         final double delay; // ticks per block, fixed when the lock is opened
         double progress = 0; // ticks waited towards the next block
 
-        Sequence(WorldServer world, List<BlockPos> blocks, double delay) {
+        Sequence(WorldServer world, List<BlockPos> blocks, String lockId, double delay) {
             this.world = world;
             this.blocks = new ArrayDeque<>(blocks);
+            this.lockId = lockId;
             this.delay = delay;
         }
     }
@@ -39,8 +41,8 @@ public class LockVanishHandler {
     /** First block vanishes right away, the rest one per delay. */
     public static void schedule(World world, List<BlockPos> blocks, String lockId) {
         if (!(world instanceof WorldServer) || blocks.isEmpty()) return;
-        Sequence sequence = new Sequence((WorldServer) world, blocks, ForgeConfigHandler.lockedblocks.getVanishDelayTicks(lockId));
-        BlockLocked.vanish(sequence.world, sequence.blocks.poll());
+        Sequence sequence = new Sequence((WorldServer) world, blocks, lockId, ForgeConfigHandler.lockedblocks.getVanishDelayTicks(lockId));
+        BlockLocked.vanish(sequence.world, sequence.blocks.poll(), lockId);
         step(sequence);
         if (!sequence.blocks.isEmpty()) SEQUENCES.add(sequence);
     }
@@ -48,7 +50,7 @@ public class LockVanishHandler {
     /** Vanishes every block whose delay has passed, all of them when the delay is 0. */
     private static void step(Sequence sequence) {
         while (!sequence.blocks.isEmpty() && (sequence.delay <= 0 || sequence.progress >= sequence.delay)) {
-            BlockLocked.vanish(sequence.world, sequence.blocks.poll());
+            BlockLocked.vanish(sequence.world, sequence.blocks.poll(), sequence.lockId);
             sequence.progress -= sequence.delay;
         }
     }

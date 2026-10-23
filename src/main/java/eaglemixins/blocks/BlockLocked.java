@@ -121,14 +121,18 @@ public class BlockLocked extends BlockLockFrame {
         return found;
     }
 
-    /** The block vanishes into smoke with a deepslate place sound. Server-side only, WorldServer sends the particles to nearby players. */
-    public static void vanish(WorldServer world, BlockPos pos) {
-        if (!(world.getBlockState(pos).getBlock() instanceof BlockLockFrame)) return; // replaced in the meantime
+    /**
+     * The block vanishes into smoke with a deepslate place sound and turns into its lock type's replacement block (air by default).
+     * Server-side only, WorldServer sends the particles to nearby players.
+     */
+    public static void vanish(WorldServer world, BlockPos pos, String lockId) {
+        Block block = world.getBlockState(pos).getBlock();
+        if (!(block instanceof BlockLockFrame)) return; // replaced in the meantime
         double x = pos.getX() + 0.5, y = pos.getY() + 0.5, z = pos.getZ() + 0.5;
         world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, x, y, z, 12, 0.3, 0.3, 0.3, 0.02);
         world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, x, y, z, 20, 0.4, 0.4, 0.4, 0.03);
         world.playSound(null, pos, ModSounds.DEEPSLATE_PLACE, SoundCategory.BLOCKS, 1.0F, 0.8F + world.rand.nextFloat() * 0.2F);
-        world.setBlockToAir(pos);
+        world.setBlockState(pos, ForgeConfigHandler.lockedblocks.getReplacement(lockId, block));
     }
 
     @Override

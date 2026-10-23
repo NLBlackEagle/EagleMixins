@@ -2,6 +2,7 @@ eaglemixins.messages.mirrorcancel=You sense a mysterious force from below coming
 eaglemixins.messages.potioncancel=You sense a mysterious force from below coming up at you as it yanks the potion from your hands
 
 eaglemixins.messages.mountspooked=It seems something has your mount spooked, and will not cooperate.
+eaglemixins.messages.vehiclespooked=A feeling of dread overcomes you... You decide not to sit down there.
 eaglemixins.messages.ominousfeeling=An ominous feeling overcomes you, as if you are being watched... Perhaps it's best to proceed on foot
 eaglemixins.messages.bedspooked=You lie down, but something out there is watching you. You will find no rest here.
 
@@ -90,6 +91,7 @@ attribute.name.eaglemixins.radiationResistance=Rads/t Resistance
 
 tile.eaglemixins.locked_block.name=Locked Block
 tile.eaglemixins.keyslave.name=Keyslave
+tile.eaglemixins.keyslave_alt.name=Keyslave (Alt)
 item.eaglemixins.lock_key.name=Key
 eaglemixins.lock.key_name=%s Key
 eaglemixins.lock.lock_name=%s Lock

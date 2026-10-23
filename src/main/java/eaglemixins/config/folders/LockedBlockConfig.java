@@ -1,7 +1,13 @@
 package eaglemixins.config.folders;
 
 import eaglemixins.EagleMixins;
+import eaglemixins.blocks.BlockLockSlave;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Config;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -16,13 +22,15 @@ public class LockedBlockConfig {
     @Config.Comment({
             "Lock types. Keys (eaglemixins:lock_key) and lock blocks (eaglemixins:locked_block) are paired through the LockId NBT tag:",
             "a key only opens locks with the same LockId and is used up when it opens one.",
-            "Keyslaves (eaglemixins:keyslave) touching an opened lock, or touching those keyslaves, vanish together with it.",
-            "Format: <lock id> | <name> | <key color> | <key lore> | <lock lore> | <vanish delay>",
+            "Keyslaves (eaglemixins:keyslave, eaglemixins:keyslave_alt) touching an opened lock, or touching those keyslaves, vanish together with it.",
+            "Format: <lock id> | <name> | <key color> | <key lore> | <lock lore> | <vanish delay> | <replace block> | <replace slave> | <replace alt>",
             "Lock id: any text, used in the NBT. Name: shown as \"<Name> Key\" / \"<Name> Lock\". Key color: hex, e.g. #8B1E1E",
             "Key lore: tooltip of the key. Lock lore: message shown when right-clicking the lock without its key.",
             "Lore can use \\n for new lines and \u00a7 color codes, and can be left empty. Only the lock id is required.",
             "Vanish delay: seconds between each block of this lock vanishing, e.g. 0.1 for big doors. 0 = all at once.",
             "Leave it out or empty to use Vanish Delay below.",
+            "Replace block / slave / alt: <modid:block>[@meta] that the lock blocks, keyslaves and alt keyslaves turn into when they vanish,",
+            "e.g. minecraft:stained_glass@14. Leave them out or empty for minecraft:air.",
             "Locks and keys with a LockId that is not listed here still work, they just use default names and no lore.",
             "Examples:",
             "    /give @p eaglemixins:lock_key 1 0 {LockId:\"brutal_arachnid\"}",
@@ -32,15 +40,15 @@ public class LockedBlockConfig {
     })
     @Config.Name("Locks")
     public String[] locks = {
-            "brutal_arachnid | Arachnid | #9d9684 | \u00a77Pulled from the remains of the great spider. | \u00a77Thick webbing is woven through the keyhole.\\n\u00a77Only one who has faced the brood may pass. | 0.5",
-            "brutal_gatekeeper | Gatekeeper | #865ec9 | \u00a77Torn from the storm dragon that guarded the way. | \u00a77Static crackles across the keyhole.\\n\u00a77The Gatekeeper holds the key to what lies beyond. | 0.1",
-            "brutal_sarevok | Sarevok's | #b7812c | \u00a77Taken from Sarevok's fallen body. | \u00a77Deep sword gouges scar the stone around the keyhole.\\n\u00a77The horned one does not give up his key willingly. | 0.5",
-            "brutal_horror | Parasitic | #6a9834 | \u00a77Cut free from the horror's writhing mass. | \u00a77Fleshy growths pulse around the keyhole.\\n\u00a77Whatever opens this was grown, not forged. | 0.5",
-            "brutal_necrotic_golem | Necrotic | #31352c | \u00a77Pried from the golem's crumbling core. | \u00a77The stone here is grey and dead, and smells of the grave.\\n\u00a77Its key lies within a heart of rotting stone. | 0.5",
-            "brutal_bogle | Dread | #e5dd05 | \u00a77Left behind when the bogle finally fell silent. | \u00a77Faint scratch marks circle the keyhole.\\n\u00a77Only one who has silenced the bogle may enter. | 0.5",
-            "brutal_staircase | Staircase | #7fa7b5 | \u00a77Torn from a Banshee or an Avaton, hanging in chains above the staircase into the underneath. | \u00a77Rusted chain links dangle from the keyhole.\\n\u00a77A Banshee or an Avaton holds its key, chained in the middle of the stairs.\\n\u00a77Good luck, and don't look down. | 0.5",
-            "brutal_dev | Developer's | #d42300 | \u00a77Wrestled from the developers after a long crunch. | \u00a77Words are scratched beside the keyhole: \"TODO: Phase 2/4\".\\n\u00a77The developers keep the key. Go and ask them nicely. | 0.5",
-            "brutal_shivaxi | Shivaxi's | #00c8d4 | \u00a77Taken from Shivaxi, altered by the Eagle. | \u00a77A blinding light seeps through the keyhole.\\n\u00a77This is where the new world begins. | 0.5"
+            "brutal_arachnid | Arachnid | #9d9684 | \u00a77Pulled from the remains of the great spider. | \u00a77Thick webbing is woven through the keyhole.\\n\u00a77Only one who has faced the brood may pass. | 0.5 | minecraft:air | minecraft:air | minecraft:air",
+            "brutal_gatekeeper | Gatekeeper | #865ec9 | \u00a77Torn from the storm dragon that guarded the way. | \u00a77Static crackles across the keyhole.\\n\u00a77The Gatekeeper holds the key to what lies beyond. | 0.1 | minecraft:air | minecraft:air | minecraft:air",
+            "brutal_sarevok | Sarevok's | #b7812c | \u00a77Taken from Sarevok's fallen body. | \u00a77Deep sword gouges scar the stone around the keyhole.\\n\u00a77The horned one does not give up his key willingly. | 0.5 | minecraft:air | minecraft:air | minecraft:air",
+            "brutal_horror | Parasitic | #6a9834 | \u00a77Cut free from the horror's writhing mass. | \u00a77Fleshy growths pulse around the keyhole.\\n\u00a77Whatever opens this was grown, not forged. | 0.5 | minecraft:air | minecraft:air | minecraft:air",
+            "brutal_necrotic_golem | Necrotic | #31352c | \u00a77Pried from the golem's crumbling core. | \u00a77The stone here is grey and dead, and smells of the grave.\\n\u00a77Its key lies within a heart of rotting stone. | 0.5 | minecraft:air | minecraft:air | minecraft:air",
+            "brutal_bogle | Dread | #e5dd05 | \u00a77Left behind when the bogle finally fell silent. | \u00a77Faint scratch marks circle the keyhole.\\n\u00a77Only one who has silenced the bogle may enter. | 0.5 | minecraft:air | minecraft:air | minecraft:air",
+            "brutal_staircase | Staircase | #7fa7b5 | \u00a77Torn from a Banshee or an Avaton, hanging in chains above the staircase into the underneath. | \u00a77Rusted chain links dangle from the keyhole.\\n\u00a77A Banshee or an Avaton holds its key, chained in the middle of the stairs.\\n\u00a77Good luck, and don't look down. | 0.5 | minecraft:air | minecraft:air | minecraft:air",
+            "brutal_dev | Developer's | #d42300 | \u00a77Wrestled from the developers after a long crunch. | \u00a77Words are scratched beside the keyhole: \"TODO: Phase 2/4\".\\n\u00a77The developers keep the key. Go and ask them nicely. | 0.5 | minecraft:air | minecraft:air | minecraft:air",
+            "brutal_shivaxi | Shivaxi's | #00c8d4 | \u00a77Taken from Shivaxi, altered by the Eagle. | \u00a77A blinding light seeps through the keyhole.\\n\u00a77This is where the new world begins. | 0.5 | minecraft:air | minecraft:air | minecraft:air"
     };
 
     @Config.Comment({
@@ -110,7 +118,10 @@ public class LockedBlockConfig {
                         EagleMixins.LOGGER.error("Invalid vanish delay \"{}\" for lock \"{}\" in Locked Blocks config", parts[5].trim(), id);
                     }
                 }
-                lockTypes.put(id, new LockType(id, name, color, keyLore, lockLore, vanishDelay));
+                IBlockState replaceBlock = parts.length > 6 ? replacement(parts[6], id) : Blocks.AIR.getDefaultState();
+                IBlockState replaceSlave = parts.length > 7 ? replacement(parts[7], id) : Blocks.AIR.getDefaultState();
+                IBlockState replaceAlt = parts.length > 8 ? replacement(parts[8], id) : Blocks.AIR.getDefaultState();
+                lockTypes.put(id, new LockType(id, name, color, keyLore, lockLore, vanishDelay, replaceBlock, replaceSlave, replaceAlt));
             }
         }
         return lockTypes;
@@ -119,6 +130,37 @@ public class LockedBlockConfig {
     private static List<String> lore(String text) {
         text = text.trim();
         return text.isEmpty() ? Collections.emptyList() : Arrays.asList(text.split("\\\\n"));
+    }
+
+    @SuppressWarnings("deprecation")
+    private static IBlockState replacement(String text, String id) {
+        text = text.trim();
+        if (text.isEmpty()) return Blocks.AIR.getDefaultState();
+        int meta = 0;
+        int at = text.indexOf('@');
+        if (at >= 0) {
+            try {
+                meta = Integer.parseInt(text.substring(at + 1).trim());
+            } catch (NumberFormatException ex) {
+                EagleMixins.LOGGER.error("Invalid meta in replacement block \"{}\" for lock \"{}\" in Locked Blocks config", text, id);
+            }
+            text = text.substring(0, at).trim();
+        }
+        ResourceLocation name = new ResourceLocation(text);
+        Block block = ForgeRegistries.BLOCKS.containsKey(name) ? ForgeRegistries.BLOCKS.getValue(name) : null;
+        if (block == null) {
+            EagleMixins.LOGGER.error("Unknown replacement block \"{}\" for lock \"{}\" in Locked Blocks config, using air", text, id);
+            return Blocks.AIR.getDefaultState();
+        }
+        return block.getStateFromMeta(meta);
+    }
+
+    /** What a lock block or keyslave of this lock type turns into when it vanishes. */
+    public IBlockState getReplacement(String lockId, Block block) {
+        LockType type = getLockType(lockId);
+        if (type == null) return Blocks.AIR.getDefaultState();
+        if (block instanceof BlockLockSlave) return ((BlockLockSlave) block).alt ? type.replaceAlt : type.replaceSlave;
+        return type.replaceBlock;
     }
 
     /** Ticks between each block of this lock vanishing, can be fractional (several blocks per tick). */
@@ -138,14 +180,21 @@ public class LockedBlockConfig {
         public final List<String> keyLore;
         public final List<String> lockLore;
         public final float vanishDelay; // seconds, negative = global Vanish Delay
+        public final IBlockState replaceBlock;
+        public final IBlockState replaceSlave;
+        public final IBlockState replaceAlt;
 
-        public LockType(String id, String name, int color, List<String> keyLore, List<String> lockLore, float vanishDelay) {
+        public LockType(String id, String name, int color, List<String> keyLore, List<String> lockLore, float vanishDelay,
+                        IBlockState replaceBlock, IBlockState replaceSlave, IBlockState replaceAlt) {
             this.id = id;
             this.name = name;
             this.color = color;
             this.keyLore = keyLore;
             this.lockLore = lockLore;
             this.vanishDelay = vanishDelay;
+            this.replaceBlock = replaceBlock;
+            this.replaceSlave = replaceSlave;
+            this.replaceAlt = replaceAlt;
         }
     }
 }

@@ -3,6 +3,7 @@ package eaglemixins.client;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
@@ -15,8 +16,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
+import javax.vecmath.Matrix4f;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -24,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Renders every face of a block model that uses a given texture at full brightness, ignoring world light and face shading.
+ * Renders every face of a block or item model that uses a given texture at full brightness, ignoring world light and face shading.
  * 1.12 has no emissive textures, so the quads get a max lightmap baked in; Forge's light pipeline keeps the brighter of that
  * and the world light. Without the Forge light pipeline (e.g. some OptiFine setups) they simply render as normal faces.
  */
@@ -32,10 +35,11 @@ import java.util.Map;
 @Mod.EventBusSubscriber(modid = "eaglemixins", value = Side.CLIENT)
 public class EmissiveBakedModel extends BakedModelWrapper<IBakedModel> {
 
-    // Block variant -> texture that glows. Only the world variant, item rendering does not use the lightmap.
+    // Model variant -> texture that glows. Items glow through Forge's allowEmissiveItems (forge.cfg, on by default)
     private static final Map<ModelResourceLocation, String> EMISSIVE = new HashMap<>();
     static {
         EMISSIVE.put(new ModelResourceLocation("eaglemixins:locked_block", "normal"), "eaglemixins:blocks/keyhole");
+        EMISSIVE.put(new ModelResourceLocation("eaglemixins:lock_key", "inventory"), "eaglemixins:items/lock_key");
     }
 
     private static final float FULL_BRIGHT = (15 * 0x20) / (float) 0xFFFF; // same encoding as VertexLighterFlat.updateLightmap
@@ -60,6 +64,13 @@ public class EmissiveBakedModel extends BakedModelWrapper<IBakedModel> {
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         return side == null ? generalQuads : sideQuads.get(side);
+    }
+
+    /** Item models hand back themselves per perspective (in hand, dropped), that has to stay this wrapper */
+    @Override
+    public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType type) {
+        Pair<? extends IBakedModel, Matrix4f> pair = originalModel.handlePerspective(type);
+        return pair.getLeft() == originalModel ? Pair.of(this, pair.getRight()) : pair;
     }
 
     private static List<BakedQuad> convert(List<BakedQuad> quads, String texture) {

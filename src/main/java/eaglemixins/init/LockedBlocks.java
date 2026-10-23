@@ -20,7 +20,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
- * Lock block (keyblock.bbmodel), keyslave (keyslave.bbmodel) and the one-time key.
+ * Lock block (keyblock.bbmodel), keyslave and alt keyslave (keyslave.bbmodel) and the one-time key.
  * Keys and locks are paired through the LockId NBT tag, see LockedBlockConfig.
  */
 @Mod.EventBusSubscriber(modid = "eaglemixins")
@@ -28,14 +28,16 @@ public final class LockedBlocks {
 
     private static BlockLocked lock;
     private static Block keyslave;
+    private static Block keyslaveAlt;
     private static Item key;
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> e) {
         lock = new BlockLocked();
         lock.setRegistryName("eaglemixins", "locked_block").setTranslationKey("eaglemixins.locked_block");
-        keyslave = new BlockLockSlave().setRegistryName("eaglemixins", "keyslave").setTranslationKey("eaglemixins.keyslave");
-        e.getRegistry().registerAll(lock, keyslave);
+        keyslave = new BlockLockSlave(false).setRegistryName("eaglemixins", "keyslave").setTranslationKey("eaglemixins.keyslave");
+        keyslaveAlt = new BlockLockSlave(true).setRegistryName("eaglemixins", "keyslave_alt").setTranslationKey("eaglemixins.keyslave_alt");
+        e.getRegistry().registerAll(lock, keyslave, keyslaveAlt);
         GameRegistry.registerTileEntity(TileEntityLock.class, new ResourceLocation("eaglemixins", "locked_block"));
     }
 
@@ -45,6 +47,7 @@ public final class LockedBlocks {
         e.getRegistry().registerAll(
                 new ItemLockKey.ItemBlockLocked(lock).setRegistryName(lock.getRegistryName()),
                 new ItemBlock(keyslave).setRegistryName(keyslave.getRegistryName()),
+                new ItemBlock(keyslaveAlt).setRegistryName(keyslaveAlt.getRegistryName()),
                 key
         );
     }
@@ -54,6 +57,7 @@ public final class LockedBlocks {
     public static void registerModels(ModelRegistryEvent e) {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(lock), 0, new ModelResourceLocation(lock.getRegistryName(), "inventory"));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(keyslave), 0, new ModelResourceLocation(keyslave.getRegistryName(), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(keyslaveAlt), 0, new ModelResourceLocation(keyslaveAlt.getRegistryName(), "inventory"));
         ModelLoader.setCustomModelResourceLocation(key, 0, new ModelResourceLocation(key.getRegistryName(), "inventory"));
     }
 

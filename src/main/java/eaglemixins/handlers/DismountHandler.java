@@ -87,7 +87,9 @@ public class DismountHandler {
         if(player.ticksExisted < 20) return;
 
         if (biomeNames.contains(player.world.getBiome(player.getPosition()).getRegistryName())){
-            player.sendStatusMessage(new TextComponentTranslation("eaglemixins.messages.mountspooked"), true);
+            //Boats, minecarts and other vehicles can't be spooked
+            String msg = event.getEntityBeingMounted() instanceof EntityLivingBase ? "eaglemixins.messages.mountspooked" : "eaglemixins.messages.vehiclespooked";
+            player.sendStatusMessage(new TextComponentTranslation(msg), true);
             event.setCanceled(true);
         }
     }
