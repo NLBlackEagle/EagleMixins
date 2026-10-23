@@ -215,7 +215,7 @@ final class PlayerBossDefaults {
         b.knockbackResistance = 1; // 2.0 in the spawner, the game caps it at 1
         b.experience = 500;
         b.equipment.mainhand = "srparasites:weapon_lance_sentient@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":15,Potion:\"potioncore:perplexity\",remainingPotionHits:50,disarm:1,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},RepairCost:999}";
-        b.equipment.offhand = "bountifulbaubles:trinketankhcharm {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneColor\":15,\"Quark:RuneAttached\":1b,hat:\"dragonskullender\"}";
+        b.equipment.offhand = "bountifulbaubles:shieldankh {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneColor\":15,\"Quark:RuneAttached\":1b,hat:\"dragonskullender\"}";
         b.equipment.feet = "srparasites:armor_boots_sentient {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}]}";
         b.equipment.legs = "srparasites:armor_pants_sentient {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}]}";
         b.equipment.chest = "srparasites:armor_chest_sentient {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}]}";
