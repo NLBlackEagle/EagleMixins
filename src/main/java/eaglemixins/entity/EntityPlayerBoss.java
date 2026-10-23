@@ -5,6 +5,7 @@ import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.config.folders.PlayerBossConfig;
 import eaglemixins.entity.ai.EntityAIBossFlight;
 import eaglemixins.util.ItemStackParser;
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -12,6 +13,7 @@ import net.minecraft.entity.ai.EntityAIAttackMelee;
 import net.minecraft.entity.ai.EntityAIAttackRangedBow;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILookIdle;
+import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
@@ -34,6 +36,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.BossInfo;
@@ -42,9 +45,11 @@ import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 
 /**
- * Boss that looks like a player and uses skeleton AI (bow or melee depending on the main hand), optionally flying.
+ * Boss that looks like a player (or a vanilla skeleton/zombie, see Model) and fights with the config's AI,
+ * by default skeleton AI (bow or melee depending on the main hand), optionally flying.
  * Everything comes from its PlayerBossConfig entry, selected with the BossId NBT tag.
  * Render settings are synced to clients in RENDER so the server config decides how it looks.
  */
@@ -60,6 +65,7 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
     private String bossId = "";
     private boolean initialized = false; // equipment and full health applied
     private boolean needsConfig = true;
+    @Nullable private PlayerBossConfig.BossAI currentAI;
     @Nullable private PlayerBossConfig.BossEntry entry;
 
     public EntityPlayerBoss(World world) {
@@ -78,13 +84,27 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
 
     @Override
     protected void initEntityAI() {
-        tasks.addTask(0, new EntityAISwimming(this));
-        tasks.addTask(1, new EntityAIBossFlight(this));
-        tasks.addTask(5, new EntityAIWanderAvoidWater(this, 1.0D));
-        tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-        tasks.addTask(6, new EntityAILookIdle(this));
-        targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-        targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, true));
+        // Tasks come from the config's AI in applyAI, this runs before the fields are set
+    }
+
+    /** Replaces all tasks with the ones of the given AI, nothing happens if that AI is already set. */
+    private void applyAI(PlayerBossConfig.BossAI ai) {
+        if (ai == currentAI) return;
+        currentAI = ai;
+        for (EntityAITasks.EntityAITaskEntry task : new ArrayList<>(tasks.taskEntries)) tasks.removeTask(task.action);
+        for (EntityAITasks.EntityAITaskEntry task : new ArrayList<>(targetTasks.taskEntries)) targetTasks.removeTask(task.action);
+        switch (ai) {
+            case PLAYER_BOSS:
+                tasks.addTask(0, new EntityAISwimming(this));
+                tasks.addTask(1, new EntityAIBossFlight(this));
+                tasks.addTask(5, new EntityAIWanderAvoidWater(this, 1.0D));
+                tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+                tasks.addTask(6, new EntityAILookIdle(this));
+                targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
+                targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, true));
+                setCombatTask();
+                break;
+        }
     }
 
     @Nullable
@@ -99,8 +119,10 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
         entry = ForgeConfigHandler.playerbosses.bosses.get(bossId);
         if (entry == null) {
             EagleMixins.LOGGER.warn("Player boss at {} has unknown BossId \"{}\", see the Player Bosses config", getPosition(), bossId);
+            applyAI(PlayerBossConfig.BossAI.PLAYER_BOSS);
             return;
         }
+        applyAI(entry.ai);
         setAttribute(SharedMonsterAttributes.MAX_HEALTH, entry.maxHealth);
         setAttribute(SharedMonsterAttributes.ARMOR, entry.armor);
         setAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS, entry.armorToughness);
@@ -133,6 +155,7 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
         bossInfo.setDarkenSky(entry.bossBar.darkenSky);
 
         NBTTagCompound render = new NBTTagCompound();
+        render.setString("Model", entry.model.name());
         render.setString("Skin", entry.skin);
         render.setBoolean("Slim", entry.slimArms);
         render.setFloat("Scale", entry.scale);
@@ -167,7 +190,8 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
     }
 
     private void updateSize(float scale) {
-        setSize(0.6F * scale, 1.8F * scale);
+        PlayerBossConfig.BossModel model = getBossModel();
+        setSize(model.width * scale, model.height * scale);
     }
 
     @Override
@@ -191,6 +215,15 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
         return dataManager.get(RENDER);
     }
 
+    /** The config's Model, synced in the render data so both sides know it */
+    public PlayerBossConfig.BossModel getBossModel() {
+        try {
+            return PlayerBossConfig.BossModel.valueOf(getRenderData().getString("Model"));
+        } catch (IllegalArgumentException e) {
+            return PlayerBossConfig.BossModel.PLAYER;
+        }
+    }
+
     public float getRenderScale() {
         NBTTagCompound render = getRenderData();
         return render.hasKey("Scale") ? render.getFloat("Scale") : 1.0F;
@@ -204,7 +237,7 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
 
     /** Bow AI with a bow in the main hand, melee otherwise, like skeletons. */
     public void setCombatTask() {
-        if (world == null || world.isRemote) return;
+        if (world == null || world.isRemote || currentAI != PlayerBossConfig.BossAI.PLAYER_BOSS) return;
         tasks.removeTask(meleeAttack);
         tasks.removeTask(bowAttack);
         if (isHoldingBow()) {
@@ -262,6 +295,19 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
         @Override
         protected double getAttackReachSqr(EntityLivingBase target) {
             return boss.getMeleeReachSqr(target);
+        }
+
+        /** Raises the arms like a melee skeleton, the player model ignores it without a bow */
+        @Override
+        public void startExecuting() {
+            super.startExecuting();
+            boss.setSwingingArms(true);
+        }
+
+        @Override
+        public void resetTask() {
+            super.resetTask();
+            boss.setSwingingArms(false);
         }
     }
 
@@ -329,14 +375,57 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
         return world.getDifficulty() != EnumDifficulty.PEACEFUL;
     }
 
+    // ---- Sounds, from the mob the Model copies ----
+
+    @Override
+    @Nullable
+    protected SoundEvent getAmbientSound() {
+        switch (getBossModel()) {
+            case SKELETON: return SoundEvents.ENTITY_SKELETON_AMBIENT;
+            case WITHER_SKELETON: return SoundEvents.ENTITY_WITHER_SKELETON_AMBIENT;
+            case STRAY: return SoundEvents.ENTITY_STRAY_AMBIENT;
+            case ZOMBIE: return SoundEvents.ENTITY_ZOMBIE_AMBIENT;
+            case HUSK: return SoundEvents.ENTITY_HUSK_AMBIENT;
+            default: return null;
+        }
+    }
+
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return SoundEvents.ENTITY_PLAYER_HURT;
+        switch (getBossModel()) {
+            case SKELETON: return SoundEvents.ENTITY_SKELETON_HURT;
+            case WITHER_SKELETON: return SoundEvents.ENTITY_WITHER_SKELETON_HURT;
+            case STRAY: return SoundEvents.ENTITY_STRAY_HURT;
+            case ZOMBIE: return SoundEvents.ENTITY_ZOMBIE_HURT;
+            case HUSK: return SoundEvents.ENTITY_HUSK_HURT;
+            default: return SoundEvents.ENTITY_PLAYER_HURT;
+        }
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvents.ENTITY_PLAYER_DEATH;
+        switch (getBossModel()) {
+            case SKELETON: return SoundEvents.ENTITY_SKELETON_DEATH;
+            case WITHER_SKELETON: return SoundEvents.ENTITY_WITHER_SKELETON_DEATH;
+            case STRAY: return SoundEvents.ENTITY_STRAY_DEATH;
+            case ZOMBIE: return SoundEvents.ENTITY_ZOMBIE_DEATH;
+            case HUSK: return SoundEvents.ENTITY_HUSK_DEATH;
+            default: return SoundEvents.ENTITY_PLAYER_DEATH;
+        }
+    }
+
+    @Override
+    protected void playStepSound(BlockPos pos, Block block) {
+        SoundEvent step;
+        switch (getBossModel()) {
+            case SKELETON: step = SoundEvents.ENTITY_SKELETON_STEP; break;
+            case WITHER_SKELETON: step = SoundEvents.ENTITY_WITHER_SKELETON_STEP; break;
+            case STRAY: step = SoundEvents.ENTITY_STRAY_STEP; break;
+            case ZOMBIE: step = SoundEvents.ENTITY_ZOMBIE_STEP; break;
+            case HUSK: step = SoundEvents.ENTITY_HUSK_STEP; break;
+            default: super.playStepSound(pos, block); return;
+        }
+        playSound(step, 0.15F, 1.0F);
     }
 
     // ---- Loot ----

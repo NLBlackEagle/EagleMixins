@@ -235,6 +235,16 @@ public class ForgeConfigHandler {
 		public Set<String> lycanitesGenerationDisabledBiomeTags = new LinkedHashSet<>();
 
 		@Config.Comment({
+				"Stops Lycanites Mobs' dungeons from building blocks in chunks whose biome carries any of these BiomeDictionary tags.",
+				"Lycanites only checks the biome at a dungeon's origin, so dungeons starting nearby could otherwise extend into these biomes.",
+				"Dungeons crossing into such a chunk are cut off at its edge.",
+				"One tag per line.",
+				"Example: ABYSSAL"
+		})
+		@Config.Name("Lycanites Mobs Dungeon Disabled Biome Tags")
+		public Set<String> lycanitesDungeonDisabledBiomeTags = new LinkedHashSet<>();
+
+		@Config.Comment({
 				"Stops Ice and Fire's Pixie Village structure from generating in biomes carrying any of these BiomeDictionary tags.",
 				"One tag per line.",
 				"Example: NUCLEAR"

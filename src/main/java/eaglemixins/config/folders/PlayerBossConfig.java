@@ -11,8 +11,8 @@ import java.util.Map;
 public class PlayerBossConfig {
 
     @Config.Comment({
-            "Bosses that look like players: a skin, armor, held items and optionally Trinkets and Baubles dragon wings and horns.",
-            "They use skeleton AI: a bow in the main hand makes them shoot, anything else makes them fight in melee.",
+            "Bosses that look like players (or a vanilla skeleton/zombie, see Model): a skin, armor, held items and optionally Trinkets and Baubles dragon wings and horns.",
+            "With the PLAYER_BOSS AI they fight like skeletons: a bow in the main hand makes them shoot, anything else makes them fight in melee.",
             "Spawn one with its boss id, the key of its entry below, in a spawner or command:",
             "    /summon eaglemixins:player_boss ~ ~ ~ {BossId:\"eagle\"}",
             "    spawner SpawnData: {id:\"eaglemixins:player_boss\",BossId:\"eagle\"}",
@@ -28,6 +28,27 @@ public class PlayerBossConfig {
 
     public enum HornStyle { NONE, INVERTED, HORNS, DRAGON }
 
+    /** Model the boss renders with, with the vanilla hitbox (at scale 1) of the mob it copies */
+    public enum BossModel {
+        PLAYER(0.6F, 1.8F),
+        SKELETON(0.6F, 1.99F),
+        WITHER_SKELETON(0.7F, 2.4F),
+        STRAY(0.6F, 1.99F),
+        ZOMBIE(0.6F, 1.95F),
+        HUSK(0.6F, 1.95F);
+
+        public final float width;
+        public final float height;
+
+        BossModel(float width, float height) {
+            this.width = width;
+            this.height = height;
+        }
+    }
+
+    /** PLAYER_BOSS: bow or melee depending on the main hand like skeletons, with optional flight */
+    public enum BossAI { PLAYER_BOSS }
+
     public static class BossEntry {
         @Config.Comment("Name above the boss and on its boss bar. \u00a7 color codes allowed")
         @Config.Name("Name")
@@ -38,13 +59,25 @@ public class PlayerBossConfig {
         public String subtitle = "";
 
         @Config.Comment({
+                "Model the boss renders with. PLAYER uses Skin and Slim Arms, the others look like that vanilla mob",
+                "and also take its hitbox, size and sounds. Wings and horns only show on PLAYER"
+        })
+        @Config.Name("Model")
+        public BossModel model = BossModel.PLAYER;
+
+        @Config.Comment("How the boss fights and moves. PLAYER_BOSS: bow or melee depending on the main hand like skeletons, with optional flight")
+        @Config.Name("AI")
+        public BossAI ai = BossAI.PLAYER_BOSS;
+
+        @Config.Comment({
                 "Skin: a file name in assets/eaglemixins/textures/entity/player_boss/ without .png (e.g. nlblackeagle),",
-                "or a full texture location (modid:textures/entity/skin.png). Empty = Steve"
+                "or a full texture location (modid:textures/entity/skin.png).",
+                "The texture has to fit the Model's layout (player skins only fit PLAYER). Empty = Steve, or the vanilla mob's texture"
         })
         @Config.Name("Skin")
         public String skin = "";
 
-        @Config.Comment("Use the slim (Alex) arm model, needed for skins made for slim arms")
+        @Config.Comment("Use the slim (Alex) arm model, needed for skins made for slim arms. PLAYER model only")
         @Config.Name("Slim Arms")
         public boolean slimArms = false;
 

@@ -252,6 +252,30 @@ final class PlayerBossDefaults {
         b.extraNbt = "{ForgeCaps:{\"champions:championship\":{tier:4}},ForgeData:{InfernalMobsMod:\"Berserk\"}}";
         b.lootTable = "dregora:entities/playerbosses/abyssal_tower_developers";
         bosses.put("nischi", b);
+
+        // Skin by terzaerian on Planet Minecraft (planetminecraft.com/skin/sarevok-anchev-252343), converted to 64x64
+        b = new PlayerBossConfig.BossEntry();
+        b.name = "§5§lSarevok Terzaerian§r";
+        b.skin = "sarevok";
+        b.maxHealth = 2350;
+        b.armor = 70;
+        b.attackDamage = 130;
+        b.movementSpeed = 0.25;
+        b.knockbackResistance = 1;
+        b.experience = 500;
+        b.fireImmune = false;
+        b.fallImmune = false;
+        b.playerDamageCap = 400;
+        b.equipment.mainhand = "spartanfire:greatsword_dragonbone@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":0,Potion:\"srparasites:corrosive\",remainingPotionHits:500,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},disarm:1,RepairCost:999}";
+        b.equipment.offhand = "mujmajnkraftsbettersurvival:itemdragonbonedagger@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":15,CustomPotionEffects:[{Ambient:0b,ShowParticles:1b,Duration:2400,Id:110b,Amplifier:0b,Incurable:1b},{Ambient:0b,ShowParticles:1b,Duration:2400,Id:67b,Amplifier:0b,Incurable:1b},{Ambient:0b,ShowParticles:1b,Duration:2400,Id:79b,Amplifier:0b,Incurable:1b}],Potion:\"srparasites:fear\",remainingPotionHits:50,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},disarm:1,RepairCost:999}";
+        b.equipment.feet = "iceandfire:armor_red_boots {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"iceandfire:armor_red_boots\",Count:1b},classy_hat_invisible:1b}";
+        b.equipment.legs = "iceandfire:armor_silver_metal_leggings {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"iceandfire:armor_silver_metal_leggings\",Count:1b},classy_hat_invisible:1b}";
+        b.equipment.chest = "iceandfire:forest_troll_leather_chestplate {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"iceandfire:forest_troll_leather_chestplate\",Count:1b},classy_hat_invisible:1b}";
+        b.equipment.head = "classyhats:hat {hat:\"largehorns\",classy_hat_disguise:{id:\"iceandfire:armor_silver_metal_helmet\",Count:1b,tag:{hat:\"fullironhelm\"}},classy_hat_invisible:0b,\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":14}";
+        b.flight.mode = PlayerBossConfig.FlightMode.NEVER;
+        b.extraNbt = "{ForgeCaps:{\"champions:championship\":{tier:4}},ForgeData:{InfernalMobsMod:\"Sticky\"}}";
+        b.lootTable = "dregora:entities/playerbosses/abyssal_tower_humanoid";
+        bosses.put("sarevok", b);
     }
 
     private PlayerBossDefaults() {}

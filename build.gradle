@@ -135,6 +135,8 @@ processResources {
     }
 }
 
+def isDevRun = gradle.startParameter.taskNames.any { it.endsWith('runClient') || it.endsWith('runServer') }
+
 jar {
     manifest {
         def attr = [:]
@@ -148,9 +150,11 @@ jar {
         attr['FMLCorePlugin']               = mixin_loader_class
         attr['FMLCorePluginContainsFMLMod'] = 'true'
         attr['TweakClass']                  = 'org.spongepowered.asm.launch.MixinTweaker'
-        attr['ForceLoadAsMod'] = gradle.startParameter.taskNames[0] != 'runClient' && gradle.startParameter.taskNames[0] != 'runServer'
+        attr['ForceLoadAsMod'] = (!isDevRun).toString()
         attributes(attr)
     }
+    // Jars built as part of runClient/runServer must not load as a mod outside dev, so keep them apart from release jars
+    if (isDevRun) archiveClassifier = 'dev'
 }
 
 jar.finalizedBy('reobfJar')
