@@ -330,11 +330,11 @@ final class PlayerBossDefaults {
         b.sounds.hurt = "eaglemixins:entity.developer.pain";
         b.sounds.death = "eaglemixins:entity.developer.death";
         b.sounds.pitch = pitch;
-        b.sounds.volume = 3;
+        b.sounds.volume = 1.5F;
         b.sounds.idleVolume = 2;
         b.sounds.respondVolume = 4;
         b.sounds.idleInterval = 120;
-        b.sounds.hurtChance = 0.4F;
+        b.sounds.hurtChance = 0.1F;
         b.sounds.targetCooldown = 30;
     }
 
