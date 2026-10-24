@@ -5,6 +5,7 @@ import com.dhanantry.scapeandrunparasites.item.tool.WeaponToolArmorBase;
 import com.dhanantry.scapeandrunparasites.item.tool.WeaponToolMeleeBase;
 import com.dhanantry.scapeandrunparasites.item.tool.WeaponToolRangeBase;
 import com.dhanantry.scapeandrunparasites.util.config.SRPConfig;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -136,7 +137,10 @@ public class SentientWeaponEvolutionHandler {
 
         List<String> tooltip = event.getToolTip();
         NBTTagCompound tag = stack.getTagCompound();
-        if (tag == null) return;
+        if (tag == null) {
+            addDormantInfo(tooltip);
+            return;
+        }
 
         int kills = tag.getInteger(srpkillsKey);
 
@@ -181,5 +185,23 @@ public class SentientWeaponEvolutionHandler {
                 }
             }
         }
+
+        addDormantInfo(tooltip);
+    }
+
+    /**
+     * Explains the living -> sentient evolution, hidden behind CTRL.
+     */
+    @SideOnly(Side.CLIENT)
+    private static void addDormantInfo(List<String> tooltip) {
+        if (!GuiScreen.isCtrlKeyDown()) {
+            tooltip.add(I18n.format("eaglemixins.srptooltip.dormant.hint"));
+            return;
+        }
+        tooltip.add(I18n.format("eaglemixins.srptooltip.dormant.1"));
+        tooltip.add(I18n.format("eaglemixins.srptooltip.dormant.2"));
+        tooltip.add(I18n.format("eaglemixins.srptooltip.dormant.3"));
+        tooltip.add(I18n.format("eaglemixins.srptooltip.dormant.4"));
+        tooltip.add(I18n.format("eaglemixins.srptooltip.dormant.5"));
     }
 }
