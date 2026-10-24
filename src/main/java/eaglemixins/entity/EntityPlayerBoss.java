@@ -18,7 +18,9 @@ import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttribute;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -46,6 +48,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Boss that looks like a player (or a vanilla skeleton/zombie, see Model) and fights with the config's AI,
@@ -64,6 +67,7 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
 
     private String bossId = "";
     private boolean initialized = false; // equipment and full health applied
+    private static final UUID INFERNAL_HP_MODIFIER = UUID.fromString("0ad3c584-7c75-42d5-992e-dc9c60ae656f"); // FermiumMixins' infernalmobs_hp_per_modifier
     private boolean needsConfig = true;
     @Nullable private PlayerBossConfig.BossAI currentAI;
     @Nullable private PlayerBossConfig.BossEntry entry;
@@ -200,7 +204,22 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
             needsConfig = false;
             applyConfig();
         }
+        if (!world.isRemote && ForgeConfigHandler.playerbosses.ignoreInfernalHealth) neutralizeInfernalHealth();
         super.onLivingUpdate();
+    }
+
+    /**
+     * FermiumMixins scales infernal max health with a modifier, and re-adds it whenever it is missing.
+     * Keeping it with a x1 amount stops both. A boss at full health stays at full health.
+     */
+    private void neutralizeInfernalHealth() {
+        IAttributeInstance hp = getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH);
+        AttributeModifier modifier = hp.getModifier(INFERNAL_HP_MODIFIER);
+        if (modifier == null || modifier.getAmount() == 0) return;
+        boolean full = getHealth() >= getMaxHealth();
+        hp.removeModifier(INFERNAL_HP_MODIFIER);
+        hp.applyModifier(new AttributeModifier(INFERNAL_HP_MODIFIER, modifier.getName(), 0, modifier.getOperation()));
+        if (full) setHealth(getMaxHealth());
     }
 
     @Override

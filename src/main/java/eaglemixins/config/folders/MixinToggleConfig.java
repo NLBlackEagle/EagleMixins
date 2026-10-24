@@ -60,6 +60,16 @@ public class MixinToggleConfig {
     @MixinConfig.CompatHandling(modid = "playerbosses", desired = true, reason = "Requires mod to properly function")
     public boolean abyssalPlayerBosses = true;
 
+    @Config.Comment({
+            "Players that randomly spawn (first join, respawning without a bed) are moved to a safe spot once the area around them",
+            "is fully generated, so OTG objects placed after the spawn point was picked can't trap them in blocks.",
+            "Can also make players spawn inside buildings, see \"Safe Spawns\"."
+    })
+    @Config.Name("Safe Random Spawns (Vanilla/OTG)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.safespawn.json", defaultValue = true)
+    public boolean safeRandomSpawns = true;
+
     @Config.Comment("Allows to change between loading screens with a modifiable waiting time between screens.")
     @Config.Name("Cycle Screens (Loading Screens)")
     @Config.RequiresMcRestart

@@ -124,6 +124,11 @@ public class ForgeConfigHandler {
 	@Order(18)
 	public static PlayerBossConfig playerbosses = new PlayerBossConfig();
 
+	@Config.Comment("Random spawns (first join, respawning without a bed), requires the \"Safe Random Spawns\" mixin toggle")
+	@Config.Name("Safe Spawns")
+	@Order(19)
+	public static SafeSpawnConfig safespawn = new SafeSpawnConfig();
+
 	public static class ServerConfig {
 		@Config.Comment("Add Blocks you can drink from, will be treated like water blocks")
 		@Config.Name("Additional Water Blocks:")
@@ -337,6 +342,7 @@ public class ForgeConfigHandler {
 				srparasites.reset();
 				nuclear.reset();
 				lockedblocks.reset();
+				safespawn.reset();
 				PotionLevelCaps.refreshConfig();
 				loadParticleRulesFromConfig();
 			}

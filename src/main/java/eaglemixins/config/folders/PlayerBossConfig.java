@@ -24,6 +24,14 @@ public class PlayerBossConfig {
     @Config.Name("Bosses")
     public Map<String, BossEntry> bosses = new LinkedHashMap<>();
 
+    @Config.Comment({
+            "If true, infernal player bosses keep their configured Max Health.",
+            "FermiumMixins' \"Fix Additional Health (InfernalMobs)\" multiplies infernal health by ability count x Infernal Mobs' mobHealthFactor,",
+            "and player bosses only get the one ability from their Extra NBT, so with mobHealthFactor=0.2 they'd only have 20% of it."
+    })
+    @Config.Name("Ignore Infernal Health Scaling")
+    public boolean ignoreInfernalHealth = true;
+
     public enum FlightMode { NEVER, WHEN_NEEDED, ALWAYS }
 
     public enum HornStyle { NONE, INVERTED, HORNS, DRAGON }

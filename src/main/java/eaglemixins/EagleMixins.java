@@ -89,6 +89,7 @@ public class EagleMixins {
         MinecraftForge.EVENT_BUS.register(RandomTippedArrowHandler.class);
         if(ForgeConfigHandler.mixintoggles.punishAbyssalTeleportation) MinecraftForge.EVENT_BUS.register(RandomTpCancelHandler.class);
         MinecraftForge.EVENT_BUS.register(RecallFlightCancelHandler.class);
+        if(ForgeConfigHandler.mixintoggles.safeRandomSpawns) MinecraftForge.EVENT_BUS.register(SafeSpawnHandler.class);
         if(ForgeConfigHandler.mixintoggles.customSRPGearEvolution) registerIfModsPresent(new String[]{"srparasites", "charm", "srpmixins"}, SentientWeaponEvolutionHandler.class);
         if(ForgeConfigHandler.mixintoggles.enableSpartanTwoHandedBuff) registerIfModsPresent(new String[]{"spartanweaponry"}, SpartanTwoHandedBuffHandler.class);
         registerIfModsPresent(new String[]{"srparasites", "biomesoplenty"}, SRParasitesHandler.class);
