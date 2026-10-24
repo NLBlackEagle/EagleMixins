@@ -51,7 +51,7 @@ public class BlockNoclipHandler {
             if (!event.getWorld().isRemote) {
                 String blockName = state.getBlock().getLocalizedName();
                 event.getEntityPlayer().sendStatusMessage(
-                        new TextComponentString("§cThe " + blockName + " is obstructed."),
+                        new TextComponentString("\u00a7cThe " + blockName + " is obstructed."),
                         true // true = action bar
                 );
             }
