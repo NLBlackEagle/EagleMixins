@@ -16,6 +16,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
@@ -151,6 +152,22 @@ public class SRParasitesHandler {
         if (health > 1000)      entity.setHealth(health / 50);
         else if (health > 100)  entity.setHealth(health / 10);
         else                    entity.setHealth(health - 10);
+    }
+
+    // Nexus parasites (Beckons/Dispatchers) don't appear at all where they would be killed, whatever spawned them
+    @SubscribeEvent
+    public static void onEntityJoinWorld(EntityJoinWorldEvent event) {
+        Entity entity = event.getEntity();
+        if (event.getWorld().isRemote || !(entity instanceof EntityPStationaryArchitect)) return;
+
+        if (ForgeConfigHandler.abyssal.killAbyssalNexus && Ref.entityIsInAbyssalRift(entity)) {
+            event.setCanceled(true);
+            return;
+        }
+        if (!ForgeConfigHandler.srparasites.killEscapedParasites) return;
+        ResourceLocation biomeReg = event.getWorld().getBiome(entity.getPosition()).getRegistryName();
+        if (biomeReg != null && !SRParasitesHandler.isBiomeAllowed(biomeReg, entity.dimension))
+            event.setCanceled(true);
     }
 
     // SRParasites in overworld - cancel spawns if not in Whitelisted Biome and from spawner
