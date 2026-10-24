@@ -21,6 +21,11 @@
           "weight": 5
         },
         {
+          "type": "loot_table",
+          "name": "eaglemixins:blocks/rustic_pipes",
+          "weight": 5
+        },
+        {
           "type": "item",
           "name": "nuclearcraft:geiger_block",
           "weight": 5

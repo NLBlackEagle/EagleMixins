@@ -15,7 +15,9 @@ final class PlayerBossDefaults {
         b.armor = 100;
         b.armorToughness = 0.1;
         b.attackDamage = 40;
-        b.movementSpeed = 0.1;
+        b.movementSpeed = 0.36;
+        b.playerDamageCap = 400;
+        b.flight.speed = 0.55;
         b.knockbackResistance = 1;
         b.experience = 500;
         b.equipment.mainhand = "srparasites:weapon_bow_sentient@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":15,Potion:\"potioncore:perplexity\",remainingPotionHits:50,disarm:1,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},RepairCost:999}";
@@ -39,7 +41,9 @@ final class PlayerBossDefaults {
         b.armor = 90;
         b.armorToughness = 0.1;
         b.attackDamage = 35;
-        b.movementSpeed = 0.2;
+        b.movementSpeed = 0.3;
+        b.playerDamageCap = 400;
+        b.flight.speed = 0.55;
         b.knockbackResistance = 1;
         b.experience = 500;
         b.equipment.mainhand = "srparasites:weapon_scythe_sentient@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":14,Potion:\"srparasites:bleed\",remainingPotionHits:50,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},disarm:1,RepairCost:999}";
@@ -65,7 +69,9 @@ final class PlayerBossDefaults {
         b.armor = 100;
         b.armorToughness = 0.3;
         b.attackDamage = 60;
-        b.movementSpeed = 0.05;
+        b.movementSpeed = 0.27;
+        b.playerDamageCap = 400;
+        b.flight.speed = 0.23;
         b.knockbackResistance = 1;
         b.experience = 500;
         b.equipment.mainhand = "mod_lavacow:skeletonking_mace@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":14,Potion:\"mod_lavacow:soiled\",remainingPotionHits:50,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},disarm:1,RepairCost:999}";
@@ -88,7 +94,9 @@ final class PlayerBossDefaults {
         b.armor = 100;
         b.armorToughness = 0.1;
         b.attackDamage = 30;
-        b.movementSpeed = 0.2;
+        b.movementSpeed = 0.3;
+        b.playerDamageCap = 400;
+        b.flight.speed = 0.55;
         b.knockbackResistance = 1;
         b.experience = 500;
         b.equipment.mainhand = "srparasites:weapon_cleaver_sentient@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":15,Potion:\"minecraft:blindness\",remainingPotionHits:50,disarm:1,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},RepairCost:999}";
@@ -112,7 +120,9 @@ final class PlayerBossDefaults {
         b.armor = 80;
         b.armorToughness = 0.1;
         b.attackDamage = 55;
-        b.movementSpeed = 0.2;
+        b.movementSpeed = 0.3;
+        b.playerDamageCap = 400;
+        b.flight.speed = 0.55;
         b.knockbackResistance = 1;
         b.experience = 500;
         b.equipment.mainhand = "mujmajnkraftsbettersurvival:itemlightningdragonbonenunchaku@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":0,Potion:\"potioncore:lightning\",remainingPotionHits:50,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},disarm:1,RepairCost:999}";
@@ -136,7 +146,9 @@ final class PlayerBossDefaults {
         b.armor = 60;
         b.armorToughness = 0.1;
         b.attackDamage = 20;
-        b.movementSpeed = 0.2;
+        b.movementSpeed = 0.3;
+        b.playerDamageCap = 400;
+        b.flight.speed = 0.55;
         b.knockbackResistance = 1;
         b.experience = 500;
         b.equipment.mainhand = "spartanfire:spear_ice_dragonbone@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":15,Potion:\"switchbow:freeze\",remainingPotionHits:50,disarm:1,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},RepairCost:999}";
@@ -160,7 +172,9 @@ final class PlayerBossDefaults {
         b.armor = 60;
         b.armorToughness = 0.1;
         b.attackDamage = 15;
-        b.movementSpeed = 0.2;
+        b.movementSpeed = 0.3;
+        b.playerDamageCap = 400;
+        b.flight.speed = 0.55;
         b.knockbackResistance = 1;
         b.experience = 500;
         b.equipment.mainhand = "srparasites:weapon_sword_sentient@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":4,Potion:\"potioncore:potion_sickness\",remainingPotionHits:20,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},disarm:1,RepairCost:999}";
@@ -185,7 +199,9 @@ final class PlayerBossDefaults {
         b.armor = 60;
         b.armorToughness = 0.1;
         b.attackDamage = 20;
-        b.movementSpeed = 0.1;
+        b.movementSpeed = 0.3;
+        b.playerDamageCap = 400;
+        b.flight.speed = 0.55;
         b.knockbackResistance = 1;
         b.experience = 500;
         b.equipment.mainhand = "srparasites:weapon_axe_sentient@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":11,Potion:\"potioncore:drown\",remainingPotionHits:50,disarm:1,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},RepairCost:999}";
@@ -203,7 +219,7 @@ final class PlayerBossDefaults {
         bosses.put("zero", b);
 
         b = new PlayerBossConfig.BossEntry();
-        b.name = "\u2620\u00a74 Cheesebane Cathy \u00a7r\u2620";
+        b.name = "\u2620\u00a74 \u00a7lCheesebane Cathy \u00a7r\u2620";
         b.subtitle = "\u00a77She's gonna get ya";
         b.skin = "cathwy";
         b.slimArms = true;
@@ -211,7 +227,10 @@ final class PlayerBossDefaults {
         b.armor = 150;
         b.armorToughness = 0.2;
         b.attackDamage = 80;
-        b.movementSpeed = 0.1;
+        b.movementSpeed = 0.3;
+        b.playerDamageCap = 400;
+        b.flight.speed = 0.28;
+        b.attackReach = 1.0;
         b.knockbackResistance = 1; // 2.0 in the spawner, the game caps it at 1
         b.experience = 500;
         b.equipment.mainhand = "srparasites:weapon_lance_sentient@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":15,Potion:\"potioncore:perplexity\",remainingPotionHits:50,disarm:1,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},RepairCost:999}";
@@ -229,13 +248,15 @@ final class PlayerBossDefaults {
         bosses.put("cathy", b);
 
         b = new PlayerBossConfig.BossEntry();
-        b.name = "\u00a76\u273f\u00a0\u00a7aNischhelm\u00a0\u00a76\u273f";
+        b.name = "\u00a76\u273f \u00a7a\u00a7lNischhelm\u00a7r \u00a76\u273f";
         b.skin = "nischhelm";
         b.maxHealth = 1200;
         b.armor = 60;
         b.armorToughness = 0.1;
         b.attackDamage = 20;
-        b.movementSpeed = 0.2;
+        b.movementSpeed = 0.3;
+        b.playerDamageCap = 400;
+        b.flight.speed = 0.55;
         b.knockbackResistance = 1;
         b.experience = 500;
         b.weaponName = "More Green";
@@ -244,7 +265,7 @@ final class PlayerBossDefaults {
         b.equipment.feet = "nuclearcraft:boots_hazmat {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}]}";
         b.equipment.legs = "nuclearcraft:legs_hazmat {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}]}";
         b.equipment.chest = "mod_lavacow:felarmor_chestplate {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}]}";
-        b.equipment.head = "mod_lavacow:scarecrowhead_common@3";
+        b.equipment.head = "mod_lavacow:scarecrowhead_common";
         b.flight.mode = PlayerBossConfig.FlightMode.WHEN_NEEDED;
         b.wings.enabled = true;
         b.wings.primaryColor = "#FFAA00";
@@ -255,12 +276,13 @@ final class PlayerBossDefaults {
 
         // Skin by terzaerian on Planet Minecraft (planetminecraft.com/skin/sarevok-anchev-252343), converted to 64x64
         b = new PlayerBossConfig.BossEntry();
-        b.name = "§5§lSarevok Terzaerian§r";
+        b.name = "\u00a75\u00a7lSarevok Terzaerian\u00a7r";
         b.skin = "sarevok";
         b.maxHealth = 2350;
         b.armor = 70;
         b.attackDamage = 130;
-        b.movementSpeed = 0.25;
+        b.movementSpeed = 0.3;
+        b.flight.speed = 0.55;
         b.knockbackResistance = 1;
         b.experience = 500;
         b.fireImmune = false;

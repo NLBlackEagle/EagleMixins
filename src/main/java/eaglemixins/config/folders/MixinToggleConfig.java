@@ -87,9 +87,9 @@ public class MixinToggleConfig {
     @Config.Comment("Allows to separately modify chance for mimics for unlooted underground chests specifically.")
     @Config.Name("Underground Mimics (RLArtifacts)")
     @Config.RequiresMcRestart
-    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.rlartifacts.undergroundmimics.json", defaultValue = true)
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.rlartifacts.undergroundmimics.json", defaultValue = false)
     @MixinConfig.CompatHandling(modid = "artifacts", desired = true, reason = "Requires mod to properly function")
-    public boolean undergroundMimics = true;
+    public boolean undergroundMimics = false;
 
     @Config.Comment("Allows to modify what kind of blocks simplediff will see as being able to drink from.")
     @Config.Name("Extend Drinkable Blocks (SimpleDifficulty)")
@@ -160,9 +160,9 @@ public class MixinToggleConfig {
     @Config.Comment("Change NuclearCraft chunk radiation to be variable over subchunks (16 blocks high slices of a chunk).")
     @Config.Name("SubChunk Radiation (NuclearCraft)")
     @Config.RequiresMcRestart
-    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.nuclearcraft.subchunkradiation.json", defaultValue = false)
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.nuclearcraft.subchunkradiation.json", defaultValue = true)
     @MixinConfig.CompatHandling(modid = "nuclearcraft", desired = true, reason = "Requires mod to properly function")
-    public boolean subchunkRadiation = false;
+    public boolean subchunkRadiation = true;
 
     @Config.Comment("Will multiply all rads by 1000 to make them better readable. Also will stop displaying negligible radiation in item tooltips.")
     @Config.Name("Change Rads Scale (NuclearCraft)")
@@ -296,16 +296,16 @@ public class MixinToggleConfig {
     @Config.Comment("Caches sourceBlock hashes to greatly reduce performance for some OTG BO3 type structures. This skips the unnecessarily expensive MaterialSet.contains() call.")
     @Config.Name("BO3 Material Performance (OTG)")
     @Config.RequiresMcRestart
-    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.otg.bo3materialperformance.json", defaultValue = true)
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.otg.bo3materialperformance.json", defaultValue = false)
     @MixinConfig.CompatHandling(modid = "openterraingenerator", desired = true, reason = "Requires mod to properly function")
-    public boolean bo3getMaterialPerformanceFix = true;
+    public boolean bo3getMaterialPerformanceFix = false;
 
     @Config.Comment("Caches BlockFunctions for some (rotatingRandomly=false) BO3 type OTG structures instead of gathering them again every time that structure generates.")
     @Config.Name("BO3 BlockFunction Cache (OTG)")
     @Config.RequiresMcRestart
-    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.otg.bo3blockfunctioncache.json", defaultValue = true)
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.otg.bo3blockfunctioncache.json", defaultValue = false)
     @MixinConfig.CompatHandling(modid = "openterraingenerator", desired = true, reason = "Requires mod to properly function")
-    public boolean bo3blockFunctionCache = true;
+    public boolean bo3blockFunctionCache = false;
 
     @Config.Comment("Modifies the world creation process to limit users to creating only the preset world type")
     @Config.Name("Create World Simplification (OTG)")

@@ -18,7 +18,24 @@ public class AbyssalConfig {
             "minecraft:horse",
             "minecraft:donkey",
             "minecraft:pig",
-            "minecraft:llama"
+            "minecraft:llama",
+            "lycanitesmobs:barghest",
+            "lycanitesmobs:erepede",
+            "lycanitesmobs:eyewig",
+            "lycanitesmobs:feradon",
+            "lycanitesmobs:ignibus",
+            "lycanitesmobs:maug",
+            "lycanitesmobs:pinky",
+            "lycanitesmobs:salamander",
+            "lycanitesmobs:shade",
+            "lycanitesmobs:uvaraptor",
+            "lycanitesmobs:ventoraptor",
+            "lycanitesmobs:warg",
+            "lycanitesmobs:zoataur",
+            "mod_lavacow:salamander",
+            "iceandfire:firedragon",
+            "iceandfire:icedragon",
+            "iceandfire:lightningdragon"
     };
 
     @Config.Comment({
@@ -42,12 +59,12 @@ public class AbyssalConfig {
     @Config.Comment("Parasites spawned in Abyssal Rift will have dmg that is this much higher than other overworld parasites")
     @Config.Name("Abyssal Rift Parasite Stat Multi: Dmg")
     @Config.RequiresMcRestart
-    public float abyssalDmgModifier = 1;
+    public float abyssalDmgModifier = 2;
 
     @Config.Comment("Parasites spawned in Abyssal Rift will have health that is this much higher than other overworld parasites")
     @Config.Name("Abyssal Rift Parasite Stat Multi: HP")
     @Config.RequiresMcRestart
-    public float abyssalHPModifier = 1;
+    public float abyssalHPModifier = 2;
 
     @Config.Comment("Parasites spawned in Abyssal Rift will have armor that is this much higher than other overworld parasites")
     @Config.Name("Abyssal Rift Parasite Stat Multi: Armor")
@@ -70,7 +87,6 @@ public class AbyssalConfig {
             "mujmajnkraftsbettersurvival:warp",
             "enderPearl",
             "chorusFruit",
-            "wallDmg",
             "enderCrown",
             "enderTalisman"
     };

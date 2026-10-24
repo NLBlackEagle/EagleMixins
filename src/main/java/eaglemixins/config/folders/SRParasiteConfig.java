@@ -40,7 +40,7 @@ public class SRParasiteConfig {
     @Config.Comment({
             "EagleMixins modifies parasite loot in the overworld.",
             "Parasites are only allowed to drop loot in certain named biomes (\"SRParasites allowed biomes\")",
-            "In those biomes, they have a reduced chance to drop parasite loot and will drop a replacement item instead (\"Parasite Replacement Drop Chance\" / \"Parasite Replacement Drop\")",
+            "In those biomes, they never drop parasite (srparasites) items. Each one instead has a chance to drop a replacement item (\"Parasite Replacement Drop Chance\" / \"Parasite Replacement Drop\")",
             "Only parasites with specific custom names are exempt from this modification (\"Parasite full loot-drop enabler\")",
             "If set to false, EagleMixins will instead not modify parasite loot at all."
     })
@@ -98,7 +98,7 @@ public class SRParasiteConfig {
     @Config.Name("Kill Parasites outside alllowed biomes")
     public boolean killEscapedParasites = true;
 
-    @Config.Comment("When set higher than 0 parasites will drop their replacement drop with this chance instead.")
+    @Config.Comment("Chance per removed parasite item to drop the replacement drop instead. Parasite items are always removed, at 0 nothing drops in their place.")
     @Config.Name("Parasite Replacement Drop Chance")
     public float replacementDropChance = 0.375f;
 

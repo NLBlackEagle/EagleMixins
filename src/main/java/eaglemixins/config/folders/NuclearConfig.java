@@ -47,8 +47,8 @@ public class NuclearConfig {
         radiationResistanceList.put(new ResourceLocation("iceandfire:icedragon"), 1000.);
         radiationResistanceList.put(new ResourceLocation("iceandfire:lightningdragon"), 1000.);
 
-        lootTableRadiation.put("dregora:ruins/nuclear", 0.1000); //value is average of such a loot table
-        lootTableRadiation.put("dregora:ruins/starter", 0.0361); //value is average of such a loot table
+        lootTableRadiation.put("dregora:ruins/nuclear", 0.02); //value is average of such a loot table
+        lootTableRadiation.put("dregora:ruins/starter", 0.005); //value is average of such a loot table
 
         inventoryRadiation.put("enderChest", true);
         inventoryRadiation.put("inventoryCrafting", true);

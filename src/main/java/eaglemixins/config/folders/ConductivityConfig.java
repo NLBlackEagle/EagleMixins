@@ -9,9 +9,33 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ConductivityConfig {
+    @Config.Comment({
+            "Every 5 seconds outside in a storm, players get a warning (and get struck 3 seconds later) with a chance of",
+            "their total conductivity x this multiplier in %. Halved when it only rains"
+    })
+    @Config.Name("Strike Chance Multiplier")
+    @Config.RangeDouble(min = 0, max = 100)
+    public double chanceMultiplier = 2.0;
+
+    @Config.Comment("Extra multiplier on the strike chance while standing where the radiation dust particles show. Requires NuclearCraft")
+    @Config.Name("Radiation Chance Multiplier")
+    @Config.RangeDouble(min = 0, max = 100)
+    public double radiationMultiplier = 2.0;
+
+    @Config.Comment("Ticks after a strike (or getting to safety) before the next warning can happen while thundering")
+    @Config.Name("Thunder Cooldown")
+    @Config.RangeInt(min = 0)
+    public int thunderCooldown = 300;
+
+    @Config.Comment("Ticks after a strike (or getting to safety) before the next warning can happen while it only rains")
+    @Config.Name("Rain Cooldown")
+    @Config.RangeInt(min = 0)
+    public int rainCooldown = 900;
+
     @Config.Comment("List of item ids and their conductivity, separated by a space. For metadata use mod:itemid:metadata conductivity")
     @Config.Name("Item Conductivity")
     public String[] itemConductivities = {
+            "spartanweaponry:club_studded 1",
             "mujmajnkraftsbettersurvival:itemironspear 1",
             "mujmajnkraftsbettersurvival:itemirondagger 1",
             "mujmajnkraftsbettersurvival:itemironbattleaxe 1",
@@ -129,6 +153,8 @@ public class ConductivityConfig {
             "variedcommodities:lead_pipe 1",
             "variedcommodities:crowbar 1",
             "variedcommodities:pipe_wrench 1",
+            "variedcommodities:sledge_hammer 1",
+            "variedcommodities:cleaver 1",
             "variedcommodities:wrench 1",
             "variedcommodities:candle 1",
             "variedcommodities:lamp 1",

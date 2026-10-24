@@ -54,8 +54,11 @@ public class PlayerBossConfig {
         }
     }
 
-    /** PLAYER_BOSS: bow or melee depending on the main hand like skeletons, with optional flight */
-    public enum BossAI { PLAYER_BOSS }
+    /**
+     * PLAYER_BOSS: bow or melee depending on the main hand like skeletons, with optional flight.
+     * The others fight the same way but pick their targets like that vanilla mob.
+     */
+    public enum BossAI { PLAYER_BOSS, ZOMBIE, SKELETON, SPIDER, ZOMBIE_PIGMAN, ENDERMAN, IRON_GOLEM, PASSIVE }
 
     public static class BossEntry {
         @Config.Comment("Name above the boss and on its boss bar. \u00a7 color codes allowed")
@@ -73,7 +76,17 @@ public class PlayerBossConfig {
         @Config.Name("Model")
         public BossModel model = BossModel.PLAYER;
 
-        @Config.Comment("How the boss fights and moves. PLAYER_BOSS: bow or melee depending on the main hand like skeletons, with optional flight")
+        @Config.Comment({
+                "How the boss picks its targets. Every AI fights with a bow or melee depending on the main hand, with optional flight",
+                "PLAYER_BOSS: attacks players on sight, fights back when hit. Spotting or getting hit by a player sends all nearby PLAYER_BOSS bosses after that player too",
+                "ZOMBIE: attacks players, villagers and iron golems on sight, calls nearby ZOMBIE bosses for help when hit",
+                "SKELETON: attacks players and iron golems on sight, runs from wolves",
+                "SPIDER: attacks players and iron golems only in the dark, fights back when hit",
+                "ZOMBIE_PIGMAN: neutral until hit, then it and all nearby ZOMBIE_PIGMAN bosses get angry at players for 20-40 seconds",
+                "ENDERMAN: neutral until hit or a player looks straight at it (a pumpkin on the head prevents that)",
+                "IRON_GOLEM: attacks hostile mobs (except creepers and other player bosses), fights back when hit",
+                "PASSIVE: never attacks, panics and runs when hit"
+        })
         @Config.Name("AI")
         public BossAI ai = BossAI.PLAYER_BOSS;
 

@@ -19,8 +19,7 @@ public class WeaponDamageConfig {
     @Config.Name("Critical Hit Multipliers")
     public Map<ResourceLocation, CritEntry> critMultipliers = new LinkedHashMap<>();
     private void initCritMultis() {
-        critMultipliers.put(new ResourceLocation("srparasites:weapon_axe"), new CritEntry(true, 1.0F));
-        critMultipliers.put(new ResourceLocation("srparasites:weapon_axe_sentient"), new CritEntry(true, 1.0F));
+        critMultipliers.put(new ResourceLocation("srparasites:weapon_axe_sentient"), new CritEntry(true, 1.3F));
     }
     public static class CritEntry {
         @Config.Name("Apply Multiplier Late")
@@ -48,8 +47,7 @@ public class WeaponDamageConfig {
     @Config.Name("Range Multipliers")
     public Map<ResourceLocation, RangeEntry> rangeMultipliers = new LinkedHashMap<>();
     private void initRangeMultis(){
-        rangeMultipliers.put(new ResourceLocation("srparasites:weapon_lance"), new RangeEntry(true, 4, 0.35F, 1.0F));
-        rangeMultipliers.put(new ResourceLocation("srparasites:weapon_lance_sentient"), new RangeEntry(true, 4, 0.35F, 1.0F));
+        rangeMultipliers.put(new ResourceLocation("srparasites:weapon_lance_sentient"), new RangeEntry(true, 4, 0.12F, 1.0F));
     }
     public static class RangeEntry {
         @Config.Name("Scales with Distance")

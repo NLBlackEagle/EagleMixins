@@ -129,10 +129,23 @@ public class ForgeConfigHandler {
 	@Order(19)
 	public static SafeSpawnConfig safespawn = new SafeSpawnConfig();
 
+	@Config.Comment("Extra lightning in radioactive areas, red/black lightning in the Underneath and dark lightning in the nuclear wasteland")
+	@Config.Name("Lightning")
+	@Order(20)
+	public static LightningConfig lightning = new LightningConfig();
+
 	public static class ServerConfig {
 		@Config.Comment("Add Blocks you can drink from, will be treated like water blocks")
 		@Config.Name("Additional Water Blocks:")
-		public Set<String> waterblockListdrinkables = new LinkedHashSet<>(Collections.singletonList("cookingforblockheads:sink"));
+		public Set<String> waterblockListdrinkables = new LinkedHashSet<>(Arrays.asList(
+				"cookingforblockheads:sink",
+				"cookingforblockheads:sink_oak",
+				"cookingforblockheads:sink_spruce",
+				"cookingforblockheads:sink_birch",
+				"cookingforblockheads:sink_jungle",
+				"cookingforblockheads:sink_acacia",
+				"cookingforblockheads:sink_darkoak"
+		));
 
 		@Config.Comment("Give Dismounting entities the ability to dismount players when they target a player in Abyssal Rift or Parasite biomes")
 		@Config.Name("Dismount on target:")
@@ -177,7 +190,7 @@ public class ForgeConfigHandler {
 
 		@Config.Comment("Health multiplier for Blighted Shivaxi")
 		@Config.Name("Blighted Shivaxi Health Multiplier")
-		public float blightedShivaxiHealthModifier = 0.5F;
+		public float blightedShivaxiHealthModifier = 8.5F;
 
         @Config.Comment("Armor multiplier for Blighted Shivaxi")
         @Config.Name("Blighted Shivaxi Armor Multiplier")
@@ -185,7 +198,7 @@ public class ForgeConfigHandler {
 
         @Config.Comment("Damage multiplier for Blighted Shivaxi")
         @Config.Name("Blighted Shivaxi Damage Multiplier")
-        public float blightedShivaxiDamageModifier = 3.0F;
+        public float blightedShivaxiDamageModifier = 2.8F;
 
 		@Config.Comment("If true, Battle Towers golems do not turn on each other when one golem damages another")
 		@Config.Name("Prevent Golem Infighting")
@@ -229,6 +242,8 @@ public class ForgeConfigHandler {
 		public Map<ResourceLocation, ArrayList<String>> biomeDictionaryTagList = new LinkedHashMap<>();
 		private void initBiomeDictTagList(){
 			biomeDictionaryTagList.put(new ResourceLocation("nuclearcraft:nuclear_wasteland"), new ArrayList<>(Collections.singletonList("NUCLEAR")));
+			biomeDictionaryTagList.put(new ResourceLocation("palebloom:pale_garden"), new ArrayList<>(Collections.singletonList("PALE")));
+			biomeDictionaryTagList.put(new ResourceLocation("srparasites:biome_parasite"), new ArrayList<>(Collections.singletonList("PARASITE")));
 		}
 
 		@Config.Comment({
@@ -237,7 +252,7 @@ public class ForgeConfigHandler {
 				"Example: NUCLEAR"
 		})
 		@Config.Name("Lycanites Mobs Fluid Lake Disabled Biome Tags")
-		public Set<String> lycanitesGenerationDisabledBiomeTags = new LinkedHashSet<>();
+		public Set<String> lycanitesGenerationDisabledBiomeTags = new LinkedHashSet<>(Collections.singletonList("PALE"));
 
 		@Config.Comment({
 				"Stops Lycanites Mobs' dungeons from building blocks in chunks whose biome carries any of these BiomeDictionary tags.",
@@ -247,7 +262,7 @@ public class ForgeConfigHandler {
 				"Example: ABYSSAL"
 		})
 		@Config.Name("Lycanites Mobs Dungeon Disabled Biome Tags")
-		public Set<String> lycanitesDungeonDisabledBiomeTags = new LinkedHashSet<>();
+		public Set<String> lycanitesDungeonDisabledBiomeTags = new LinkedHashSet<>(Arrays.asList("ABYSSAL", "PARASITE", "PALE", "NUCLEAR"));
 
 		@Config.Comment({
 				"Stops Ice and Fire's Pixie Village structure from generating in biomes carrying any of these BiomeDictionary tags.",
@@ -255,7 +270,7 @@ public class ForgeConfigHandler {
 				"Example: NUCLEAR"
 		})
 		@Config.Name("Pixie Village Disabled Biome Tags")
-		public Set<String> pixieVillageDisabledBiomeTags = new LinkedHashSet<>();
+		public Set<String> pixieVillageDisabledBiomeTags = new LinkedHashSet<>(Arrays.asList("PALE", "PARASITE"));
 
 		@Config.Comment({
 				"Forgotten Item Crafting Rune Recipe Overrides for the guaranteed core item.",
@@ -310,8 +325,8 @@ public class ForgeConfigHandler {
         })
         @Config.Name("Particle Spawn System")
         public String[] ambientparticlespawnlist = {
-                "0, all, [], [SPELL_MOB], 3, 8, 1.0, 0.0, 0.01, 20, true, 0, 256, [], NUCLEAR",
-                "0, minecraft:plains, [minecraft:grass|minecraft:tallgrass], [VILLAGER_HAPPY|TOWN_AURA], 3, 8, 1.0, 0.0, 0.01, 20, true, 0, 256, [thunder|rain|clear], NUCLEAR"
+                "all, all, [SOLID], [mobSpell@71,116,57|mobSpell@146,116,24], 6, 25, 1.0, 1.0, 0, 0.001, 30, true, 0, 256, [], all",
+                "all, all, [], [totem], 6, 1, 1.0, 2.0, 10, 0, 30, true, 0, 256, [], all"
         };
 
         @Config.Comment("Max distance (blocks) at which a spawner's mob model renders. Beyond this, only the cage renders")
@@ -343,6 +358,7 @@ public class ForgeConfigHandler {
 				nuclear.reset();
 				lockedblocks.reset();
 				safespawn.reset();
+				lightning.reset();
 				PotionLevelCaps.refreshConfig();
 				loadParticleRulesFromConfig();
 			}
