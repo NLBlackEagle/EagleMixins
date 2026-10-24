@@ -3,16 +3,19 @@ package eaglemixins.entity;
 import eaglemixins.EagleMixins;
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.config.folders.PlayerBossConfig;
+import eaglemixins.entity.ai.BossTargetAI;
 import eaglemixins.entity.ai.EntityAIBossFlight;
 import eaglemixins.util.ItemStackParser;
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
 import net.minecraft.entity.ai.EntityAIAttackRangedBow;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
+import net.minecraft.entity.ai.EntityAIAvoidEntity;
 import net.minecraft.entity.ai.EntityAILookIdle;
+import net.minecraft.entity.ai.EntityAIPanic;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
@@ -21,7 +24,12 @@ import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.monster.EntityCreeper;
+import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityArrow;
@@ -69,6 +77,7 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
     private boolean initialized = false; // equipment and full health applied
     private static final UUID INFERNAL_HP_MODIFIER = UUID.fromString("0ad3c584-7c75-42d5-992e-dc9c60ae656f"); // FermiumMixins' infernalmobs_hp_per_modifier
     private boolean needsConfig = true;
+    private int angerLevel = 0; // ZOMBIE_PIGMAN AI
     @Nullable private PlayerBossConfig.BossAI currentAI;
     @Nullable private PlayerBossConfig.BossEntry entry;
 
@@ -97,18 +106,96 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
         currentAI = ai;
         for (EntityAITasks.EntityAITaskEntry task : new ArrayList<>(tasks.taskEntries)) tasks.removeTask(task.action);
         for (EntityAITasks.EntityAITaskEntry task : new ArrayList<>(targetTasks.taskEntries)) targetTasks.removeTask(task.action);
+
+        // Movement is the same for every AI
+        tasks.addTask(0, new EntityAISwimming(this));
+        if (ai == PlayerBossConfig.BossAI.PASSIVE) tasks.addTask(1, new EntityAIPanic(this, 1.4D));
+        else tasks.addTask(1, new EntityAIBossFlight(this));
+        if (ai == PlayerBossConfig.BossAI.SKELETON) tasks.addTask(3, new EntityAIAvoidEntity<>(this, EntityWolf.class, 6.0F, 1.0D, 1.2D));
+        tasks.addTask(5, new EntityAIWanderAvoidWater(this, 1.0D));
+        tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+        tasks.addTask(6, new EntityAILookIdle(this));
+
+        // Targets like the vanilla mob
         switch (ai) {
             case PLAYER_BOSS:
-                tasks.addTask(0, new EntityAISwimming(this));
-                tasks.addTask(1, new EntityAIBossFlight(this));
-                tasks.addTask(5, new EntityAIWanderAvoidWater(this, 1.0D));
-                tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-                tasks.addTask(6, new EntityAILookIdle(this));
-                targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-                targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, true));
-                setCombatTask();
+                targetTasks.addTask(1, new BossTargetAI.HurtByTarget(this, false));
+                targetTasks.addTask(2, BossTargetAI.nearest(this, EntityPlayer.class, true));
+                break;
+            case ZOMBIE:
+                targetTasks.addTask(1, new BossTargetAI.HurtByTarget(this, true));
+                targetTasks.addTask(2, BossTargetAI.nearest(this, EntityPlayer.class, true));
+                targetTasks.addTask(3, BossTargetAI.nearest(this, EntityVillager.class, false));
+                targetTasks.addTask(3, BossTargetAI.nearest(this, EntityIronGolem.class, true));
+                break;
+            case SKELETON:
+                targetTasks.addTask(1, new BossTargetAI.HurtByTarget(this, false));
+                targetTasks.addTask(2, BossTargetAI.nearest(this, EntityPlayer.class, true));
+                targetTasks.addTask(3, BossTargetAI.nearest(this, EntityIronGolem.class, true));
+                break;
+            case SPIDER:
+                targetTasks.addTask(1, new BossTargetAI.HurtByTarget(this, false));
+                targetTasks.addTask(2, new BossTargetAI.InDark<>(this, EntityPlayer.class));
+                targetTasks.addTask(3, new BossTargetAI.InDark<>(this, EntityIronGolem.class));
+                break;
+            case ZOMBIE_PIGMAN:
+                targetTasks.addTask(1, new BossTargetAI.HurtByTarget(this, true));
+                targetTasks.addTask(2, new BossTargetAI.WhileAngry(this));
+                break;
+            case ENDERMAN:
+                targetTasks.addTask(1, new BossTargetAI.HurtByTarget(this, false));
+                targetTasks.addTask(2, new BossTargetAI.Stare(this));
+                break;
+            case IRON_GOLEM:
+                targetTasks.addTask(1, new BossTargetAI.HurtByTarget(this, false));
+                targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityLiving.class, 10, false, true,
+                        mob -> mob != null && IMob.VISIBLE_MOB_SELECTOR.apply(mob) && !(mob instanceof EntityCreeper) && !(mob instanceof EntityPlayerBoss)));
+                break;
+            case PASSIVE:
                 break;
         }
+        setCombatTask();
+    }
+
+    @Nullable
+    public PlayerBossConfig.BossAI getAI() {
+        return currentAI;
+    }
+
+    @Override
+    public void setAttackTarget(@Nullable EntityLivingBase target) {
+        EntityLivingBase old = getAttackTarget();
+        super.setAttackTarget(target);
+        if (!world.isRemote && currentAI == PlayerBossConfig.BossAI.PLAYER_BOSS && target instanceof EntityPlayer && target != old)
+            alertNearby(target);
+    }
+
+    /** PLAYER_BOSS: a boss that spots or gets hit by a player sends the PLAYER_BOSS bosses around it (within follow range) after them too */
+    private void alertNearby(EntityLivingBase target) {
+        double range = getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getAttributeValue();
+        for (EntityPlayerBoss other : world.getEntitiesWithinAABB(EntityPlayerBoss.class, getEntityBoundingBox().grow(range, 10.0D, range))) {
+            // already busy ones are skipped, which also stops the alerts from bouncing back and forth
+            if (other != this && other.currentAI == currentAI && other.getAttackTarget() == null) other.setAttackTarget(target);
+        }
+    }
+
+    // ---- Zombie pigman anger ----
+
+    public boolean isAngry() {
+        return angerLevel > 0;
+    }
+
+    /** Like zombie pigmen: angry for 20-40 seconds, during which it also targets any player it sees */
+    public void becomeAngryAt(EntityLivingBase target) {
+        angerLevel = 400 + rand.nextInt(400);
+        setRevengeTarget(target);
+    }
+
+    @Override
+    public boolean attackEntityFrom(DamageSource source, float amount) {
+        if (!isEntityInvulnerable(source) && currentAI == PlayerBossConfig.BossAI.ZOMBIE_PIGMAN && source.getTrueSource() instanceof EntityPlayer)
+            becomeAngryAt((EntityPlayer) source.getTrueSource());
+        return super.attackEntityFrom(source, amount);
     }
 
     @Nullable
@@ -256,7 +343,7 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
 
     /** Bow AI with a bow in the main hand, melee otherwise, like skeletons. */
     public void setCombatTask() {
-        if (world == null || world.isRemote || currentAI != PlayerBossConfig.BossAI.PLAYER_BOSS) return;
+        if (world == null || world.isRemote || currentAI == null || currentAI == PlayerBossConfig.BossAI.PASSIVE) return;
         tasks.removeTask(meleeAttack);
         tasks.removeTask(bowAttack);
         if (isHoldingBow()) {
@@ -350,6 +437,7 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
     @Override
     protected void updateAITasks() {
         super.updateAITasks();
+        if (angerLevel > 0) angerLevel--;
         bossInfo.setPercent(getHealth() / getMaxHealth());
     }
 
@@ -477,6 +565,7 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
         super.writeEntityToNBT(compound);
         compound.setString("BossId", bossId);
         compound.setBoolean("BossInitialized", initialized);
+        compound.setShort("Anger", (short) angerLevel);
     }
 
     /**
@@ -505,6 +594,7 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
         super.readEntityFromNBT(compound);
         bossId = compound.getString("BossId");
         initialized = compound.getBoolean("BossInitialized");
+        angerLevel = compound.getShort("Anger");
         needsConfig = true;
         if (bossInfo != null) bossInfo.setName(getDisplayName());
     }
