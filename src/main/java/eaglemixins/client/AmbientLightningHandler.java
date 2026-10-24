@@ -80,11 +80,12 @@ public class AmbientLightningHandler {
             // a few tries so spots in solid rock or right against a wall don't make bolts rarer than the interval
             if (RNG.nextDouble() * config.underneathInterval * 20 < 1)
                 for (int i = 0; i < 8 && !spawnDiagonalBolt(mc.world, mc.player, config.underneathMinDistance,
-                        config.underneathMaxDistance, config.getUnderneathColors(), config.underneathVolume); i++);
+                        config.underneathMaxDistance, config.getUnderneathColors(), config.underneathVolume, 1.0F); i++);
         } else if (config.endLightning && dimension == config.endDimension) {
+            // far away over the void, so they're bigger and higher up to still be seen
             if (RNG.nextDouble() * config.endInterval * 20 < 1)
                 for (int i = 0; i < 8 && !spawnDiagonalBolt(mc.world, mc.player, config.endMinDistance,
-                        config.endMaxDistance, config.getEndColors(), config.endVolume); i++);
+                        config.endMaxDistance, config.getEndColors(), config.endVolume, 3.0F); i++);
         } else {
             ResourceLocation biome = mc.world.getBiome(mc.player.getPosition()).getRegistryName();
             if (config.wastelandLightning && config.isWastelandBiome(biome)) {
@@ -100,13 +101,13 @@ public class AmbientLightningHandler {
     }
 
     // Underneath/End: from somewhere in the air above the player's height diagonally down, stopping where it hits a block
-    private static boolean spawnDiagonalBolt(World world, EntityPlayer player, int minDistance, int maxDistance, int[] colors, float volume) {
+    private static boolean spawnDiagonalBolt(World world, EntityPlayer player, int minDistance, int maxDistance, int[] colors, float volume, float size) {
         int max = Math.max(minDistance + 1, maxDistance);
         double dist = minDistance + RNG.nextDouble() * (max - minDistance);
         double angle = RNG.nextDouble() * Math.PI * 2;
 
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(new BlockPos(
-                player.posX + Math.cos(angle) * dist, Math.min(250, player.posY + 8 + RNG.nextInt(32)), player.posZ + Math.sin(angle) * dist));
+                player.posX + Math.cos(angle) * dist, Math.min(250, player.posY + 8 * size + RNG.nextInt((int) (32 * size))), player.posZ + Math.sin(angle) * dist));
         if (!world.isBlockLoaded(pos)) return false;
         int tries = 0;
         while (!world.isAirBlock(pos) && tries++ < 48 && pos.getY() > 1) pos.move(EnumFacing.DOWN);
@@ -114,7 +115,7 @@ public class AmbientLightningHandler {
         Vec3d start = new Vec3d(pos.getX() + RNG.nextDouble(), pos.getY() + RNG.nextDouble(), pos.getZ() + RNG.nextDouble());
 
         double slope = 0.6 + RNG.nextDouble() * 0.9;
-        return strike(world, start, slope, 20 + RNG.nextDouble() * 30, (float) Math.max(0.15, 1 - dist / max), colors[RNG.nextInt(colors.length)], volume, 0.5F);
+        return strike(world, start, slope, (20 + RNG.nextDouble() * 30) * size, (float) Math.max(0.15, 1 - dist / max), colors[RNG.nextInt(colors.length)], volume, 0.5F, size);
     }
 
     // Wasteland/parasite biomes: from high up in the sky (nearly) straight down onto the ground, only where the ground is in one of the biomes too
@@ -144,15 +145,15 @@ public class AmbientLightningHandler {
         Vec3d start = new Vec3d(target.x - Math.cos(lean) * slope * height, Math.min(320, target.y + height), target.z - Math.sin(lean) * slope * height);
 
         return strike(world, start, new Vec3d(Math.cos(lean) * slope, -1, Math.sin(lean) * slope), height * 1.2, flash,
-                colors[RNG.nextInt(colors.length)], volume, 0.7F);
+                colors[RNG.nextInt(colors.length)], volume, 0.7F, 1.0F);
     }
 
-    private static boolean strike(World world, Vec3d start, double slope, double length, float flash, int color, float volume, float pitch) {
+    private static boolean strike(World world, Vec3d start, double slope, double length, float flash, int color, float volume, float pitch, float width) {
         double dirAngle = RNG.nextDouble() * Math.PI * 2;
-        return strike(world, start, new Vec3d(Math.cos(dirAngle) * slope, -1, Math.sin(dirAngle) * slope), length, flash, color, volume, pitch);
+        return strike(world, start, new Vec3d(Math.cos(dirAngle) * slope, -1, Math.sin(dirAngle) * slope), length, flash, color, volume, pitch, width);
     }
 
-    private static boolean strike(World world, Vec3d start, Vec3d dir, double maxLength, float flash, int color, float volume, float pitch) {
+    private static boolean strike(World world, Vec3d start, Vec3d dir, double maxLength, float flash, int color, float volume, float pitch, float width) {
         dir = dir.normalize();
         Vec3d end = start.add(dir.scale(maxLength));
         @Nullable RayTraceResult hit = world.rayTraceBlocks(start, end, false, true, false);
@@ -161,12 +162,12 @@ public class AmbientLightningHandler {
         if (length < 6) return false;
 
         Bolt bolt = new Bolt(flash, color);
-        addJagged(bolt, start, end, 1.0F);
+        addJagged(bolt, start, end, width);
         int branches = 1 + RNG.nextInt(4);
         for (int i = 0; i < branches; i++) {
             Vec3d from = start.add(end.subtract(start).scale(0.15 + RNG.nextDouble() * 0.6));
             Vec3d branchDir = dir.add((RNG.nextDouble() - 0.5) * 1.2, (RNG.nextDouble() - 0.5) * 0.6, (RNG.nextDouble() - 0.5) * 1.2).normalize();
-            addJagged(bolt, from, from.add(branchDir.scale(length * (0.15 + RNG.nextDouble() * 0.25))), 0.55F);
+            addJagged(bolt, from, from.add(branchDir.scale(length * (0.15 + RNG.nextDouble() * 0.25))), 0.55F * width);
         }
         BOLTS.add(bolt);
 

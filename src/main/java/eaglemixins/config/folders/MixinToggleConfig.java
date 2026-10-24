@@ -70,6 +70,15 @@ public class MixinToggleConfig {
     @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.safespawn.json", defaultValue = true)
     public boolean safeRandomSpawns = true;
 
+    @Config.Comment({
+            "Spawners only count player bosses with the same BossId for MaxNearbyEntities, instead of every player boss.",
+            "Without it, several boss spawners close together fill up each other's count, and the later ones skip their boss for good."
+    })
+    @Config.Name("Player Boss Spawner Count Fix (Vanilla)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.spawner.json", defaultValue = true)
+    public boolean playerBossSpawnerCount = true;
+
     @Config.Comment("Allows to change between loading screens with a modifiable waiting time between screens.")
     @Config.Name("Cycle Screens (Loading Screens)")
     @Config.RequiresMcRestart
