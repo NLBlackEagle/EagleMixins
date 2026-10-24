@@ -107,3 +107,9 @@ eaglemixins.lock.opened=As you insert the key and turn it, you hear a mechanism 
 eaglemixins.lock.bound=Lock bound to LockId "%s"
 
 entity.eaglemixins.player_boss.name=Player Boss
+
+subtitles.eaglemixins.developer.idle=Distant screeching
+subtitles.eaglemixins.developer.target=Something screeches
+subtitles.eaglemixins.developer.respond=Screeches answer
+subtitles.eaglemixins.developer.pain=Developer hurts
+subtitles.eaglemixins.developer.death=Developer dies

@@ -204,6 +204,9 @@ public class PlayerBossConfig {
         @Config.Name("Flight")
         public Flight flight = new Flight();
 
+        @Config.Name("Sounds")
+        public Sounds sounds = new Sounds();
+
         @Config.Comment("Trinkets and Baubles dragon wings and horns. Only shown when Trinkets and Baubles (0.33+) is installed")
         @Config.Name("Wings")
         public Wings wings = new Wings();
@@ -278,6 +281,69 @@ public class PlayerBossConfig {
         public double keepDistance = 8;
 
         public Flight() {}
+    }
+
+    public static class Sounds {
+        @Config.Comment({
+                "Sound ids, e.g. eaglemixins:entity.developer.idle or minecraft:entity.ghast.scream.",
+                "Empty = the Model's own sound for idle, hurt and death (players have no idle sound), and none for target and respond"
+        })
+        @Config.Name("Idle Sound")
+        public String idle = "";
+
+        @Config.Comment("Played once, a moment after the boss spots a player when it had no target before")
+        @Config.Name("Target Sound")
+        public String target = "";
+
+        @Config.Comment({
+                "Played by bosses answering another boss: PLAYER_BOSS bosses alerted by one that spotted a player,",
+                "and ZOMBIE bosses called for help. Each one answers after a random 1-3 seconds"
+        })
+        @Config.Name("Respond Sound")
+        public String respond = "";
+
+        @Config.Name("Hurt Sound")
+        public String hurt = "";
+
+        @Config.Name("Death Sound")
+        public String death = "";
+
+        @Config.Comment("Base pitch of all sounds, each one varies a little around it. Give every boss its own so players can tell them apart")
+        @Config.Name("Pitch")
+        @Config.RangeDouble(min = 0.5, max = 2)
+        public float pitch = 1.0F;
+
+        @Config.Comment("Volume of the target, hurt and death sounds. Above 1 it isn't louder up close, but is heard further away: up to 16 x this many blocks")
+        @Config.Name("Volume")
+        @Config.RangeDouble(min = 0, max = 16)
+        public float volume = 1.0F;
+
+        @Config.Comment("Volume of the idle sound, heard up to 16 x this many blocks away")
+        @Config.Name("Idle Volume")
+        @Config.RangeDouble(min = 0, max = 16)
+        public float idleVolume = 1.0F;
+
+        @Config.Comment("Volume of the respond sound, heard up to 16 x this many blocks away")
+        @Config.Name("Respond Volume")
+        @Config.RangeDouble(min = 0, max = 16)
+        public float respondVolume = 1.0F;
+
+        @Config.Comment("Average seconds between idle sounds, which only play while the boss has no target. Vanilla mobs are about 4")
+        @Config.Name("Idle Interval")
+        @Config.RangeDouble(min = 1, max = 3600)
+        public double idleInterval = 4;
+
+        @Config.Comment("Chance to play the hurt sound when hit. It never plays again within 2.5 seconds, so long hurt sounds don't overlap")
+        @Config.Name("Hurt Chance")
+        @Config.RangeDouble(min = 0, max = 1)
+        public float hurtChance = 1.0F;
+
+        @Config.Comment("Min seconds between two target sounds of this boss, so losing and finding a target again doesn't repeat it")
+        @Config.Name("Target Cooldown")
+        @Config.RangeDouble(min = 0, max = 3600)
+        public double targetCooldown = 30;
+
+        public Sounds() {}
     }
 
     public static class Wings {

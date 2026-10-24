@@ -17,5 +17,25 @@
   },
   "block.deepslate.fall": {
     "sounds": ["eaglemixins:block/deepslate/step1", "eaglemixins:block/deepslate/step2", "eaglemixins:block/deepslate/step3", "eaglemixins:block/deepslate/step4", "eaglemixins:block/deepslate/step5", "eaglemixins:block/deepslate/step6"]
+  },
+  "entity.developer.idle": {
+    "subtitle": "subtitles.eaglemixins.developer.idle",
+    "sounds": ["eaglemixins:developer/idle"]
+  },
+  "entity.developer.target": {
+    "subtitle": "subtitles.eaglemixins.developer.target",
+    "sounds": ["eaglemixins:developer/target"]
+  },
+  "entity.developer.respond": {
+    "subtitle": "subtitles.eaglemixins.developer.respond",
+    "sounds": ["eaglemixins:developer/respond"]
+  },
+  "entity.developer.pain": {
+    "subtitle": "subtitles.eaglemixins.developer.pain",
+    "sounds": ["eaglemixins:developer/pain"]
+  },
+  "entity.developer.death": {
+    "subtitle": "subtitles.eaglemixins.developer.death",
+    "sounds": ["eaglemixins:developer/death"]
   }
 }

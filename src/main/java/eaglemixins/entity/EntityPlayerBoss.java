@@ -78,6 +78,12 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
     private static final UUID INFERNAL_HP_MODIFIER = UUID.fromString("0ad3c584-7c75-42d5-992e-dc9c60ae656f"); // FermiumMixins' infernalmobs_hp_per_modifier
     private boolean needsConfig = true;
     private int angerLevel = 0; // ZOMBIE_PIGMAN AI
+    @Nullable private SoundEvent pendingSound; // target/respond sound, played pendingSoundTimer ticks later
+    private float pendingVolume;
+    private int pendingSoundTimer = 0;
+    private boolean responding = false; // set while being alerted, so it answers instead of playing its own target sound
+    private long lastTargetSound = Long.MIN_VALUE / 2; // world time
+    private int lastHurtSound = -100; // ticksExisted
     @Nullable private PlayerBossConfig.BossAI currentAI;
     @Nullable private PlayerBossConfig.BossEntry entry;
 
@@ -166,8 +172,9 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
     public void setAttackTarget(@Nullable EntityLivingBase target) {
         EntityLivingBase old = getAttackTarget();
         super.setAttackTarget(target);
-        if (!world.isRemote && currentAI == PlayerBossConfig.BossAI.PLAYER_BOSS && target instanceof EntityPlayer && target != old)
-            alertNearby(target);
+        if (world.isRemote || !(target instanceof EntityPlayer)) return;
+        if (old == null && !responding) playTargetSound();
+        if (currentAI == PlayerBossConfig.BossAI.PLAYER_BOSS && target != old) alertNearby(target);
     }
 
     /** PLAYER_BOSS: a boss that spots or gets hit by a player sends the PLAYER_BOSS bosses around it (within follow range) after them too */
@@ -175,8 +182,48 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
         double range = getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getAttributeValue();
         for (EntityPlayerBoss other : world.getEntitiesWithinAABB(EntityPlayerBoss.class, getEntityBoundingBox().grow(range, 10.0D, range))) {
             // already busy ones are skipped, which also stops the alerts from bouncing back and forth
-            if (other != this && other.currentAI == currentAI && other.getAttackTarget() == null) other.setAttackTarget(target);
+            if (other != this && other.currentAI == currentAI && other.getAttackTarget() == null) other.respondTo(target);
         }
+    }
+
+    /** Sent after target by another boss: answers with its respond sound after 1-3 seconds instead of its own target sound */
+    public void respondTo(EntityLivingBase target) {
+        responding = true;
+        setAttackTarget(target);
+        responding = false;
+        if (entry != null) scheduleSound(sound(entry.sounds.respond), entry.sounds.respondVolume, 20 + rand.nextInt(40));
+    }
+
+    // ---- Custom sounds, see PlayerBossConfig.Sounds ----
+
+    @Nullable
+    private static SoundEvent sound(String id) {
+        return id.isEmpty() ? null : SoundEvent.REGISTRY.getObject(new ResourceLocation(id));
+    }
+
+    /** A moment after spotting a player, the delay makes it creepier than screeching right away */
+    private void playTargetSound() {
+        if (entry == null) return;
+        long time = world.getTotalWorldTime();
+        if (time - lastTargetSound < entry.sounds.targetCooldown * 20) return;
+        SoundEvent target = sound(entry.sounds.target);
+        if (target == null) return;
+        lastTargetSound = time;
+        scheduleSound(target, entry.sounds.volume, 10 + rand.nextInt(10));
+    }
+
+    private void scheduleSound(@Nullable SoundEvent sound, float volume, int delay) {
+        if (sound == null) return;
+        pendingSound = sound;
+        pendingVolume = volume;
+        pendingSoundTimer = delay;
+    }
+
+    /** Only plays if it still has a target by then */
+    private void tickPendingSound() {
+        if (pendingSoundTimer <= 0 || --pendingSoundTimer > 0 || pendingSound == null) return;
+        if (getAttackTarget() != null) playSound(pendingSound, pendingVolume, getSoundPitch());
+        pendingSound = null;
     }
 
     // ---- Zombie pigman anger ----
@@ -196,6 +243,10 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
         if (!isEntityInvulnerable(source) && currentAI == PlayerBossConfig.BossAI.ZOMBIE_PIGMAN && source.getTrueSource() instanceof EntityPlayer)
             becomeAngryAt((EntityPlayer) source.getTrueSource());
         return super.attackEntityFrom(source, amount);
+    }
+
+    public String getBossId() {
+        return bossId;
     }
 
     @Nullable
@@ -438,6 +489,7 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
     protected void updateAITasks() {
         super.updateAITasks();
         if (angerLevel > 0) angerLevel--;
+        tickPendingSound();
         bossInfo.setPercent(getHealth() / getMaxHealth());
     }
 
@@ -482,11 +534,51 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
         return world.getDifficulty() != EnumDifficulty.PEACEFUL;
     }
 
-    // ---- Sounds, from the mob the Model copies ----
+    // ---- Sounds, from the config's Sounds or else the mob the Model copies ----
+
+    @Override
+    public int getTalkInterval() {
+        if (entry == null) return super.getTalkInterval();
+        int average = (int) (entry.sounds.idleInterval * 20);
+        return average / 2 + rand.nextInt(average + 1);
+    }
+
+    /** Idle sounds only while it has nothing to hunt */
+    @Override
+    public void playLivingSound() {
+        if (entry == null) {
+            super.playLivingSound();
+            return;
+        }
+        if (getAttackTarget() != null) return;
+        SoundEvent idle = getAmbientSound();
+        if (idle != null) playSound(idle, entry.sounds.idleVolume, getSoundPitch());
+    }
+
+    @Override
+    protected void playHurtSound(DamageSource source) {
+        if (entry != null) {
+            if (ticksExisted - lastHurtSound < 50 || rand.nextFloat() >= entry.sounds.hurtChance) return;
+            lastHurtSound = ticksExisted;
+        }
+        super.playHurtSound(source);
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return entry != null ? entry.sounds.volume : super.getSoundVolume();
+    }
+
+    @Override
+    protected float getSoundPitch() {
+        return entry != null ? entry.sounds.pitch * ((rand.nextFloat() - rand.nextFloat()) * 0.1F + 1.0F) : super.getSoundPitch();
+    }
 
     @Override
     @Nullable
     protected SoundEvent getAmbientSound() {
+        SoundEvent custom = entry != null ? sound(entry.sounds.idle) : null;
+        if (custom != null) return custom;
         switch (getBossModel()) {
             case SKELETON: return SoundEvents.ENTITY_SKELETON_AMBIENT;
             case WITHER_SKELETON: return SoundEvents.ENTITY_WITHER_SKELETON_AMBIENT;
@@ -499,6 +591,8 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
+        SoundEvent custom = entry != null ? sound(entry.sounds.hurt) : null;
+        if (custom != null) return custom;
         switch (getBossModel()) {
             case SKELETON: return SoundEvents.ENTITY_SKELETON_HURT;
             case WITHER_SKELETON: return SoundEvents.ENTITY_WITHER_SKELETON_HURT;
@@ -511,6 +605,8 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
 
     @Override
     protected SoundEvent getDeathSound() {
+        SoundEvent custom = entry != null ? sound(entry.sounds.death) : null;
+        if (custom != null) return custom;
         switch (getBossModel()) {
             case SKELETON: return SoundEvents.ENTITY_SKELETON_DEATH;
             case WITHER_SKELETON: return SoundEvents.ENTITY_WITHER_SKELETON_DEATH;

@@ -32,7 +32,7 @@ public class BossTargetAI {
         protected void setEntityAttackTarget(EntityCreature creature, EntityLivingBase target) {
             if (!(creature instanceof EntityPlayerBoss) || ((EntityPlayerBoss) creature).getAI() != boss.getAI()) return;
             if (boss.getAI() == PlayerBossConfig.BossAI.ZOMBIE_PIGMAN) ((EntityPlayerBoss) creature).becomeAngryAt(target);
-            else super.setEntityAttackTarget(creature, target);
+            else ((EntityPlayerBoss) creature).respondTo(target);
         }
     }
 

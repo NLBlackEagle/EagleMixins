@@ -220,7 +220,6 @@ final class PlayerBossDefaults {
 
         b = new PlayerBossConfig.BossEntry();
         b.name = "\u2620\u00a74 \u00a7lCheesebane Cathy \u00a7r\u2620";
-        b.subtitle = "\u00a77She's gonna get ya";
         b.skin = "cathwy";
         b.slimArms = true;
         b.maxHealth = 2400;
@@ -298,6 +297,45 @@ final class PlayerBossDefaults {
         b.extraNbt = "{ForgeCaps:{\"champions:championship\":{tier:4}},ForgeData:{InfernalMobsMod:\"Sticky\"}}";
         b.lootTable = "dregora:entities/playerbosses/abyssal_tower_humanoid";
         bosses.put("sarevok", b);
+
+        bosses.get("artsy").subtitle = "§7Every wound is but a brushstroke.";
+        bosses.get("eagle").subtitle = "§7Brutal enough for you?";
+        bosses.get("fonny").subtitle = "§7What are you on about?";
+        bosses.get("heaven").subtitle = "§7What do you think of my new features?";
+        bosses.get("kotlin").subtitle = "§7Compiled in Flesh.";
+        bosses.get("meldexun").subtitle = "§7Thou shalt address me as Sir Meldexun.";
+        bosses.get("ray").subtitle = "§7Bugs, bugs everywhere!";
+        bosses.get("zero").subtitle = "§7But my job description was Admin!?";
+        bosses.get("cathy").subtitle = "§7She's gonna get ya!";
+        bosses.get("nischi").subtitle = "§7What is this place I have been forced in?";
+
+        // Each developer screeches at its own pitch, so players learn who's coming
+        developerSounds(bosses.get("artsy"), 1.15F);
+        developerSounds(bosses.get("eagle"), 0.85F);
+        developerSounds(bosses.get("fonny"), 1.05F);
+        developerSounds(bosses.get("heaven"), 1.2F);
+        developerSounds(bosses.get("kotlin"), 0.95F);
+        developerSounds(bosses.get("meldexun"), 0.8F);
+        developerSounds(bosses.get("ray"), 1.1F);
+        developerSounds(bosses.get("zero"), 0.9F);
+        developerSounds(bosses.get("cathy"), 1.0F);
+        developerSounds(bosses.get("nischi"), 0.88F);
+    }
+
+    /** Rare distant idle screeches, one loud delayed screech on spotting you, the others answering from further away */
+    private static void developerSounds(PlayerBossConfig.BossEntry b, float pitch) {
+        b.sounds.idle = "eaglemixins:entity.developer.idle";
+        b.sounds.target = "eaglemixins:entity.developer.target";
+        b.sounds.respond = "eaglemixins:entity.developer.respond";
+        b.sounds.hurt = "eaglemixins:entity.developer.pain";
+        b.sounds.death = "eaglemixins:entity.developer.death";
+        b.sounds.pitch = pitch;
+        b.sounds.volume = 3;
+        b.sounds.idleVolume = 2;
+        b.sounds.respondVolume = 4;
+        b.sounds.idleInterval = 120;
+        b.sounds.hurtChance = 0.4F;
+        b.sounds.targetCooldown = 30;
     }
 
     private PlayerBossDefaults() {}

@@ -19,6 +19,13 @@ public final class ModSounds {
     // Same as vanilla 1.17+ deepslate. Sound events are created here so blocks can reference them before the sound registry fires
     public static final SoundType DEEPSLATE = new SoundType(1.0F, 1.0F, DEEPSLATE_BREAK, DEEPSLATE_STEP, DEEPSLATE_PLACE, DEEPSLATE_HIT, DEEPSLATE_FALL);
 
+    // Developer bosses, used through the player boss config's Sounds
+    public static final SoundEvent DEVELOPER_IDLE = create("entity.developer.idle");
+    public static final SoundEvent DEVELOPER_TARGET = create("entity.developer.target");
+    public static final SoundEvent DEVELOPER_RESPOND = create("entity.developer.respond");
+    public static final SoundEvent DEVELOPER_PAIN = create("entity.developer.pain");
+    public static final SoundEvent DEVELOPER_DEATH = create("entity.developer.death");
+
     private static SoundEvent create(String name) {
         ResourceLocation location = new ResourceLocation("eaglemixins", name);
         return new SoundEvent(location).setRegistryName(location);
@@ -26,6 +33,7 @@ public final class ModSounds {
 
     @SubscribeEvent
     public static void registerSounds(RegistryEvent.Register<SoundEvent> e) {
-        e.getRegistry().registerAll(DEEPSLATE_BREAK, DEEPSLATE_STEP, DEEPSLATE_PLACE, DEEPSLATE_HIT, DEEPSLATE_FALL);
+        e.getRegistry().registerAll(DEEPSLATE_BREAK, DEEPSLATE_STEP, DEEPSLATE_PLACE, DEEPSLATE_HIT, DEEPSLATE_FALL,
+                DEVELOPER_IDLE, DEVELOPER_TARGET, DEVELOPER_RESPOND, DEVELOPER_PAIN, DEVELOPER_DEATH);
     }
 }
