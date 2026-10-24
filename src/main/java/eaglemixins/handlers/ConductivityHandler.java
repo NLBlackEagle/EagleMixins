@@ -1,5 +1,6 @@
 package eaglemixins.handlers;
 
+import eaglemixins.compat.ModLoadedUtil;
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.util.Ref;
 import net.minecraft.client.resources.I18n;
@@ -46,13 +47,16 @@ public class ConductivityHandler {
             conductivityOnEquipment += ForgeConfigHandler.conductivity.getItemConductivity(stack);
         }
 
-        if (!isThundering)
-            conductivityOnEquipment /= 2;
-
         if (conductivityOnEquipment == 0) {
             resetLightningNBT(player, worldTime);
             return;
         }
+
+        double strikeChance = conductivityOnEquipment * ForgeConfigHandler.conductivity.chanceMultiplier;
+        if (!isThundering)
+            strikeChance /= 2;
+        if (ModLoadedUtil.nuclearcraft.isLoaded() && RadioactiveLightningHandler.isHighRadiation(world, player.getPosition()))
+            strikeChance *= ForgeConfigHandler.conductivity.radiationMultiplier;
 
         if (!player.getEntityData().hasKey(savedTimeKey)) player.getEntityData().setLong(savedTimeKey, worldTime);
         long lastSavedTime = player.getEntityData().getLong(savedTimeKey);
@@ -60,8 +64,9 @@ public class ConductivityHandler {
         boolean hasWarned = player.getEntityData().getBoolean(hasWarnedKey);
 
         if (!hasWarned) {
-            //each conductivity point is 0.5% or 1% per 100 ticks (5 seconds) to send a warning msg and strike after 100 ticks
-            if (worldTime > lastSavedTime + (isThundering ? 400 : 1200) && player.getRNG().nextInt(100) < conductivityOnEquipment) {
+            //each conductivity point is 0.5% or 1% (x multipliers) per 100 ticks (5 seconds) to send a warning msg and strike after 100 ticks
+            int cooldown = isThundering ? ForgeConfigHandler.conductivity.thunderCooldown : ForgeConfigHandler.conductivity.rainCooldown;
+            if (worldTime > lastSavedTime + cooldown && player.getRNG().nextDouble() * 100 < strikeChance) {
                 player.sendStatusMessage(new TextComponentTranslation("eaglemixins.conductivity."+player.getRNG().nextInt(8)), true);
                 player.getEntityData().setLong(savedTimeKey, worldTime);
                 player.getEntityData().setBoolean(hasWarnedKey, true);
@@ -77,7 +82,7 @@ public class ConductivityHandler {
 
     private static void resetLightningNBT(EntityPlayer player, long worldTime) {
         //Setting to 0 would mean players lose their old cooldown (from last strike) if they get to safety, making next warning happen earlier when they get back into the rain right away
-        //By setting to worldTime instead, players will always have at least 400/1200 ticks of safety in the rain after one strike. only after that the warning checks will happen
+        //By setting to worldTime instead, players will always have at least the thunder/rain cooldown of safety in the rain after one strike. only after that the warning checks will happen
         player.getEntityData().setLong(savedTimeKey, worldTime);
         //first thing to happen is warning, only after that comes next strike
         player.getEntityData().setBoolean(hasWarnedKey, false);
