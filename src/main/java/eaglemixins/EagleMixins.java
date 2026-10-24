@@ -1,5 +1,6 @@
 package eaglemixins;
 
+import eaglemixins.client.AmbientLightningHandler;
 import eaglemixins.client.gui.TeleportOverlayHandler;
 import eaglemixins.client.particles.ParticlesClientRunner;
 import eaglemixins.compat.ForgottenItemsUtil;
@@ -8,12 +9,14 @@ import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.debug.BO3_ChunkGen_Debug;
 import eaglemixins.handlers.*;
 import eaglemixins.client.render.RenderPlayerBoss;
+import eaglemixins.client.render.RenderWastelandLightning;
 import eaglemixins.entity.EntityPlayerBoss;
 import eaglemixins.init.ModEntities;
 import eaglemixins.init.ModBlocks;
 import eaglemixins.init.ModStats;
 import eaglemixins.network.PacketHandler;
 import eaglemixins.teleport.entity.EntitySpawnListener;
+import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Loader;
@@ -55,6 +58,7 @@ public class EagleMixins {
 
         ModEntities.init();
         if(event.getSide() == Side.CLIENT) RenderingRegistry.registerEntityRenderingHandler(EntityPlayerBoss.class, RenderPlayerBoss::new);
+        if(event.getSide() == Side.CLIENT) RenderingRegistry.registerEntityRenderingHandler(EntityLightningBolt.class, RenderWastelandLightning::new);
 
         MinecraftForge.EVENT_BUS.register(ProjectileImmunityHandler.class);
         registerIfModsPresent(new String[]{"firstaid"}, FirstAidRadiationHandler.class);
@@ -72,6 +76,8 @@ public class EagleMixins {
         registerIfModsPresent(new String[]{"champions", "playerbosses"}, BlightedShivaxiHandler.class);
         registerIfModsPresent(new String[]{"biomesoplenty"}, BlockDropsHandler.class);
         MinecraftForge.EVENT_BUS.register(ConductivityHandler.class);
+        registerIfModsPresent(new String[]{"nuclearcraft"}, RadioactiveLightningHandler.class);
+        if(event.getSide() == Side.CLIENT) MinecraftForge.EVENT_BUS.register(AmbientLightningHandler.class);
         MinecraftForge.EVENT_BUS.register(DamageFalloffHandler.class);
         MinecraftForge.EVENT_BUS.register(DismountHandler.class);
         MinecraftForge.EVENT_BUS.register(WildfireHandler.class);
