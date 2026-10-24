@@ -225,9 +225,10 @@ public class SRParasitesHandler {
                 ResourceLocation itemId = drop.getItem().getItem().getRegistryName();
                 if(itemId == null) continue;
                 if(itemId.getNamespace().equals(Ref.SRPMODID)) {
+                    //SRP loot never drops here, it only has a chance to be replaced
+                    itemsToRemove.add(drop);
                     //default 0.375 based of healthmultiplier 0.5 & damagemultiplier 0.25 averaged out on 0.625 the overall strength of ow parasites compared to LC parasites.
                     if (entity.getRNG().nextFloat() < ForgeConfigHandler.srparasites.replacementDropChance) {
-                        itemsToRemove.add(drop);
                         ItemStack replacement = ForgeConfigHandler.srparasites.getReplacementDrop();
                         if (!replacement.isEmpty())
                             itemsToAdd.add(new EntityItem(entity.getEntityWorld(), entity.posX, entity.posY, entity.posZ, replacement));
