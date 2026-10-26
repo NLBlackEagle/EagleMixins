@@ -128,6 +128,8 @@ public class SRParasitesHandler {
         return !ForgeConfigHandler.abyssal.killAbyssalNexus || !biomeReg.equals(Ref.abyssalRiftReg);
     }
 
+    private static final String ESCAPED_CHECKS_KEY = "eaglemixins:escapedChecks";
+
     // SRParasites in overworld Script Biome Whitelist, kill Beckons
     @SubscribeEvent
     public static void onLivingUpdate(LivingEvent.LivingUpdateEvent event) {
@@ -146,7 +148,18 @@ public class SRParasitesHandler {
 
         //Slowly kill Parasites outside specific biomes
         ResourceLocation biomeReg = entity.world.getBiome(entity.getPosition()).getRegistryName();
-        if (biomeReg != null && SRParasitesHandler.isBiomeAllowed(biomeReg, entity.dimension)) return;
+        if (biomeReg != null && SRParasitesHandler.isBiomeAllowed(biomeReg, entity.dimension)) {
+            entity.getEntityData().removeTag(ESCAPED_CHECKS_KEY);
+            return;
+        }
+
+        //Failsafe: parasites that out-heal the drain get removed after enough checks outside
+        int escapedChecks = entity.getEntityData().getInteger(ESCAPED_CHECKS_KEY) + 1;
+        if (escapedChecks >= ForgeConfigHandler.srparasites.escapedParasiteRemovalChecks) {
+            entity.setDead();
+            return;
+        }
+        entity.getEntityData().setInteger(ESCAPED_CHECKS_KEY, escapedChecks);
 
         float health = entity.getHealth();
         if (health > 1000)      entity.setHealth(health / 50);

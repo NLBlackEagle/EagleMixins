@@ -98,6 +98,15 @@ public class SRParasiteConfig {
     @Config.Name("Kill Parasites outside alllowed biomes")
     public boolean killEscapedParasites = true;
 
+    @Config.Comment({
+            "Failsafe for escaped parasites that heal faster than they get drained.",
+            "After this many checks (one every 2.5 seconds) outside the allowed biomes, the parasite is removed outright.",
+            "Re-entering an allowed biome resets the count."
+    })
+    @Config.Name("Escaped Parasite Removal Checks")
+    @Config.RangeInt(min = 1)
+    public int escapedParasiteRemovalChecks = 4;
+
     @Config.Comment("Chance per removed parasite item to drop the replacement drop instead. Parasite items are always removed, at 0 nothing drops in their place.")
     @Config.Name("Parasite Replacement Drop Chance")
     public float replacementDropChance = 0.375f;
