@@ -40,7 +40,8 @@ public class PlayerBossConfig {
     })
     @Config.Name("Target Blacklist")
     public String[] targetBlacklist = {
-            "srparasites:*"
+            "srparasites:*",
+            "eaglemixins:player_boss"
     };
 
     /** True if the entity id matches an entry of Target Blacklist */

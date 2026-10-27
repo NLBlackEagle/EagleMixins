@@ -294,6 +294,8 @@ public class ForgeConfigHandler {
 		private void initPotionLevelCaps(){
 			potionLevelCaps.put(new ResourceLocation("minecraft:resistance"), 3);
 			potionLevelCaps.put(new ResourceLocation("bountifulbaubles:sinful"), 4);
+			potionLevelCaps.put(new ResourceLocation("minecraft:strength"), 4);
+			potionLevelCaps.put(new ResourceLocation("potioncore:magic_focus"), 2);
 		}
 
 		public ServerConfig(){
