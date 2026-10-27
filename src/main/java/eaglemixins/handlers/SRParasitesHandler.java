@@ -46,6 +46,14 @@ public class SRParasitesHandler {
         return isInList == ForgeConfigHandler.srparasites.biomeListIsWhitelist;
     }
 
+    //Parasites with this ForgeData flag (e.g. from WakingNights) ignore the biome restrictions
+    //Summon NBT: {ForgeData:{EagleMixinsOverworldAllowed:1b}}
+    private static final String OVERWORLD_ALLOWED_KEY = "EagleMixinsOverworldAllowed";
+
+    public static boolean isOverworldAllowed(Entity entity) {
+        return entity.getEntityData().getBoolean(OVERWORLD_ALLOWED_KEY);
+    }
+
     private static boolean matchesEntry(String entry, String biomeId, String biomeWildcard, int dimensionId) {
         String dimPart = null;
         String biomePart = entry;
@@ -145,6 +153,7 @@ public class SRParasitesHandler {
 
         //Only if enabled
         if(!ForgeConfigHandler.srparasites.killEscapedParasites) return;
+        if(isOverworldAllowed(entity)) return;
 
         //Slowly kill Parasites outside specific biomes
         ResourceLocation biomeReg = entity.world.getBiome(entity.getPosition()).getRegistryName();
@@ -177,7 +186,7 @@ public class SRParasitesHandler {
             event.setCanceled(true);
             return;
         }
-        if (!ForgeConfigHandler.srparasites.killEscapedParasites) return;
+        if (!ForgeConfigHandler.srparasites.killEscapedParasites || isOverworldAllowed(entity)) return;
         ResourceLocation biomeReg = event.getWorld().getBiome(entity.getPosition()).getRegistryName();
         if (biomeReg != null && !SRParasitesHandler.isBiomeAllowed(biomeReg, entity.dimension))
             event.setCanceled(true);
@@ -189,7 +198,7 @@ public class SRParasitesHandler {
         if(!event.isSpawner()) return;
         int dimensionId = event.getWorld().provider.getDimension();
         EntityLivingBase entity = event.getEntityLiving();
-        if(!(entity instanceof EntityParasiteBase)) return;
+        if(!(entity instanceof EntityParasiteBase) || isOverworldAllowed(entity)) return;
         ResourceLocation biomeReg = event.getWorld().getBiome(entity.getPosition()).getRegistryName();
         if (biomeReg != null && !SRParasitesHandler.isBiomeAllowed(biomeReg, dimensionId))
             event.setResult(Event.Result.DENY);

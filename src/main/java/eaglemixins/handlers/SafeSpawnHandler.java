@@ -29,30 +29,34 @@ public class SafeSpawnHandler {
 
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        relocate(event.player);
+        relocate(event.player, ForgeConfigHandler.safespawn.structureChanceFirstJoin);
     }
 
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
-        relocate(event.player);
+        relocate(event.player, ForgeConfigHandler.safespawn.structureChanceRespawn);
     }
 
-    private static void relocate(EntityPlayer player) {
+    private static void relocate(EntityPlayer player, double structureChance) {
         if (!(player instanceof EntityPlayerMP) || !(player instanceof SafeSpawnPlayer) || !(player.world instanceof WorldServer)) return;
         BlockPos randomSpawn = ((SafeSpawnPlayer) player).eaglemixins$getRandomSpawn();
         // Players with a saved position or a bed were moved away from it
         if (randomSpawn == null || MathHelper.floor(player.posX) != randomSpawn.getX() || MathHelper.floor(player.posZ) != randomSpawn.getZ()) return;
 
-        BlockPos spot = findSpot((WorldServer) player.world, randomSpawn);
+        boolean preferInterior = ForgeConfigHandler.safespawn.preferStructures && player.getRNG().nextDouble() < structureChance;
+        BlockPos spot = findSpot((WorldServer) player.world, randomSpawn, preferInterior);
         if (spot == null) return;
         player.fallDistance = 0;
         ((EntityPlayerMP) player).connection.setPlayerLocation(spot.getX() + 0.5D, spot.getY(), spot.getZ() + 0.5D, player.rotationYaw, player.rotationPitch);
         EagleMixins.LOGGER.debug("Moved random spawn of {} from {} to {}", player.getName(), randomSpawn, spot);
     }
 
-    /** Feet position of the nearest spot inside a building, or else the nearest highest safe spot. Null if there is none. */
+    /**
+     * Feet position of the nearest spot inside a building if preferInterior, else the nearest highest safe spot.
+     * Either one falls back to the other. Null if there is none.
+     */
     @Nullable
-    public static BlockPos findSpot(WorldServer world, BlockPos origin) {
+    public static BlockPos findSpot(WorldServer world, BlockPos origin, boolean preferInterior) {
         SafeSpawnConfig config = ForgeConfigHandler.safespawn;
         int radius = config.searchRadius;
 
@@ -85,7 +89,8 @@ public class SafeSpawnHandler {
                 }
             }
         }
-        return config.preferStructures && interior != null ? interior : surface;
+        if (preferInterior) return interior != null ? interior : surface;
+        return surface != null ? surface : interior;
     }
 
     private static class Column {

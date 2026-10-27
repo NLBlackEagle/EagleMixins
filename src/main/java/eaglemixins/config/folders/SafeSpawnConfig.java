@@ -18,6 +18,19 @@ public class SafeSpawnConfig {
     public boolean preferStructures = true;
 
     @Config.Comment({
+            "Chance that a first join spawn prefers a spot inside a building (see Prefer Structure Spawns).",
+            "Otherwise the player spawns on the highest safe spot, keeping them out of caves the roof check mistakes for buildings."
+    })
+    @Config.Name("Structure Spawn Chance (First Join)")
+    @Config.RangeDouble(min = 0, max = 1)
+    public double structureChanceFirstJoin = 0.7;
+
+    @Config.Comment("Chance that a respawn without a bed prefers a spot inside a building (see Prefer Structure Spawns)")
+    @Config.Name("Structure Spawn Chance (Respawn)")
+    @Config.RangeDouble(min = 0, max = 1)
+    public double structureChanceRespawn = 0.3;
+
+    @Config.Comment({
             "Blocks around the random spawn point that are searched for a safe spot (and a building to spawn in).",
             "All chunks this touches (plus one around) get fully generated first, so bigger values make spawning take longer."
     })
