@@ -7,6 +7,8 @@ import eaglemixins.entity.ai.BossTargetAI;
 import eaglemixins.entity.ai.EntityAIBossFlight;
 import eaglemixins.util.ItemStackParser;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IRangedAttackMob;
@@ -155,7 +157,7 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
             case IRON_GOLEM:
                 targetTasks.addTask(1, new BossTargetAI.HurtByTarget(this, false));
                 targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityLiving.class, 10, false, true,
-                        mob -> mob != null && IMob.VISIBLE_MOB_SELECTOR.apply(mob) && !(mob instanceof EntityCreeper) && !(mob instanceof EntityPlayerBoss)));
+                        mob -> mob != null && IMob.VISIBLE_MOB_SELECTOR.apply(mob) && !(mob instanceof EntityCreeper) && !(mob instanceof EntityPlayerBoss) && !isTargetBlacklisted(mob)));
                 break;
             case PASSIVE:
                 break;
@@ -170,11 +172,17 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
 
     @Override
     public void setAttackTarget(@Nullable EntityLivingBase target) {
+        if (isTargetBlacklisted(target)) target = null;
         EntityLivingBase old = getAttackTarget();
         super.setAttackTarget(target);
         if (world.isRemote || !(target instanceof EntityPlayer)) return;
         if (old == null && !responding) playTargetSound();
         if (currentAI == PlayerBossConfig.BossAI.PLAYER_BOSS && target != old) alertNearby(target);
+    }
+
+    /** Target Blacklist in the Player Bosses config */
+    public static boolean isTargetBlacklisted(@Nullable Entity target) {
+        return target != null && ForgeConfigHandler.playerbosses.isTargetBlacklisted(EntityList.getKey(target));
     }
 
     /** PLAYER_BOSS: a boss that spots or gets hit by a player sends the PLAYER_BOSS bosses around it (within follow range) after them too */

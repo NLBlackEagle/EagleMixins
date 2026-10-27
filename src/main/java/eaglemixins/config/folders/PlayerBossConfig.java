@@ -1,8 +1,10 @@
 package eaglemixins.config.folders;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.BossInfo;
 import net.minecraftforge.common.config.Config;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -31,6 +33,25 @@ public class PlayerBossConfig {
     })
     @Config.Name("Ignore Infernal Health Scaling")
     public boolean ignoreInfernalHealth = true;
+
+    @Config.Comment({
+            "Entities player bosses never target, not even when hit by them.",
+            "Format: <modid:entity>, or <modid>:* for every entity of a mod, e.g. srparasites:* or srparasites:sim_human"
+    })
+    @Config.Name("Target Blacklist")
+    public String[] targetBlacklist = {
+            "srparasites:*"
+    };
+
+    /** True if the entity id matches an entry of Target Blacklist */
+    public boolean isTargetBlacklisted(@Nullable ResourceLocation id) {
+        if (id == null) return false;
+        for (String entry : targetBlacklist) {
+            entry = entry.trim();
+            if (entry.endsWith(":*") ? id.getNamespace().equals(entry.substring(0, entry.length() - 2)) : id.toString().equals(entry)) return true;
+        }
+        return false;
+    }
 
     public enum FlightMode { NEVER, WHEN_NEEDED, ALWAYS }
 

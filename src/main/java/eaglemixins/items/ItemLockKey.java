@@ -65,6 +65,7 @@ public class ItemLockKey extends Item {
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
         LockedBlockConfig.LockType type = ForgeConfigHandler.lockedblocks.getLockType(getLockId(stack));
         if (type != null) tooltip.addAll(type.keyLore);
+        tooltip.add(I18n.translateToLocal("eaglemixins.lock.key_source"));
     }
 
     @Override

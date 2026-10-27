@@ -101,6 +101,7 @@ tile.eaglemixins.keyslave_alt.name=Keyslave (Alt)
 item.eaglemixins.lock_key.name=Key
 eaglemixins.lock.key_name=%s Key
 eaglemixins.lock.lock_name=%s Lock
+eaglemixins.lock.key_source=§8Obtainable through defeating the Brutal Tower bosses or through the Brutal Merchant at a steep price.
 eaglemixins.lock.locked=It's locked. There must be a key for this somewhere.
 eaglemixins.lock.wrong_key=This key doesn't fit this lock.
 eaglemixins.lock.opened=As you insert the key and turn it, you hear a mechanism activating within the block.
