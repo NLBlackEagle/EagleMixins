@@ -81,6 +81,13 @@ public class LockedBlockConfig {
     @Config.Name("Keep Key In Creative")
     public boolean keepKeyInCreative = true;
 
+    @Config.Comment({
+            "If true, dropped keys glow (the spectral arrow outline, visible through walls).",
+            "With Key Outline Color (Vanilla) in the mixin toggles the outline uses the key color from Locks."
+    })
+    @Config.Name("Glowing Keys")
+    public boolean glowingKeys = true;
+
     private Map<String, LockType> lockTypes = null;
 
     @Nullable

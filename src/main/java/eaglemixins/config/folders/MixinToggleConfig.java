@@ -456,6 +456,12 @@ public class MixinToggleConfig {
     @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.spawnerrendercancel.json", defaultValue = true)
     public boolean limitSpawnerRendering = true;
 
+    @Config.Comment("Gives the glowing outline of dropped lock keys their key color instead of white")
+    @Config.Name("Key Outline Color (Vanilla)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.keyoutlinecolor.json", defaultValue = true)
+    public boolean keyOutlineColor = true;
+
     @Config.Comment({
             "This restores old set bonus behavior of removing set bonus potion effects when losing the bonus (removing armor etc) no matter the duration or amplifier of the current effect on the player.",
             "This counteracts players using wine/wildberry wine to avoid getting the effect removed."

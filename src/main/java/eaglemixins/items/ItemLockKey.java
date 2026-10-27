@@ -6,6 +6,7 @@ import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.config.folders.LockedBlockConfig;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -48,6 +49,15 @@ public class ItemLockKey extends Item {
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
         return displayName(getLockId(stack), "eaglemixins.lock.key_name", super.getItemStackDisplayName(stack));
+    }
+
+    /** Dropped keys get the glowing outline, tinted with the key color by RenderMixin_KeyOutlineColor. */
+    @Override
+    public boolean onEntityItemUpdate(EntityItem entityItem) {
+        if (!entityItem.world.isRemote && entityItem.isGlowing() != ForgeConfigHandler.lockedblocks.glowingKeys) {
+            entityItem.setGlowing(ForgeConfigHandler.lockedblocks.glowingKeys);
+        }
+        return false;
     }
 
     @Override

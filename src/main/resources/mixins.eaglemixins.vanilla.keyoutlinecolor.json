@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "eaglemixins.mixin.vanilla",
+  "refmap": "mixins.eaglemixins.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "target": "@env(CLIENT)",
+  "minVersion": "0.8",
+  "client": [
+    "RenderMixin_KeyOutlineColor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
