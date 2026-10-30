@@ -78,7 +78,7 @@ public class EagleMixins {
         MinecraftForge.EVENT_BUS.register(ConductivityHandler.class);
         registerIfModsPresent(new String[]{"nuclearcraft"}, RadioactiveLightningHandler.class);
         if(event.getSide() == Side.CLIENT) MinecraftForge.EVENT_BUS.register(AmbientLightningHandler.class);
-        MinecraftForge.EVENT_BUS.register(DamageFalloffHandler.class);
+        if(ForgeConfigHandler.server.enableDamageFalloff) MinecraftForge.EVENT_BUS.register(DamageFalloffHandler.class);
         MinecraftForge.EVENT_BUS.register(DismountHandler.class);
         MinecraftForge.EVENT_BUS.register(WildfireHandler.class);
         MinecraftForge.EVENT_BUS.register(LockVanishHandler.class);

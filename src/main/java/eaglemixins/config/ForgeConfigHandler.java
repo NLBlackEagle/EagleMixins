@@ -135,6 +135,10 @@ public class ForgeConfigHandler {
 	public static LightningConfig lightning = new LightningConfig();
 
 	public static class ServerConfig {
+		@Config.Comment("Reduces damage done by players by a factor of 1 to 1/3, with the falloff multiplier that scales linearly in the span between. No reduction for damages below 20. Caps out at 300 dmg before falloff.")
+		@Config.Name("Enable Damage Falloff")
+		public boolean enableDamageFalloff = false;
+
 		@Config.Comment("Add Blocks you can drink from, will be treated like water blocks")
 		@Config.Name("Additional Water Blocks:")
 		public Set<String> waterblockListdrinkables = new LinkedHashSet<>(Arrays.asList(
