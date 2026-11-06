@@ -93,13 +93,6 @@ public class MixinToggleConfig {
     @MixinConfig.CompatHandling(modid = "loadingscreens", desired = true, reason = "Requires mod to properly function")
     public boolean cycleLoadingScreens = true;
 
-    @Config.Comment("Will show the progress for unpacking DregoraRL during first time startup.")
-    @Config.Name("First Time Setup Progress (DregoraRL)")
-    @Config.RequiresMcRestart
-    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.dregorarl.firsttimesetup.json", defaultValue = true)
-    @MixinConfig.CompatHandling(modid = "dregorarl", desired = true, reason = "Requires mod to properly function")
-    public boolean firstTimeStartupProgress = true;
-
     @Config.Comment("Allows to separately modify chance for mimics for unlooted underground chests specifically.")
     @Config.Name("Underground Mimics (RLArtifacts)")
     @Config.RequiresMcRestart
