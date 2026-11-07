@@ -88,6 +88,7 @@ dependencies {
     compileOnly fg.deobf("curse.maven:cooking-for-blockheads-${cooking_for_blockheads_version}")
     compileOnly fg.deobf("curse.maven:quark-${quark_version}")
     compileOnly fg.deobf("curse.maven:giant-player-boss-${giant_player_boss_version}")
+    compileOnly fg.deobf("curse.maven:dregora-${dregora_version}")
     compileOnly fg.deobf("curse.maven:variedcommodities-${variedcommodities_version}")
     compileOnly fg.deobf("curse.maven:content-creator-${content_creator_version}")
     compileOnly fg.deobf("curse.maven:trinkets-and-baubles-${xat_version}")
