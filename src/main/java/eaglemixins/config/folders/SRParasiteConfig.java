@@ -181,6 +181,7 @@ public class SRParasiteConfig {
     @Config.Comment({
             "EagleMixins modifies parasite loot in the overworld.",
             "Parasites are only allowed to drop loot in certain named biomes (\"SRParasites allowed biomes\")",
+            "Parasites with the ForgeData flag EagleMixinsOverworldAllowed (e.g. from WakingNights) are treated as being in an allowed biome",
             "In those biomes, they never drop parasite (srparasites) items. Each one instead has a chance to drop a replacement item (\"Parasite Replacement Drop Chance\" / \"Parasite Replacement Drop\")",
             "Only parasites with specific custom names are exempt from this modification (\"Parasite full loot-drop enabler\")",
             "If set to false, EagleMixins will instead not modify parasite loot at all."

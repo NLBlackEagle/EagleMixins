@@ -243,7 +243,10 @@ public class SRParasitesHandler {
 
         ResourceLocation biomeReg = entity.world.getBiome(entity.getPosition()).getRegistryName();
 
-        if (biomeReg != null && SRParasitesHandler.isBiomeAllowed(biomeReg, entity.dimension)){
+        //TODO: Add per dimension configurable replacement drops and change tag name to EagleMixinsSRPExceptionTag
+        //Parasites with the overworld allowed flag (e.g. from WakingNights) count as being in an allowed biome
+        if (isOverworldAllowed(entity) ||
+                (biomeReg != null && SRParasitesHandler.isBiomeAllowed(biomeReg, entity.dimension))){
             List<EntityItem> itemsToRemove = new ArrayList<>();
             List<EntityItem> itemsToAdd = new ArrayList<>();
             for (EntityItem drop : event.getDrops()) {
