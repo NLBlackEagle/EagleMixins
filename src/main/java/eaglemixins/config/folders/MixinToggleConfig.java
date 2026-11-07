@@ -486,4 +486,18 @@ public class MixinToggleConfig {
     @MixinConfig.CompatHandling(modid = "neat", desired = true, reason = "Optional compat with Neat", warnIngame = false)
     @MixinConfig.CompatHandling(modid = "srparasites", desired = true, reason = "Optional compat with Neat for SRP carapace", warnIngame = false)
     public boolean neatCarapaceBar = true;
+
+    @Config.Comment("Stops Vespids from building hives when they or their Vespid Queen were spawned by a mob event (e.g. The Swarm).")
+    @Config.Name("No Event Hive Building (LycanitesMobs)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.lycanitesmobs.noeventhive.json", defaultValue = true)
+    @MixinConfig.CompatHandling(modid = "lycanitesmobs", desired = true, reason = "Requires mod to properly function")
+    public boolean lycanitesNoEventHiveBuilding = true;
+
+    @Config.Comment("Non-boss Lycanites mobs using the FireProjectiles ability (Conba poop, Chupacabra) only fire when they can see their target, instead of firing through walls.")
+    @Config.Name("Projectile Line Of Sight (LycanitesMobs)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.lycanitesmobs.projectilesight.json", defaultValue = true)
+    @MixinConfig.CompatHandling(modid = "lycanitesmobs", desired = true, reason = "Requires mod to properly function")
+    public boolean lycanitesProjectileLineOfSight = true;
 }
