@@ -1,5 +1,7 @@
 package eaglemixins.config;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import eaglemixins.EagleMixins;
 import eaglemixins.client.particles.ParticleRule;
 import eaglemixins.client.particles.ParticlesClientRunner;
@@ -312,18 +314,17 @@ public class ForgeConfigHandler {
 				"Format: <bauble item id> { <potion id> ... }"
 		})
 		@Config.Name("Bauble Potion Immunities")
-		public Map<ResourceLocation, ArrayList<String>> baublePotionImmunities = new LinkedHashMap<>();
-		private void initBaublePotionImmunities(){
-			baublePotionImmunities.put(new ResourceLocation("quark:witch_hat"), new ArrayList<>(Arrays.asList(
-					"potioncore:spin",
-					"potioncore:disorganization",
-					"potioncore:perplexity")));
-		}
+		public Map<ResourceLocation, ArrayList<String>> baublePotionImmunities = Maps.newLinkedHashMap(ImmutableMap.<ResourceLocation, ArrayList<String>>builder()
+				.put(new ResourceLocation("quark", "witch_hat"), new ArrayList<>(Arrays.asList(
+						"potioncore:spin",
+						"potioncore:disorganization",
+						"potioncore:perplexity"
+				)))
+				.build());
 
 		public ServerConfig(){
 			initBiomeDictTagList();
 			initPotionLevelCaps();
-			initBaublePotionImmunities();
 		}
 	}
 

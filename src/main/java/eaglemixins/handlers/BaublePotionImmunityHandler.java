@@ -1,8 +1,7 @@
 package eaglemixins.handlers;
 
-import baubles.api.BaublesApi;
-import baubles.api.cap.IBaublesItemHandler;
 import eaglemixins.EagleMixins;
+import eaglemixins.compat.BaublesUtil;
 import eaglemixins.config.ForgeConfigHandler;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,7 +10,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.entity.living.PotionEvent;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -43,10 +41,7 @@ import java.util.Set;
  */
 public class BaublePotionImmunityHandler {
 
-    private static final boolean BAUBLES_LOADED = Loader.isModLoaded("baubles");
-
     private static Map<Item, Set<Potion>> immunities = null;
-    private static Set<Potion> allBlockedPotions = null;
 
     /**
      * LOWEST so this runs last: for PotionApplicableEvent the last handler to set a result wins,
@@ -64,7 +59,7 @@ public class BaublePotionImmunityHandler {
      * Removes the effects this bauble blocks that were already active.
      */
     public static void onBaubleEquipped(ItemStack stack, EntityLivingBase wearer) {
-        if (!BAUBLES_LOADED || stack.isEmpty() || wearer.world.isRemote) return;
+        if (wearer.world.isRemote) return;
 
         Set<Potion> blocked = getImmunities().get(stack.getItem());
         if (blocked == null) return;
@@ -76,18 +71,17 @@ public class BaublePotionImmunityHandler {
 
     /** True if the entity is a player wearing a configured bauble that blocks this potion. */
     public static boolean isImmune(EntityLivingBase entity, Potion potion) {
-        if (!BAUBLES_LOADED || potion == null || !(entity instanceof EntityPlayer)) return false;
+        if (!(entity instanceof EntityPlayer)) return false;
 
         Map<Item, Set<Potion>> map = getImmunities();
-        if (map.isEmpty() || !allBlockedPotions.contains(potion)) return false;
+        if (map.isEmpty()) return false;
 
-        return BaublesAccess.wearsBlockingBauble((EntityPlayer) entity, potion, map);
+        return BaublesUtil.isWearingImmunityBauble((EntityPlayer) entity, potion, map);
     }
 
     private static Map<Item, Set<Potion>> getImmunities() {
         if (immunities == null) {
             Map<Item, Set<Potion>> map = new HashMap<>();
-            Set<Potion> all = new HashSet<>();
 
             for (Map.Entry<ResourceLocation, ArrayList<String>> entry : ForgeConfigHandler.server.baublePotionImmunities.entrySet()) {
                 if (!ForgeRegistries.ITEMS.containsKey(entry.getKey())) {
@@ -105,11 +99,9 @@ public class BaublePotionImmunityHandler {
                     }
                     Potion potion = ForgeRegistries.POTIONS.getValue(potionLoc);
                     potions.add(potion);
-                    all.add(potion);
                 }
             }
 
-            allBlockedPotions = Collections.unmodifiableSet(all);
             immunities = Collections.unmodifiableMap(map);
         }
         return immunities;
@@ -117,23 +109,5 @@ public class BaublePotionImmunityHandler {
 
     public static void refreshConfig() {
         immunities = null;
-        allBlockedPotions = null;
-    }
-
-    /** Kept separate so Baubles classes are only loaded when Baubles is present. */
-    private static class BaublesAccess {
-        static boolean wearsBlockingBauble(EntityPlayer player, Potion potion, Map<Item, Set<Potion>> map) {
-            IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
-            if (baubles == null) return false;
-
-            for (int slot = 0; slot < baubles.getSlots(); slot++) {
-                ItemStack stack = baubles.getStackInSlot(slot);
-                if (stack.isEmpty()) continue;
-
-                Set<Potion> blocked = map.get(stack.getItem());
-                if (blocked != null && blocked.contains(potion)) return true;
-            }
-            return false;
-        }
     }
 }
