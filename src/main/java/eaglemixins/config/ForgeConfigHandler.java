@@ -1,10 +1,13 @@
 package eaglemixins.config;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import eaglemixins.EagleMixins;
 import eaglemixins.client.particles.ParticleRule;
 import eaglemixins.client.particles.ParticlesClientRunner;
 import eaglemixins.client.particles.ParticlesRuleParser;
 import eaglemixins.config.folders.*;
+import eaglemixins.handlers.BaublePotionImmunityHandler;
 import eaglemixins.util.PotionLevelCaps;
 import meldexun.betterconfig.api.BetterConfig;
 import meldexun.betterconfig.api.BetterConfigManager;
@@ -302,6 +305,23 @@ public class ForgeConfigHandler {
 			potionLevelCaps.put(new ResourceLocation("potioncore:magic_focus"), 2);
 		}
 
+		@Config.Comment({
+				"Baubles that make the wearer immune to the listed potion effects.",
+				"Blocked effects are never applied: they are denied before being added, so they never tick, not even once.",
+				"Instant applications (drinking, splash, lingering) don't fire PotionApplicableEvent, so they aren't blocked.",
+				"Effects already active when the bauble is put on are removed with the \"Bauble Potion Immunity Removes Active Effects (Baubles)\" mixin toggle.",
+				"Requires Baubles.",
+				"Format: <bauble item id> { <potion id> ... }"
+		})
+		@Config.Name("Bauble Potion Immunities")
+		public Map<ResourceLocation, ArrayList<String>> baublePotionImmunities = Maps.newLinkedHashMap(ImmutableMap.<ResourceLocation, ArrayList<String>>builder()
+				.put(new ResourceLocation("quark", "witch_hat"), new ArrayList<>(Arrays.asList(
+						"potioncore:spin",
+						"potioncore:disorganization",
+						"potioncore:perplexity"
+				)))
+				.build());
+
 		public ServerConfig(){
 			initBiomeDictTagList();
 			initPotionLevelCaps();
@@ -366,6 +386,7 @@ public class ForgeConfigHandler {
 				safespawn.reset();
 				lightning.reset();
 				PotionLevelCaps.refreshConfig();
+				BaublePotionImmunityHandler.refreshConfig();
 				loadParticleRulesFromConfig();
 			}
 		}
