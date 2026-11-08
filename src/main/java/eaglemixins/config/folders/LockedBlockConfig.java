@@ -29,7 +29,7 @@ public class LockedBlockConfig {
             "Lore can use \\n for new lines and \u00a7 color codes, and can be left empty. Only the lock id is required.",
             "Vanish delay: seconds between each block of this lock vanishing, e.g. 0.1 for big doors. 0 = all at once.",
             "Leave it out or empty to use Vanish Delay below.",
-            "Replace block / slave / alt: <modid:block>[@meta] that the lock blocks, keyslaves and alt keyslaves turn into when they vanish,",
+            "Replace block / slave / alt: <modid:block>[@meta] or <modid:block>[:meta] that the lock blocks, keyslaves and alt keyslaves turn into when they vanish,",
             "e.g. minecraft:stained_glass@14. Leave them out or empty for minecraft:air.",
             "Locks and keys with a LockId that is not listed here still work, they just use default names and no lore.",
             "Examples:",
@@ -146,6 +146,8 @@ public class LockedBlockConfig {
         if (text.isEmpty()) return Blocks.AIR.getDefaultState();
         int meta = 0;
         int at = text.indexOf('@');
+        // Also accept modid:block:meta (e.g. quark:crystal:8)
+        if (at < 0 && text.indexOf(':') != text.lastIndexOf(':')) at = text.lastIndexOf(':');
         if (at >= 0) {
             try {
                 meta = Integer.parseInt(text.substring(at + 1).trim());
