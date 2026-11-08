@@ -320,6 +320,247 @@ final class PlayerBossDefaults {
         developerSounds(bosses.get("zero"), 0.9F);
         developerSounds(bosses.get("cathy"), 1.0F);
         developerSounds(bosses.get("nischi"), 0.88F);
+
+        addRevenants(bosses);
+    }
+
+    /** Ghostly revenants of the developers, the regular mobs of the Shivaxi room (boss_spawners/shivaxi_boss.nbt). Generated from their old spawner NBT. */
+    private static void addRevenants(Map<String, PlayerBossConfig.BossEntry> bosses) {
+        PlayerBossConfig.BossEntry b;
+
+        // was a minecraft:wither_skeleton
+        b = new PlayerBossConfig.BossEntry();
+        b.name = "\u00a7b\u06de\u00a75\u00a7l Revenant Artsy\u00a7r \u00a7b\u06de";
+        b.skin = "starartsy";
+        b.opacity = 0.5F;
+        b.alertHeight = 24; // reaches the developer room about 20 blocks up, so skipped developers join the fight
+        b.maxHealth = 75;
+        b.armor = 20;
+        b.armorToughness = 0.1;
+        b.attackDamage = 20;
+        b.movementSpeed = 0.2;
+        b.knockbackResistance = 1;
+        b.experience = 20;
+        b.equipment.mainhand = "srparasites:weapon_bow_sentient@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":15,Potion:\"potioncore:perplexity\",remainingPotionHits:50,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},disarm:1,RepairCost:999}";
+        b.equipment.offhand = "classyhats:hat@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneColor\":15,\"Quark:RuneAttached\":1b,hat:\"dragonskullender\",display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},disarm:1,RepairCost:999}";
+        b.equipment.feet = "variedcommodities:commissar_bottom {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"variedcommodities:commissar_bottom\",Count:1b},classy_hat_invisible:1b}";
+        b.equipment.legs = "variedcommodities:x407_legs {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"variedcommodities:x407_legs\",Count:1b},classy_hat_invisible:1b}";
+        b.equipment.chest = "variedcommodities:nanorum_chest {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"variedcommodities:nanorum_chest\",Count:1b},classy_hat_invisible:1b}";
+        b.flight.mode = PlayerBossConfig.FlightMode.NEVER;
+        b.bossBar.enabled = false;
+        b.lootTable = "dregora:brutaltowers/mobs/tier_6";
+        b.extraNbt = "{ForgeCaps:{\"champions:championship\":{tier:4}},ForgeData:{InfernalMobsMod:\"Alchimist\"},PersistenceRequired:1b}";
+        b.sounds.idle = "minecraft:entity.vex.ambient";
+        b.sounds.hurt = "minecraft:entity.vex.hurt";
+        b.sounds.death = "minecraft:entity.vex.death";
+        b.sounds.pitch = 1.15F;
+        b.sounds.idleInterval = 8;
+        bosses.put("revenant_artsy", b);
+
+        // was a minecraft:zombie_pigman
+        b = new PlayerBossConfig.BossEntry();
+        b.name = "\u00a74\u00a7l\u273f \u00a75\u00a7lRevenant Blood Eagle \u00a74\u00a7l\u273f";
+        b.skin = "nlblackeagle";
+        b.opacity = 0.5F;
+        b.alertHeight = 24; // reaches the developer room about 20 blocks up, so skipped developers join the fight
+        b.maxHealth = 75;
+        b.armor = 20;
+        b.armorToughness = 0.1;
+        b.attackDamage = 20;
+        b.movementSpeed = 0.2;
+        b.knockbackResistance = 1;
+        b.experience = 20;
+        b.equipment.mainhand = "srparasites:weapon_scythe_sentient@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":14,Potion:\"srparasites:bleed\",remainingPotionHits:50,Weight:50,disarm:1,RepairCost:999}";
+        b.equipment.offhand = "variedcommodities:hammer@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":14,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},disarm:1,RepairCost:999}";
+        b.equipment.feet = "iceandfire:armor_red_boots {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"iceandfire:armor_red_boots\",Count:1b},classy_hat_invisible:1b}";
+        b.equipment.legs = "iceandfire:armor_black_leggings {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"iceandfire:armor_black_leggings\",Count:1b},classy_hat_invisible:1b}";
+        b.equipment.chest = "iceandfire:forest_troll_leather_chestplate {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"iceandfire:forest_troll_leather_chestplate\",Count:1b},classy_hat_invisible:1b}";
+        b.flight.mode = PlayerBossConfig.FlightMode.NEVER;
+        b.bossBar.enabled = false;
+        b.lootTable = "dregora:brutaltowers/mobs/tier_6";
+        b.extraNbt = "{ForgeCaps:{\"champions:championship\":{tier:4}},ForgeData:{InfernalMobsMod:\"Lifesteal\"},PersistenceRequired:1b}";
+        b.sounds.idle = "minecraft:entity.vex.ambient";
+        b.sounds.hurt = "minecraft:entity.vex.hurt";
+        b.sounds.death = "minecraft:entity.vex.death";
+        b.sounds.pitch = 0.85F;
+        b.sounds.idleInterval = 8;
+        bosses.put("revenant_eagle", b);
+
+        // was a quark:pirate
+        b = new PlayerBossConfig.BossEntry();
+        b.name = "\u00a70\u00a7l\u2600 \u00a75\u00a7lRevenant Black Heaven\u00a7r \u00a70\u00a7l\u2600";
+        b.skin = "nlblackheavennl";
+        b.opacity = 0.5F;
+        b.alertHeight = 24; // reaches the developer room about 20 blocks up, so skipped developers join the fight
+        b.maxHealth = 60;
+        b.armor = 20;
+        b.armorToughness = 0.1;
+        b.attackDamage = 15;
+        b.movementSpeed = 0.25;
+        b.knockbackResistance = 1;
+        b.experience = 20;
+        b.fireImmune = false;
+        b.equipment.mainhand = "srparasites:weapon_cleaver_sentient@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":0,Potion:\"potioncore:lightning\",remainingPotionHits:50,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},disarm:1,RepairCost:999}";
+        b.equipment.offhand = "spartanfire:katana_dragonbone@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":0,Potion:\"potioncore:lightning\",remainingPotionHits:50,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},disarm:1,RepairCost:999}";
+        b.equipment.feet = "variedcommodities:commissar_bottom {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"variedcommodities:commissar_bottom\",Count:1b},classy_hat_invisible:1b}";
+        b.equipment.legs = "variedcommodities:commissar_legs {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"variedcommodities:commissar_legs\",Count:1b},classy_hat_invisible:1b}";
+        b.equipment.chest = "iceandfire:forest_troll_leather_chestplate {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"iceandfire:forest_troll_leather_chestplate\",Count:1b},classy_hat_invisible:1b}";
+        b.flight.mode = PlayerBossConfig.FlightMode.NEVER;
+        b.bossBar.enabled = false;
+        b.lootTable = "dregora:brutaltowers/mobs/tier_6";
+        b.extraNbt = "{ForgeCaps:{\"champions:championship\":{tier:4}},ForgeData:{InfernalMobsMod:\"Darkness\"},PersistenceRequired:1b}";
+        b.sounds.idle = "minecraft:entity.vex.ambient";
+        b.sounds.hurt = "minecraft:entity.vex.hurt";
+        b.sounds.death = "minecraft:entity.vex.death";
+        b.sounds.pitch = 1.2F;
+        b.sounds.idleInterval = 8;
+        bosses.put("revenant_heaven", b);
+
+        // was a quark:pirate
+        b = new PlayerBossConfig.BossEntry();
+        b.name = "\u00a76\u00a7l\u26a1\u00a75\u00a7l Revenant Kotlin\u00a7r \u00a76\u00a7l\u26a1";
+        b.skin = "kotlin_dev";
+        b.opacity = 0.5F;
+        b.alertHeight = 24; // reaches the developer room about 20 blocks up, so skipped developers join the fight
+        b.maxHealth = 75;
+        b.armor = 20;
+        b.armorToughness = 0.1;
+        b.attackDamage = 20;
+        b.movementSpeed = 0.2;
+        b.knockbackResistance = 1;
+        b.experience = 20;
+        b.fireImmune = false;
+        b.equipment.mainhand = "mujmajnkraftsbettersurvival:itemlightningdragonbonenunchaku@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":0,Potion:\"potioncore:lightning\",remainingPotionHits:50,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},disarm:1,RepairCost:999}";
+        b.equipment.offhand = "iceandfire:dragon_horn_lightning {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":10,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},disarm:1,RepairCost:999}";
+        b.equipment.feet = "iceandfire:armor_silver_metal_boots {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"iceandfire:armor_silver_metal_boots\",Count:1b},classy_hat_invisible:1b}";
+        b.equipment.legs = "iceandfire:armor_silver_metal_leggings {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"iceandfire:armor_silver_metal_leggings\",Count:1b},classy_hat_invisible:1b}";
+        b.equipment.chest = "iceandfire:forest_troll_leather_chestplate {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"iceandfire:forest_troll_leather_chestplate\",Count:1b},classy_hat_invisible:1b}";
+        b.flight.mode = PlayerBossConfig.FlightMode.NEVER;
+        b.bossBar.enabled = false;
+        b.lootTable = "dregora:brutaltowers/mobs/tier_6";
+        b.extraNbt = "{ForgeCaps:{\"champions:championship\":{tier:4}},ForgeData:{InfernalMobsMod:\"Storm\"},PersistenceRequired:1b}";
+        b.sounds.idle = "minecraft:entity.vex.ambient";
+        b.sounds.hurt = "minecraft:entity.vex.hurt";
+        b.sounds.death = "minecraft:entity.vex.death";
+        b.sounds.pitch = 0.95F;
+        b.sounds.idleInterval = 8;
+        bosses.put("revenant_kotlin", b);
+
+        // was a minecraft:wither_skeleton
+        b = new PlayerBossConfig.BossEntry();
+        b.name = "\u00a7b\u2744\u00a75\u00a7lRevenant Meldexun\u00a7r \u00a7b\u2744";
+        b.skin = "meldexun";
+        b.opacity = 0.5F;
+        b.alertHeight = 24; // reaches the developer room about 20 blocks up, so skipped developers join the fight
+        b.maxHealth = 75;
+        b.armor = 20;
+        b.armorToughness = 0.1;
+        b.attackDamage = 20;
+        b.movementSpeed = 0.2;
+        b.knockbackResistance = 1;
+        b.experience = 20;
+        b.equipment.mainhand = "spartanfire:spear_ice_dragonbone@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":15,Potion:\"switchbow:freeze\",remainingPotionHits:50,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},disarm:1,RepairCost:999}";
+        b.equipment.offhand = "variedcommodities:frost_staff {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":15,disarm:1,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},RepairCost:999}";
+        b.equipment.feet = "variedcommodities:nanorum_boots {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"variedcommodities:nanorum_boots\",Count:1b},classy_hat_invisible:1b}";
+        b.equipment.legs = "iceandfire:tide_teal_leggings {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"iceandfire:armor_green_leggings\",Count:1b},classy_hat_invisible:1b}";
+        b.equipment.chest = "variedcommodities:nanorum_chest {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"variedcommodities:nanorum_chest\",Count:1b},classy_hat_invisible:1b}";
+        b.flight.mode = PlayerBossConfig.FlightMode.NEVER;
+        b.bossBar.enabled = false;
+        b.lootTable = "dregora:brutaltowers/mobs/tier_6";
+        b.extraNbt = "{ForgeCaps:{\"champions:championship\":{tier:4}},ForgeData:{InfernalMobsMod:\"Bulwark\"},PersistenceRequired:1b}";
+        b.sounds.idle = "minecraft:entity.vex.ambient";
+        b.sounds.hurt = "minecraft:entity.vex.hurt";
+        b.sounds.death = "minecraft:entity.vex.death";
+        b.sounds.pitch = 0.8F;
+        b.sounds.idleInterval = 8;
+        bosses.put("revenant_meldexun", b);
+
+        // was a minecraft:zombie_pigman
+        b = new PlayerBossConfig.BossEntry();
+        b.name = "\u00a76\u2622 \u00a74\u00a7lRevenant Bugging Ray\u00a7r \u00a76\u2622";
+        b.skin = "rayquazafallout";
+        b.opacity = 0.5F;
+        b.alertHeight = 24; // reaches the developer room about 20 blocks up, so skipped developers join the fight
+        b.maxHealth = 50;
+        b.armor = 20;
+        b.armorToughness = 0.1;
+        b.attackDamage = 15;
+        b.movementSpeed = 0.25;
+        b.knockbackResistance = 1;
+        b.experience = 20;
+        b.equipment.mainhand = "srparasites:weapon_sword_sentient@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":4,Potion:\"potioncore:potion_sickness\",remainingPotionHits:10,disarm:1,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},RepairCost:999}";
+        b.equipment.offhand = "spartanweaponry:dynamite {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":4}";
+        b.equipment.feet = "variedcommodities:x407_boots {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"variedcommodities:x407_boots\",Count:1b},classy_hat_invisible:1b}";
+        b.equipment.legs = "iceandfire:armor_green_leggings {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"iceandfire:armor_green_leggings\",Count:1b},classy_hat_invisible:1b}";
+        b.equipment.chest = "variedcommodities:x407_chest {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"variedcommodities:x407_chest\",Count:1b},classy_hat_invisible:1b}";
+        b.flight.mode = PlayerBossConfig.FlightMode.NEVER;
+        b.bossBar.enabled = false;
+        b.lootTable = "dregora:brutaltowers/mobs/tier_6";
+        b.extraNbt = "{ForgeCaps:{\"champions:championship\":{tier:4}},ForgeData:{InfernalMobsMod:\"Ninja\"},PersistenceRequired:1b}";
+        b.sounds.idle = "minecraft:entity.vex.ambient";
+        b.sounds.hurt = "minecraft:entity.vex.hurt";
+        b.sounds.death = "minecraft:entity.vex.death";
+        b.sounds.pitch = 1.1F;
+        b.sounds.idleInterval = 8;
+        bosses.put("revenant_ray", b);
+
+        // was a minecraft:wither_skeleton
+        b = new PlayerBossConfig.BossEntry();
+        b.name = "\u00a71\u25cc\u25cb\u00a75\u00a7lRevenant XzeroAir\u00a7r \u00a71\u25cb\u25cc";
+        b.skin = "xzeroair";
+        b.slimArms = true;
+        b.opacity = 0.5F;
+        b.alertHeight = 24; // reaches the developer room about 20 blocks up, so skipped developers join the fight
+        b.maxHealth = 75;
+        b.armor = 20;
+        b.armorToughness = 0.1;
+        b.attackDamage = 20;
+        b.movementSpeed = 0.2;
+        b.knockbackResistance = 1;
+        b.experience = 20;
+        b.equipment.mainhand = "srparasites:weapon_axe_sentient@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":11,Potion:\"potioncore:drown\",remainingPotionHits:50,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},disarm:1,RepairCost:999}";
+        b.equipment.offhand = "minecraft:skull {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":11}";
+        b.equipment.feet = "forgottenitems:golem_boots {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"forgottenitems:golem_boots\",Count:1b},classy_hat_invisible:1b}";
+        b.equipment.legs = "srparasites:armor_pants_sentient {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"srparasites:armor_pants_sentient\",Count:1b},classy_hat_invisible:1b}";
+        b.equipment.chest = "iceandfire:forest_troll_leather_chestplate {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"iceandfire:forest_troll_leather_chestplate\",Count:1b},classy_hat_invisible:1b}";
+        b.flight.mode = PlayerBossConfig.FlightMode.NEVER;
+        b.bossBar.enabled = false;
+        b.lootTable = "dregora:brutaltowers/mobs/tier_6";
+        b.extraNbt = "{ForgeCaps:{\"champions:championship\":{tier:4}},ForgeData:{InfernalMobsMod:\"Choke\"},PersistenceRequired:1b}";
+        b.sounds.idle = "minecraft:entity.vex.ambient";
+        b.sounds.hurt = "minecraft:entity.vex.hurt";
+        b.sounds.death = "minecraft:entity.vex.death";
+        b.sounds.pitch = 0.9F;
+        b.sounds.idleInterval = 8;
+        bosses.put("revenant_zero", b);
+
+        // was a minecraft:wither_skeleton
+        b = new PlayerBossConfig.BossEntry();
+        b.name = "\u00a74\u00a7l\u2317 \u00a75\u00a7lRevenant Menacing Fonny\u00a7r \u00a74\u00a7l\u2317";
+        b.skin = "fonnymunkey";
+        b.opacity = 0.5F;
+        b.alertHeight = 24; // reaches the developer room about 20 blocks up, so skipped developers join the fight
+        b.maxHealth = 85;
+        b.armor = 20;
+        b.armorToughness = 0.3;
+        b.attackDamage = 30;
+        b.movementSpeed = 0.15;
+        b.knockbackResistance = 1;
+        b.experience = 20;
+        b.equipment.mainhand = "mod_lavacow:skeletonking_mace@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":14,Potion:\"mod_lavacow:soiled\",remainingPotionHits:50,disarm:1,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},RepairCost:999}";
+        b.equipment.offhand = "variedcommodities:pipe_wrench {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":14}";
+        b.equipment.feet = "srparasites:armor_boots_sentient {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"srparasites:armor_boots_sentient\",Count:1b},classy_hat_invisible:1b}";
+        b.equipment.legs = "iceandfire:forest_troll_leather_leggings {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"iceandfire:forest_troll_leather_leggings\",Count:1b},classy_hat_invisible:1b}";
+        b.flight.mode = PlayerBossConfig.FlightMode.NEVER;
+        b.bossBar.enabled = false;
+        b.lootTable = "dregora:brutaltowers/mobs/tier_6";
+        b.extraNbt = "{ForgeCaps:{\"champions:championship\":{tier:5}},ForgeData:{InfernalMobsMod:\"Vengeance\"},PersistenceRequired:1b}";
+        b.sounds.idle = "minecraft:entity.vex.ambient";
+        b.sounds.hurt = "minecraft:entity.vex.hurt";
+        b.sounds.death = "minecraft:entity.vex.death";
+        b.sounds.pitch = 1.05F;
+        b.sounds.idleInterval = 8;
+        bosses.put("revenant_fonny", b);
     }
 
     /** Rare distant idle screeches, one loud delayed screech on spotting you, the others answering from further away */

@@ -120,7 +120,30 @@ public class RenderPlayerBoss extends RenderLivingBase<EntityPlayerBoss> {
             model.leftArmPose = mainPose;
         }
         model.isSneak = entity.isSneaking();
+        shadowOpaque = entity.getRenderOpacity(); // the shadow is drawn after doRender, ghosts get a faint one
         super.doRender(entity, x, y, z, entityYaw, partialTicks);
+    }
+
+    /** Below 1 Opacity the body is drawn see-through, the same way vanilla draws invisible entities to spectators */
+    @Override
+    protected void renderModel(EntityPlayerBoss entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
+        float opacity = entity.getRenderOpacity();
+        if (opacity >= 1.0F) {
+            super.renderModel(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
+            return;
+        }
+        GlStateManager.pushMatrix();
+        GlStateManager.color(1.0F, 1.0F, 1.0F, opacity);
+        GlStateManager.depthMask(false);
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        GlStateManager.alphaFunc(516, 0.003921569F);
+        super.renderModel(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
+        GlStateManager.disableBlend();
+        GlStateManager.alphaFunc(516, 0.1F);
+        GlStateManager.depthMask(true);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.popMatrix();
     }
 
     /** Name tag with the subtitle as a second line under it, both centered like vanilla labels. */

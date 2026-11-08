@@ -185,10 +185,11 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
         return target != null && ForgeConfigHandler.playerbosses.isTargetBlacklisted(EntityList.getKey(target));
     }
 
-    /** PLAYER_BOSS: a boss that spots or gets hit by a player sends the PLAYER_BOSS bosses around it (within follow range) after them too */
+    /** PLAYER_BOSS: a boss that spots or gets hit by a player sends the PLAYER_BOSS bosses around it (within follow range, Alert Height up and down) after them too */
     private void alertNearby(EntityLivingBase target) {
         double range = getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getAttributeValue();
-        for (EntityPlayerBoss other : world.getEntitiesWithinAABB(EntityPlayerBoss.class, getEntityBoundingBox().grow(range, 10.0D, range))) {
+        double height = entry != null ? entry.alertHeight : 10.0D;
+        for (EntityPlayerBoss other : world.getEntitiesWithinAABB(EntityPlayerBoss.class, getEntityBoundingBox().grow(range, height, range))) {
             // already busy ones are skipped, which also stops the alerts from bouncing back and forth
             if (other != this && other.currentAI == currentAI && other.getAttackTarget() == null) other.respondTo(target);
         }
@@ -309,6 +310,7 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
         render.setString("Skin", entry.skin);
         render.setBoolean("Slim", entry.slimArms);
         render.setFloat("Scale", entry.scale);
+        render.setFloat("Opacity", entry.opacity);
         render.setBoolean("Wings", entry.wings.enabled);
         render.setInteger("WingPrimary", ItemStackParser.parseColor(entry.wings.primaryColor));
         render.setInteger("WingSecondary", ItemStackParser.parseColor(entry.wings.secondaryColor));
@@ -392,6 +394,12 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
     public float getRenderScale() {
         NBTTagCompound render = getRenderData();
         return render.hasKey("Scale") ? render.getFloat("Scale") : 1.0F;
+    }
+
+    /** The config's Opacity, 1 = solid */
+    public float getRenderOpacity() {
+        NBTTagCompound render = getRenderData();
+        return render.hasKey("Opacity") ? render.getFloat("Opacity") : 1.0F;
     }
 
     public boolean isSwingingArms() {

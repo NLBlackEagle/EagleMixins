@@ -129,6 +129,14 @@ public class PlayerBossConfig {
         @Config.RangeDouble(min = 0.25, max = 4)
         public float scale = 1.0F;
 
+        @Config.Comment({
+                "How solid the boss' body looks. 1 = solid, lower = see-through like a ghost (0.5 = half transparent).",
+                "Only the body and skin fade: held items, visible armor and wings stay solid. Its shadow fades along with it"
+        })
+        @Config.Name("Opacity")
+        @Config.RangeDouble(min = 0.05, max = 1)
+        public float opacity = 1.0F;
+
         @Config.Name("Max Health")
         @Config.RangeDouble(min = 1)
         public double maxHealth = 200;
@@ -183,6 +191,14 @@ public class PlayerBossConfig {
         @Config.Name("Knockback Resistance")
         @Config.RangeDouble(min = 0, max = 1)
         public double knockbackResistance = 1.0;
+
+        @Config.Comment({
+                "PLAYER_BOSS AI only: how many blocks up and down a boss that spots a player alerts other PLAYER_BOSS bosses",
+                "(sideways it reaches Follow Range). Raise it to wake bosses on the floor above or below"
+        })
+        @Config.Name("Alert Height")
+        @Config.RangeDouble(min = 0, max = 256)
+        public double alertHeight = 10;
 
         @Config.Comment("How far away the boss notices players")
         @Config.Name("Follow Range")
