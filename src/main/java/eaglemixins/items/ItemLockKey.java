@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -58,6 +59,29 @@ public class ItemLockKey extends Item {
      */
     @Override
     public boolean onEntityItemUpdate(EntityItem entityItem) {
+        // Both server and client
+        if(ForgeConfigHandler.lockedblocks.floatingKeys) {
+            double posX = entityItem.posX;
+            double posY = entityItem.posY;
+            double posZ = entityItem.posZ;
+            BlockPos groundPos = new BlockPos(posX, posY - 1.0D, posZ);
+
+            if (!entityItem.world.isAirBlock(groundPos)) {
+                if (!entityItem.hasNoGravity()) {
+                    entityItem.motionY += 0.04D;
+                }
+
+                entityItem.motionX *= 0.8D;
+                entityItem.motionZ *= 0.8D;
+                entityItem.motionY += 0.01D;
+
+                // Server forced update
+                if (!entityItem.world.isRemote && entityItem.ticksExisted % 40 == 0) {
+                    entityItem.isAirBorne = true;
+                }
+            }
+        }
+
         if (entityItem.world.isRemote) return false;
         if (entityItem.isGlowing() != ForgeConfigHandler.lockedblocks.glowingKeys) {
             entityItem.setGlowing(ForgeConfigHandler.lockedblocks.glowingKeys);

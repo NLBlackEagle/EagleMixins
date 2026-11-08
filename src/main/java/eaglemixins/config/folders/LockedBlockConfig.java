@@ -89,6 +89,10 @@ public class LockedBlockConfig {
     @Config.Name("Glowing Keys")
     public boolean glowingKeys = true;
 
+    @Config.Comment("If true, dropped keys will float above the ground.")
+    @Config.Name("Floating Keys")
+    public boolean floatingKeys = true;
+
     private Map<String, LockType> lockTypes = null;
 
     @Nullable
