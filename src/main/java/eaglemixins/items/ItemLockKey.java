@@ -51,12 +51,20 @@ public class ItemLockKey extends Item {
         return displayName(getLockId(stack), "eaglemixins.lock.key_name", super.getItemStackDisplayName(stack));
     }
 
-    /** Dropped keys get the glowing outline, tinted with the key color by RenderMixin_KeyOutlineColor. */
+    /**
+     * Dropped keys get the glowing outline, tinted with the key color by RenderMixin_KeyOutlineColor.
+     * They are also indestructible: invulnerable to explosions, fire, lava, cactus and any other damage.
+     * The void still deletes them.
+     */
     @Override
     public boolean onEntityItemUpdate(EntityItem entityItem) {
-        if (!entityItem.world.isRemote && entityItem.isGlowing() != ForgeConfigHandler.lockedblocks.glowingKeys) {
+        if (entityItem.world.isRemote) return false;
+        if (entityItem.isGlowing() != ForgeConfigHandler.lockedblocks.glowingKeys) {
             entityItem.setGlowing(ForgeConfigHandler.lockedblocks.glowingKeys);
         }
+        // Blocks every DamageSource except the void, which kills items without damaging them anyway
+        if (!entityItem.getIsInvulnerable()) entityItem.setEntityInvulnerable(true);
+        if (entityItem.isBurning()) entityItem.extinguish();
         return false;
     }
 
