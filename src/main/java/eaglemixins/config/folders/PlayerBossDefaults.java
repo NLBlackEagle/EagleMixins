@@ -561,6 +561,65 @@ final class PlayerBossDefaults {
         b.sounds.pitch = 1.05F;
         b.sounds.idleInterval = 8;
         bosses.put("revenant_fonny", b);
+
+        // new, gear from the cathy developer boss with its armor hidden like the other revenants, Fonny-level stats as the strongest developer
+        b = new PlayerBossConfig.BossEntry();
+        b.name = "☠§4 §lRevenant Cheesebane Cathy §r☠";
+        b.skin = "cathwy";
+        b.slimArms = true;
+        b.opacity = 0.5F;
+        b.alertHeight = 24; // reaches the developer room about 20 blocks up, so skipped developers join the fight
+        b.maxHealth = 85;
+        b.armor = 20;
+        b.armorToughness = 0.2;
+        b.attackDamage = 30;
+        b.movementSpeed = 0.2;
+        b.knockbackResistance = 1;
+        b.experience = 20;
+        b.equipment.mainhand = "srparasites:weapon_lance_sentient@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":15,Potion:\"potioncore:perplexity\",remainingPotionHits:50,disarm:1,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},RepairCost:999}";
+        b.equipment.offhand = "bountifulbaubles:shieldankh {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneColor\":15,\"Quark:RuneAttached\":1b}";
+        b.equipment.feet = "srparasites:armor_boots_sentient {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"srparasites:armor_boots_sentient\",Count:1b},classy_hat_invisible:1b}";
+        b.equipment.legs = "srparasites:armor_pants_sentient {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"srparasites:armor_pants_sentient\",Count:1b},classy_hat_invisible:1b}";
+        b.equipment.chest = "srparasites:armor_chest_sentient {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"srparasites:armor_chest_sentient\",Count:1b},classy_hat_invisible:1b}";
+        b.flight.mode = PlayerBossConfig.FlightMode.NEVER;
+        b.bossBar.enabled = false;
+        b.lootTable = "dregora:brutaltowers/mobs/tier_6";
+        b.extraNbt = "{ForgeCaps:{\"champions:championship\":{tier:5}},ForgeData:{InfernalMobsMod:\"Lifesteal\"},PersistenceRequired:1b}";
+        b.sounds.idle = "minecraft:entity.vex.ambient";
+        b.sounds.hurt = "minecraft:entity.vex.hurt";
+        b.sounds.death = "minecraft:entity.vex.death";
+        b.sounds.pitch = 1.0F;
+        b.sounds.idleInterval = 8;
+        bosses.put("revenant_cathy", b);
+
+        // new, gear from the nischi developer boss with its armor hidden like the other revenants (no scarecrow head)
+        b = new PlayerBossConfig.BossEntry();
+        b.name = "§6✿ §a§lRevenant Nischhelm§r §6✿";
+        b.skin = "nischhelm";
+        b.opacity = 0.5F;
+        b.alertHeight = 24; // reaches the developer room about 20 blocks up, so skipped developers join the fight
+        b.maxHealth = 75;
+        b.armor = 20;
+        b.armorToughness = 0.1;
+        b.attackDamage = 20;
+        b.movementSpeed = 0.2;
+        b.knockbackResistance = 1;
+        b.experience = 20;
+        b.equipment.mainhand = "spartanfire:scythe_fire_dragonbone@30000 {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":15,Potion:\"switchbow:freeze\",remainingPotionHits:50,disarm:1,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},RepairCost:999}";
+        b.equipment.offhand = "spartanfire:throwing_axe_fire_dragonbone {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],\"Quark:RuneAttached\":1b,\"Quark:RuneColor\":15,disarm:1,display:{Lore:[\"You sense a strange opposing aura from this weapon, as if it wants to cut you...\"]},RepairCost:999}";
+        b.equipment.feet = "nuclearcraft:boots_hazmat {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"nuclearcraft:boots_hazmat\",Count:1b},classy_hat_invisible:1b}";
+        b.equipment.legs = "nuclearcraft:legs_hazmat {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"nuclearcraft:legs_hazmat\",Count:1b},classy_hat_invisible:1b}";
+        b.equipment.chest = "mod_lavacow:felarmor_chestplate {ench:[{lvl:1,name:\"minecraft:vanishing_curse\"}],classy_hat_disguise:{id:\"mod_lavacow:felarmor_chestplate\",Count:1b},classy_hat_invisible:1b}";
+        b.flight.mode = PlayerBossConfig.FlightMode.NEVER;
+        b.bossBar.enabled = false;
+        b.lootTable = "dregora:brutaltowers/mobs/tier_6";
+        b.extraNbt = "{ForgeCaps:{\"champions:championship\":{tier:4}},ForgeData:{InfernalMobsMod:\"Berserk\"},PersistenceRequired:1b}";
+        b.sounds.idle = "minecraft:entity.vex.ambient";
+        b.sounds.hurt = "minecraft:entity.vex.hurt";
+        b.sounds.death = "minecraft:entity.vex.death";
+        b.sounds.pitch = 0.88F;
+        b.sounds.idleInterval = 8;
+        bosses.put("revenant_nischi", b);
     }
 
     /** Rare distant idle screeches, one loud delayed screech on spotting you, the others answering from further away */
