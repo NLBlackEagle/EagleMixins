@@ -365,6 +365,13 @@ public class MixinToggleConfig {
     @MixinConfig.CompatHandling(modid = "mod_lavacow", desired = true, reason = "Requires mod to properly function")
     public boolean limitInfestedEffect = true;
 
+    @Config.Comment("Fish's Undead Rising parasites attached to your face can't be hit when your size is changed (e.g. Trinkets and Baubles races like the Dragon Ring). This keeps their hitbox around your eyes so they can always be hit.")
+    @Config.Name("Fix Attached Parasite Hitbox (FUR)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.fishsundeadrising.parasitehitbox.json", defaultValue = true)
+    @MixinConfig.CompatHandling(modid = "mod_lavacow", desired = true, reason = "Requires mod to properly function")
+    public boolean fixAttachedParasiteHitbox = true;
+
     @Config.Comment("By default, Legendary Tooltips only allows 16 different tooltip frames. This increases that max to 64.")
     @Config.Name("More Frames (LegendaryTooltips)")
     @Config.RequiresMcRestart
