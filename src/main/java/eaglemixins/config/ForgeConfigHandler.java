@@ -142,6 +142,11 @@ public class ForgeConfigHandler {
 	@Order(21)
 	public static LeapConfig leap = new LeapConfig();
 
+	@Config.Comment("Stronghold placement, requires the \"Limit Stronghold Generation (Vanilla)\" mixin toggle (and \"OTG Stronghold Limiter (OTG)\" for OTG worlds)")
+	@Config.Name("Strongholds")
+	@Order(22)
+	public static StrongholdConfig strongholds = new StrongholdConfig();
+
 	public static class ServerConfig {
 		@Config.Comment("Reduces damage done by players by a factor of 1 to 1/3, with the falloff multiplier that scales linearly in the span between. No reduction for damages below 20. Caps out at 300 dmg before falloff.")
 		@Config.Name("Enable Damage Falloff")

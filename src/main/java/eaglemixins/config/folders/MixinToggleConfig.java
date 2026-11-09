@@ -425,7 +425,7 @@ public class MixinToggleConfig {
     @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.pickuptippedarrows.json", defaultValue = true)
     public boolean mobsPickupArrows = true;
 
-    @Config.Comment("Cancels generation of strongholds between 0 and 10.000 blocks from spawn")
+    @Config.Comment("Pushes stronghold rings outward so none generate near spawn, see the \"Strongholds\" options")
     @Config.Name("Limit Stronghold Generation (Vanilla)")
     @Config.RequiresMcRestart
     @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.mapgenstronghold.json", defaultValue = true)
