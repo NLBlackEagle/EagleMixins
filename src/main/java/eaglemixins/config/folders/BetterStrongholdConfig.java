@@ -21,16 +21,23 @@ public class BetterStrongholdConfig {
     public boolean cutOffIntoAir = true;
 
     @Config.Comment({
-            "Air and liquids within this many blocks around the center portal room get filled with the filler block,",
-            "so the room always sits inside solid blocks. The center room itself is never cut off. 0 = disabled."
+            "Before the first piece of a new stronghold generates, checks if the chunk of the center portal room is solid underground.",
+            "If not, the same check is done this many chunks away: first north/east/south/west, then the 4 corners (8 checks at most).",
+            "The whole stronghold moves to the first solid spot, if none is solid it stays where it is.",
+            "Chunks that don't exist yet get generated without being saved just to check them (terrain and caves only).",
+            "0 = disabled. Only new strongholds are moved, eyes of ender and /locate point to the moved stronghold."
     })
-    @Config.Name("Center Room Solid Shell (blocks)")
+    @Config.Name("Center Room Relocation Distance (chunks)")
     @Config.RangeInt(min = 0, max = 8)
-    public int centerRoomShell = 2;
+    public int relocationDistance = 3;
 
-    @Config.Comment("Block used to encase the center portal room, see \"Center Room Solid Shell (blocks)\"")
-    @Config.Name("Center Room Filler Block")
-    public String centerRoomFiller = "minecraft:stone";
+    @Config.Comment({
+            "Fraction (0-1) of the sampled blocks in the center room's chunk, at the height of the room, that has to be solid",
+            "for the spot to count as solid ground. Air, liquids and plants don't count as solid."
+    })
+    @Config.Name("Center Room Min Solid Fraction")
+    @Config.RangeDouble(min = 0.0D, max = 1.0D)
+    public double minSolidFraction = 0.9D;
 
     @Config.Comment({
             "Loot table for chests in corridors, dead ends and the portal room.",

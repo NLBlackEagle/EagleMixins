@@ -21,9 +21,13 @@ public class LeapConfig {
             "  maxRange      Max horizontal distance to the target (blocks) to leap",
             "  minHeight     Target must be at least this many blocks above the mob. 2 = only at players who pillared up, -64 = any height",
             "  distance      [range] Leap distance compared to the target's distance. 1 = lands on the target, 0.8 = 20% short, 1.2 = 20% too far",
-            "  vertical      [range] Upward speed. A normal jump is 0.42, the vanilla spider leap 0.4",
+            "  leapDistance  [range] Fixed leap length in blocks towards the target (e.g. 6~10), replaces \"distance\". 0 = use \"distance\"",
             "  inaccuracy    [range] Blocks the landing spot is shifted in a random direction",
-            "  maxSpeed      Caps the horizontal leap speed. A sprinting player moves at about 0.28",
+            "  arc           true = flies a smooth, symmetric arch to the landing spot. false = a single physics push (flat start, steep drop)",
+            "  arcHeight     [range] (arc=true) Height of the arch compared to the leap length. 0.25 = a 8 block leap peaks 2 blocks high (min 1.25)",
+            "  arcSpeed      [range] (arc=true) Horizontal speed in blocks per tick. A sprinting player moves at about 0.28",
+            "  vertical      [range] (arc=false) Upward speed. A normal jump is 0.42, the vanilla spider leap 0.4",
+            "  maxSpeed      (arc=false) Caps the horizontal leap speed",
             "  cooldown      [range] Ticks between leaps (20 ticks = 1 second)",
             "  chance        Chance to leap when all conditions are met. A failed roll retries 1 second later",
             "  lineOfSight   true = only leaps when it can see the target",
@@ -33,7 +37,7 @@ public class LeapConfig {
             "[range] settings take a fixed number (1.2) or a range (0.9~1.4) that is rolled again on every leap."
     })
     @Config.Name("Default Leap Settings")
-    public String defaults = "minRange=4, maxRange=10, minHeight=-64, distance=1.0, vertical=0.5, inaccuracy=0, maxSpeed=2, cooldown=60, chance=0.3, lineOfSight=true, noFall=true, removeVanilla=false, priority=3";
+    public String defaults = "minRange=4, maxRange=10, minHeight=-64, distance=1.0, leapDistance=0, arc=true, arcHeight=0.25~0.3, arcSpeed=0.5~0.6, vertical=0.5, inaccuracy=0, maxSpeed=2, cooldown=60, chance=0.3, lineOfSight=true, noFall=true, removeVanilla=false, priority=3";
 
     @Config.Comment({
             "Mobs that leap at their attack target. One mob per line: <target>, key=value, key=value, ...",

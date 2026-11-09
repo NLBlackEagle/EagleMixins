@@ -438,6 +438,15 @@ public class MixinToggleConfig {
     @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.mapgenstronghold.json", defaultValue = true)
     public boolean limitStrongholdGen = true;
 
+    @Config.Comment({
+            "Colors the Eye of Ender trail by distance to the stronghold: purple-blue when far, purple halfway, purple-red on top. See the \"Strongholds\" options.",
+            "Must be set the same on the server and on every client."
+    })
+    @Config.Name("Eye Of Ender Distance Trail (Vanilla)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.endereyetrail.json", defaultValue = true)
+    public boolean enderEyeDistanceTrail = true;
+
     @Config.Comment("Account for OTG when Limit Stronghold Generation is set to true")
     @Config.Name("OTG Stronghold Limiter (OTG)")
     @Config.RequiresMcRestart
@@ -457,7 +466,7 @@ public class MixinToggleConfig {
 
     @Config.Comment({
             "Tweaks BetterStronghold strongholds, see the \"Better Stronghold\" options: pieces are cut off where they generate into air,",
-            "the center portal room is encased in solid blocks, chests use the (vanilla) stronghold loot tables and spawners get configurable entities.",
+            "the stronghold is moved to solid ground if its center portal room is not underground, chests use the (vanilla) stronghold loot tables and spawners get configurable entities.",
             "Also fixes the mod deleting chests/spawners in neighbouring chunks and causing cascading worldgen through its data markers."
     })
     @Config.Name("Better Stronghold Tweaks (BetterStronghold)")

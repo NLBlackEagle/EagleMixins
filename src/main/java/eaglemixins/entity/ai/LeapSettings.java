@@ -16,6 +16,10 @@ public class LeapSettings {
     public double maxRange = 10;
     public double minHeightAbove = -64;
     public RandomRange distanceMultiplier = RandomRange.of(1);
+    public RandomRange leapDistance = RandomRange.of(0);
+    public boolean arc = true;
+    public RandomRange arcHeight = RandomRange.of(0.25, 0.3);
+    public RandomRange arcSpeed = RandomRange.of(0.5, 0.6);
     public RandomRange verticalPower = RandomRange.of(0.5);
     public RandomRange inaccuracy = RandomRange.of(0);
     public double maxHorizontalSpeed = 2;
@@ -32,6 +36,10 @@ public class LeapSettings {
         s.maxRange = maxRange;
         s.minHeightAbove = minHeightAbove;
         s.distanceMultiplier = distanceMultiplier;
+        s.leapDistance = leapDistance;
+        s.arc = arc;
+        s.arcHeight = arcHeight;
+        s.arcSpeed = arcSpeed;
         s.verticalPower = verticalPower;
         s.inaccuracy = inaccuracy;
         s.maxHorizontalSpeed = maxHorizontalSpeed;
@@ -82,6 +90,7 @@ public class LeapSettings {
                 case "lineOfSight": lineOfSight = parseBoolean(value); return true;
                 case "noFall": preventFallDamage = parseBoolean(value); return true;
                 case "removeVanilla": removeVanillaLeap = parseBoolean(value); return true;
+                case "arc": arc = parseBoolean(value); return true;
             }
             if (getRange(key) != null) {
                 RandomRange range = RandomRange.parse(value);
@@ -101,6 +110,9 @@ public class LeapSettings {
     private RandomRange getRange(String key) {
         switch (key) {
             case "distance": return distanceMultiplier;
+            case "leapDistance": return leapDistance;
+            case "arcHeight": return arcHeight;
+            case "arcSpeed": return arcSpeed;
             case "vertical": return verticalPower;
             case "inaccuracy": return inaccuracy;
             case "cooldown": return cooldown;
@@ -111,6 +123,9 @@ public class LeapSettings {
     private boolean setRange(String key, RandomRange range) {
         switch (key) {
             case "distance": distanceMultiplier = range; return true;
+            case "leapDistance": leapDistance = range; return true;
+            case "arcHeight": arcHeight = range; return true;
+            case "arcSpeed": arcSpeed = range; return true;
             case "vertical": verticalPower = range; return true;
             case "inaccuracy": inaccuracy = range; return true;
             case "cooldown": cooldown = range; return true;

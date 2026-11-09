@@ -412,6 +412,7 @@ public class ForgeConfigHandler {
 				lightning.reset();
 				leap.reset();
 				betterstronghold.reset();
+				strongholds.reset();
 				PotionLevelCaps.refreshConfig();
 				BaublePotionImmunityHandler.refreshConfig();
 				loadParticleRulesFromConfig();
