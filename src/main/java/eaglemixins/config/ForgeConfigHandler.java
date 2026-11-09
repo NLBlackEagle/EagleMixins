@@ -147,10 +147,25 @@ public class ForgeConfigHandler {
 	@Order(22)
 	public static StrongholdConfig strongholds = new StrongholdConfig();
 
+	@Config.Comment("BetterStronghold (Unseen's Structures) strongholds: terrain fit, chest loot tables and spawner entities, requires the \"Better Stronghold Tweaks (BetterStronghold)\" mixin toggle")
+	@Config.Name("Better Stronghold")
+	@Order(23)
+	public static BetterStrongholdConfig betterstronghold = new BetterStrongholdConfig();
+
 	public static class ServerConfig {
 		@Config.Comment("Reduces damage done by players by a factor of 1 to 1/3, with the falloff multiplier that scales linearly in the span between. No reduction for damages below 20. Caps out at 300 dmg before falloff.")
 		@Config.Name("Enable Damage Falloff")
 		public boolean enableDamageFalloff = false;
+
+		@Config.Comment({
+				"Height multiplier while crouching for Trinkets and Baubles races taller than a normal player (e.g. the Dragon Ring).",
+				"Trinkets and Baubles uses 0.92, which keeps a dragon (2.16 blocks) too tall for 2 high gaps with a trapdoor.",
+				"0.75 makes a crouching dragon 1.62 blocks tall. Races of normal size or smaller keep 0.92.",
+				"Requires the \"Tall Race Crouch Height (Trinkets)\" mixin toggle."
+		})
+		@Config.Name("Tall Race Crouch Height Multiplier")
+		@Config.RangeDouble(min = 0.1D, max = 1.0D)
+		public double tallRaceCrouchHeight = 0.75D;
 
 		@Config.Comment("Add Blocks you can drink from, will be treated like water blocks")
 		@Config.Name("Additional Water Blocks:")
@@ -396,6 +411,7 @@ public class ForgeConfigHandler {
 				safespawn.reset();
 				lightning.reset();
 				leap.reset();
+				betterstronghold.reset();
 				PotionLevelCaps.refreshConfig();
 				BaublePotionImmunityHandler.refreshConfig();
 				loadParticleRulesFromConfig();

@@ -126,6 +126,13 @@ public class MixinToggleConfig {
     @MixinConfig.CompatHandling(modid = "potioncore", desired = true, reason = "Requires mod to properly function")
     public boolean punishAbyssalTeleportation = true;
 
+    @Config.Comment("Tall Trinkets and Baubles races (e.g. the Dragon Ring) shrink more while crouching, so they fit through 2 high gaps, also with a trapdoor. The multiplier is under Server Options.")
+    @Config.Name("Tall Race Crouch Height (Trinkets)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.xat.racecrouch.json", defaultValue = true)
+    @MixinConfig.CompatHandling(modid = "xat", desired = true, reason = "Requires mod to properly function")
+    public boolean tallRaceCrouchHeight = true;
+
     @Config.Comment({
             "Removes the effects listed in Server Options > Bauble Potion Immunities that are already active",
             "when the bauble is put on, from the bauble's onEquipped (Baubles API) instead of letting them run out."
@@ -437,6 +444,27 @@ public class MixinToggleConfig {
     @MixinConfig.CompatHandling(modid = "openterraingenerator", desired = true, reason = "Requires mod to properly function")
     @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.otg.tweakstronghold.json", defaultValue = true)
     public boolean limitOTGStrongholdGen = true;
+
+    @Config.Comment({
+            "Generates strongholds at the end of OTG's chunk population instead of before it,",
+            "so OTG ores, lakes, liquids, boulders, BO3s and ReplacedBlocks no longer carve into them."
+    })
+    @Config.Name("Generate Strongholds After OTG Population (OTG)")
+    @Config.RequiresMcRestart
+    @MixinConfig.CompatHandling(modid = "openterraingenerator", desired = true, reason = "Requires mod to properly function")
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.otg.deferstronghold.json", defaultValue = true)
+    public boolean deferOTGStronghold = true;
+
+    @Config.Comment({
+            "Tweaks BetterStronghold strongholds, see the \"Better Stronghold\" options: pieces are cut off where they generate into air,",
+            "the center portal room is encased in solid blocks, chests use the (vanilla) stronghold loot tables and spawners get configurable entities.",
+            "Also fixes the mod deleting chests/spawners in neighbouring chunks and causing cascading worldgen through its data markers."
+    })
+    @Config.Name("Better Stronghold Tweaks (BetterStronghold)")
+    @Config.RequiresMcRestart
+    @MixinConfig.CompatHandling(modid = "bt", desired = true, reason = "Requires mod to properly function")
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.betterstronghold.tweaks.json", defaultValue = true)
+    public boolean betterStrongholdTweaks = true;
 
     @Config.Comment({
             "Replaces the biome search of /otg tp with a nearest-first search spread over multiple ticks and adds a radius argument: /otg tp <biome> [radius] [-p player].",
