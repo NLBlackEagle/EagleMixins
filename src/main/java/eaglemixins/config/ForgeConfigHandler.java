@@ -134,6 +134,11 @@ public class ForgeConfigHandler {
 	@Order(20)
 	public static LightningConfig lightning = new LightningConfig();
 
+	@Config.Comment("Mobs that leap at their target from a distance, configured per entity id, per ForgeData flag or through NBT")
+	@Config.Name("Leaping Mobs")
+	@Order(21)
+	public static LeapConfig leap = new LeapConfig();
+
 	public static class ServerConfig {
 		@Config.Comment("Reduces damage done by players by a factor of 1 to 1/3, with the falloff multiplier that scales linearly in the span between. No reduction for damages below 20. Caps out at 300 dmg before falloff.")
 		@Config.Name("Enable Damage Falloff")
