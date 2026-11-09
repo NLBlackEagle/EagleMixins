@@ -1,81 +1,126 @@
 package eaglemixins.entity.ai;
 
-import eaglemixins.config.folders.LeapConfig;
+import eaglemixins.EagleMixins;
 import eaglemixins.util.RandomRange;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTPrimitive;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.nbt.NBTTagString;
 
 /**
- * Resolved leap settings for one mob: a config {@link LeapConfig.Entry} with its range strings parsed,
- * optionally overridden by the mob's {@code ForgeData.EagleMixinsLeap} compound.
+ * Leap settings for one mob. Built from "key=value" pairs (config lines) or the ForgeData.EagleMixinsLeap compound,
+ * both using the same keys. Range keys take "1.2", "0.9~1.4", or keyMin / keyMax separately.
  */
 public class LeapSettings {
-    public double minRange;
-    public double maxRange;
-    public double minHeightAbove;
-    public RandomRange distanceMultiplier;
-    public RandomRange verticalPower;
-    public RandomRange inaccuracy;
-    public double maxHorizontalSpeed;
-    public RandomRange cooldown;
-    public float chance;
-    public boolean lineOfSight;
-    public boolean preventFallDamage;
-    public boolean removeVanillaLeap;
-    public int aiPriority;
+    public double minRange = 4;
+    public double maxRange = 10;
+    public double minHeightAbove = -64;
+    public RandomRange distanceMultiplier = RandomRange.of(1);
+    public RandomRange verticalPower = RandomRange.of(0.5);
+    public RandomRange inaccuracy = RandomRange.of(0);
+    public double maxHorizontalSpeed = 2;
+    public RandomRange cooldown = RandomRange.of(60);
+    public float chance = 0.3F;
+    public boolean lineOfSight = true;
+    public boolean preventFallDamage = true;
+    public boolean removeVanillaLeap = false;
+    public int aiPriority = 3;
 
-    public static LeapSettings from(LeapConfig.Entry e) {
+    public LeapSettings copy() {
         LeapSettings s = new LeapSettings();
-        s.minRange = e.minRange;
-        s.maxRange = e.maxRange;
-        s.minHeightAbove = e.minHeightAbove;
-        s.distanceMultiplier = RandomRange.parse(e.distanceMultiplier, 1.0);
-        s.verticalPower = RandomRange.parse(e.verticalPower, 0.5);
-        s.inaccuracy = RandomRange.parse(e.inaccuracy, 0.0);
-        s.maxHorizontalSpeed = e.maxHorizontalSpeed;
-        s.cooldown = RandomRange.parse(e.cooldown, 60.0);
-        s.chance = e.chance;
-        s.lineOfSight = e.lineOfSight;
-        s.preventFallDamage = e.preventFallDamage;
-        s.removeVanillaLeap = e.removeVanillaLeap;
-        s.aiPriority = e.aiPriority;
+        s.minRange = minRange;
+        s.maxRange = maxRange;
+        s.minHeightAbove = minHeightAbove;
+        s.distanceMultiplier = distanceMultiplier;
+        s.verticalPower = verticalPower;
+        s.inaccuracy = inaccuracy;
+        s.maxHorizontalSpeed = maxHorizontalSpeed;
+        s.cooldown = cooldown;
+        s.chance = chance;
+        s.lineOfSight = lineOfSight;
+        s.preventFallDamage = preventFallDamage;
+        s.removeVanillaLeap = removeVanillaLeap;
+        s.aiPriority = aiPriority;
         return s;
     }
 
-    public LeapSettings applyNbt(NBTTagCompound nbt) {
-        minRange = getDouble(nbt, "minRange", minRange);
-        maxRange = getDouble(nbt, "maxRange", maxRange);
-        minHeightAbove = getDouble(nbt, "minHeight", minHeightAbove);
-        distanceMultiplier = getRange(nbt, "distance", distanceMultiplier);
-        verticalPower = getRange(nbt, "vertical", verticalPower);
-        inaccuracy = getRange(nbt, "inaccuracy", inaccuracy);
-        maxHorizontalSpeed = getDouble(nbt, "maxSpeed", maxHorizontalSpeed);
-        cooldown = getRange(nbt, "cooldown", cooldown);
-        chance = (float) getDouble(nbt, "chance", chance);
-        lineOfSight = getBoolean(nbt, "lineOfSight", lineOfSight);
-        preventFallDamage = getBoolean(nbt, "noFall", preventFallDamage);
-        removeVanillaLeap = getBoolean(nbt, "removeVanilla", removeVanillaLeap);
-        aiPriority = (int) getDouble(nbt, "priority", aiPriority);
+    /** Applies "key=value, key=value, ...". Bad pairs are logged with {@code context} and skipped. */
+    public LeapSettings apply(String pairs, String context) {
+        for (String pair : pairs.split(",")) {
+            if (pair.trim().isEmpty()) continue;
+            String[] kv = pair.split("=", 2);
+            if (kv.length != 2 || !set(kv[0].trim(), kv[1].trim()))
+                EagleMixins.LOGGER.warn("Leaping Mobs: invalid setting \"{}\" in \"{}\"", pair.trim(), context);
+        }
         return this;
     }
 
-    private static double getDouble(NBTTagCompound nbt, String key, double fallback) {
-        return nbt.hasKey(key, Constants.NBT.TAG_ANY_NUMERIC) ? nbt.getDouble(key) : fallback;
+    /** Applies the ForgeData.EagleMixinsLeap compound. Numbers and strings both work as values. */
+    public LeapSettings apply(NBTTagCompound nbt) {
+        for (String key : nbt.getKeySet()) {
+            NBTBase tag = nbt.getTag(key);
+            String value;
+            if (tag instanceof NBTPrimitive) value = String.valueOf(((NBTPrimitive) tag).getDouble());
+            else if (tag instanceof NBTTagString) value = ((NBTTagString) tag).getString();
+            else value = null;
+            if (value == null || !set(key, value))
+                EagleMixins.LOGGER.warn("Leaping Mobs: invalid NBT setting {}:{}", key, tag);
+        }
+        return this;
     }
 
-    private static boolean getBoolean(NBTTagCompound nbt, String key, boolean fallback) {
-        return nbt.hasKey(key, Constants.NBT.TAG_ANY_NUMERIC) ? nbt.getBoolean(key) : fallback;
+    /** Sets one setting, returns false if the key is unknown or the value is invalid. */
+    public boolean set(String key, String value) {
+        try {
+            switch (key) {
+                case "minRange": minRange = Double.parseDouble(value); return true;
+                case "maxRange": maxRange = Double.parseDouble(value); return true;
+                case "minHeight": minHeightAbove = Double.parseDouble(value); return true;
+                case "maxSpeed": maxHorizontalSpeed = Double.parseDouble(value); return true;
+                case "chance": chance = (float) Double.parseDouble(value); return true;
+                case "priority": aiPriority = (int) Double.parseDouble(value); return true;
+                case "lineOfSight": lineOfSight = parseBoolean(value); return true;
+                case "noFall": preventFallDamage = parseBoolean(value); return true;
+                case "removeVanilla": removeVanillaLeap = parseBoolean(value); return true;
+            }
+            if (getRange(key) != null) {
+                RandomRange range = RandomRange.parse(value);
+                return range != null && setRange(key, range);
+            }
+            if (key.endsWith("Min") || key.endsWith("Max")) {
+                String rangeKey = key.substring(0, key.length() - 3);
+                RandomRange current = getRange(rangeKey);
+                if (current == null) return false;
+                double v = Double.parseDouble(value);
+                return setRange(rangeKey, key.endsWith("Min") ? RandomRange.of(v, current.max) : RandomRange.of(current.min, v));
+            }
+        } catch (IllegalArgumentException ignored) {} //includes NumberFormatException
+        return false;
     }
 
-    /** Accepts key:1.2, key:"0.9~1.4", or keyMin + keyMax (a missing side falls back to the current range). */
-    private static RandomRange getRange(NBTTagCompound nbt, String key, RandomRange fallback) {
-        if (nbt.hasKey(key, Constants.NBT.TAG_ANY_NUMERIC)) return RandomRange.of(nbt.getDouble(key));
-        if (nbt.hasKey(key, Constants.NBT.TAG_STRING)) return RandomRange.parse(nbt.getString(key), fallback.min);
-        boolean hasMin = nbt.hasKey(key + "Min", Constants.NBT.TAG_ANY_NUMERIC);
-        boolean hasMax = nbt.hasKey(key + "Max", Constants.NBT.TAG_ANY_NUMERIC);
-        if (!hasMin && !hasMax) return fallback;
-        return RandomRange.of(
-                hasMin ? nbt.getDouble(key + "Min") : fallback.min,
-                hasMax ? nbt.getDouble(key + "Max") : fallback.max);
+    private RandomRange getRange(String key) {
+        switch (key) {
+            case "distance": return distanceMultiplier;
+            case "vertical": return verticalPower;
+            case "inaccuracy": return inaccuracy;
+            case "cooldown": return cooldown;
+            default: return null;
+        }
+    }
+
+    private boolean setRange(String key, RandomRange range) {
+        switch (key) {
+            case "distance": distanceMultiplier = range; return true;
+            case "vertical": verticalPower = range; return true;
+            case "inaccuracy": inaccuracy = range; return true;
+            case "cooldown": cooldown = range; return true;
+            default: return false;
+        }
+    }
+
+    private static boolean parseBoolean(String value) {
+        if (value.equalsIgnoreCase("true") || value.equals("1") || value.equals("1.0")) return true;
+        if (value.equalsIgnoreCase("false") || value.equals("0") || value.equals("0.0")) return false;
+        throw new IllegalArgumentException(value);
     }
 }

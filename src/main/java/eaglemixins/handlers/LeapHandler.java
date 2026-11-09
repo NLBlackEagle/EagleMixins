@@ -42,7 +42,7 @@ public class LeapHandler {
         if (mob.tasks.taskEntries.stream().anyMatch(t -> t.action instanceof EntityAILeap)) return;
         if (tryAttach(mob)) return;
         //Some mods (e.g. Scaling Health blights) set their ForgeData flag a few ticks after joining, so recheck for a bit
-        if (!ForgeConfigHandler.leap.byFlag.isEmpty()) PENDING.put(mob, RECHECK_TICKS);
+        if (!ForgeConfigHandler.leap.getByFlag().isEmpty()) PENDING.put(mob, RECHECK_TICKS);
     }
 
     @SubscribeEvent
@@ -71,11 +71,11 @@ public class LeapHandler {
         LeapConfig cfg = ForgeConfigHandler.leap;
         NBTTagCompound forgeData = mob.getEntityData();
 
-        LeapConfig.Entry rule = null;
+        LeapSettings rule = null;
         ResourceLocation id = EntityList.getKey(mob);
-        if (id != null) rule = cfg.byEntity.get(id);
+        if (id != null) rule = cfg.getByEntity().get(id);
         if (rule == null) {
-            for (Map.Entry<String, LeapConfig.Entry> flagRule : cfg.byFlag.entrySet()) {
+            for (Map.Entry<String, LeapSettings> flagRule : cfg.getByFlag().entrySet()) {
                 if (forgeData.getBoolean(flagRule.getKey())) {
                     rule = flagRule.getValue();
                     break;
@@ -83,13 +83,14 @@ public class LeapHandler {
             }
         }
 
+        //Settings objects are only read by the AI, so config ones are shared and only NBT-modified ones are copied
         if (forgeData.hasKey(NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
-            return LeapSettings.from(rule != null ? rule : cfg.nbtDefaults).applyNbt(forgeData.getCompoundTag(NBT_KEY));
+            return (rule != null ? rule : cfg.getDefaults()).copy().apply(forgeData.getCompoundTag(NBT_KEY));
         }
         if (forgeData.hasKey(NBT_KEY, Constants.NBT.TAG_ANY_NUMERIC)) {
             if (!forgeData.getBoolean(NBT_KEY)) return null; //EagleMixinsLeap:0b explicitly disables
-            return LeapSettings.from(rule != null ? rule : cfg.nbtDefaults);
+            return rule != null ? rule : cfg.getDefaults();
         }
-        return rule != null ? LeapSettings.from(rule) : null;
+        return rule;
     }
 }

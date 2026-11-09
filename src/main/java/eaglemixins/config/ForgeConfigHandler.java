@@ -390,6 +390,7 @@ public class ForgeConfigHandler {
 				lockedblocks.reset();
 				safespawn.reset();
 				lightning.reset();
+				leap.reset();
 				PotionLevelCaps.refreshConfig();
 				BaublePotionImmunityHandler.refreshConfig();
 				loadParticleRulesFromConfig();
