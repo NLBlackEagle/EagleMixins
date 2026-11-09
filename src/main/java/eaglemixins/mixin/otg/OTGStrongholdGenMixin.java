@@ -25,14 +25,14 @@ public abstract class OTGStrongholdGenMixin extends MapGenStronghold {
     @Shadow(remap = false)
     private ChunkPos[] structureCoords;
 
-    @Inject(method = "generatePositions", at = @At("HEAD"), remap = false)
+    @Inject(method = {"generatePositions", "func_189104_c"}, at = @At("HEAD"), remap = false)
     private void eaglemixins$applyStrongholdConfig(CallbackInfo ci) {
         StrongholdConfig cfg = ForgeConfigHandler.strongholds;
         if (cfg.spread > 0) this.spread = cfg.spread;
         if (cfg.count > 0 && this.structureCoords.length != cfg.count) this.structureCoords = new ChunkPos[cfg.count];
     }
 
-    @ModifyConstant(method = "generatePositions", constant = @Constant(doubleValue = 4.0D), remap = false)
+    @ModifyConstant(method = {"generatePositions", "func_189104_c"}, constant = @Constant(doubleValue = 4.0D), remap = false)
     private double eaglemixins$offsetRings(double original) {
         return original + ForgeConfigHandler.strongholds.ringOffset / 16.0D / this.distance;
     }
