@@ -58,6 +58,16 @@ public class LeapHandler {
         else PENDING.put(mob, ticksLeft - 1);
     }
 
+    /**
+     * API for other mods: checks a mob that's already in the world again, for when they add the EagleMixinsLeap tag
+     * (or a flag from Leap Rules By ForgeData Flag) after it joined. True if the mob leaps now (or already did).
+     */
+    public static boolean recheck(EntityLiving mob) {
+        if (mob.world.isRemote || !ForgeConfigHandler.leap.enabled) return false;
+        if (mob.tasks.taskEntries.stream().anyMatch(t -> t.action instanceof EntityAILeap)) return true;
+        return tryAttach(mob);
+    }
+
     private static boolean tryAttach(EntityLiving mob) {
         LeapSettings settings = resolve(mob);
         if (settings == null) return false;
