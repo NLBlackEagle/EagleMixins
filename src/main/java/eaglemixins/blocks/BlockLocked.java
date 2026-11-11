@@ -89,11 +89,11 @@ public class BlockLocked extends BlockLockFrame {
      * vanish one by one, nearest first, see LockVanishHandler.
      */
     private void open(World world, BlockPos origin, String lockId, EntityPlayer player, ItemStack held) {
+        // Key is used up first, schedule then writes the lock and the player's inventory to disk in this same tick
+        if (!(player.isCreative() && ForgeConfigHandler.lockedblocks.keepKeyInCreative)) held.shrink(1);
         LockVanishHandler.schedule(world, findConnected(world, origin, lockId), lockId);
         world.playSound(null, origin, SoundEvents.BLOCK_IRON_DOOR_OPEN, SoundCategory.BLOCKS, 1.0F, 0.6F);
         player.sendMessage(new TextComponentTranslation("eaglemixins.lock.opened"));
-
-        if (!(player.isCreative() && ForgeConfigHandler.lockedblocks.keepKeyInCreative)) held.shrink(1);
     }
 
     /** Blocks that open together with the lock at origin, in breadth-first order. */
@@ -119,6 +119,11 @@ public class BlockLocked extends BlockLockFrame {
             }
         }
         return found;
+    }
+
+    /** Whether pos still holds a lock or keyslave that has to vanish. */
+    public static boolean isLockBlock(World world, BlockPos pos) {
+        return world.getBlockState(pos).getBlock() instanceof BlockLockFrame;
     }
 
     /**
