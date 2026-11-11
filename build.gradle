@@ -165,3 +165,10 @@ jar {
 }
 
 jar.finalizedBy('reobfJar')
+// ForgeGradle leaves a log-only _RenameSrg2Mcp_<hash> folder in build/ for every dependency it deobfuscates
+tasks.named('build') {
+    mustRunAfter('reobfJar')
+    doLast {
+        buildDir.eachDirMatch(~/_RenameSrg2Mcp_.*/) { it.deleteDir() }
+    }
+}
