@@ -544,6 +544,15 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
         return false;
     }
 
+    /**
+     * Despawn mods and entity cleaners (InControl, LagBGone, AllowDespawn listeners) check this instead of canDespawn.
+     * Always true, a boss is key to progression and should only ever leave by dying.
+     */
+    @Override
+    public boolean isNoDespawnRequired() {
+        return true;
+    }
+
     /** Spawners also check this. Monsters normally need darkness, bosses should spawn in any light. */
     @Override
     public boolean getCanSpawnHere() {
@@ -704,6 +713,9 @@ public class EntityPlayerBoss extends EntityMob implements IRangedAttackMob {
     @Override
     public void readEntityFromNBT(NBTTagCompound compound) {
         super.readEntityFromNBT(compound);
+        // Spawner/summon NBT has no PersistenceRequired, which made vanilla clear the flag set in the constructor.
+        // Without it the boss could be despawned by any mod allowing despawns (LivingSpawnEvent.AllowDespawn) or cleaning up entities.
+        enablePersistence();
         bossId = compound.getString("BossId");
         initialized = compound.getBoolean("BossInitialized");
         angerLevel = compound.getShort("Anger");

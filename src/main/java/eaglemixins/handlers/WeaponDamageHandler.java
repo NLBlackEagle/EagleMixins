@@ -1,10 +1,11 @@
 package eaglemixins.handlers;
 
-import eaglemixins.EagleMixins;
 import eaglemixins.compat.ModLoadedUtil;
 import eaglemixins.compat.RLCombatUtil;
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.config.folders.WeaponDamageConfig;
+import eaglemixins.network.PacketHandler;
+import eaglemixins.network.PacketRedCrit;
 import eaglemixins.util.IDamageSource_IsCritFlagMixin;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -64,7 +65,6 @@ public class WeaponDamageHandler {
         if(victim == null) return;
         ItemStack stack = attacker.getHeldItemMainhand();
         if(stack.isEmpty()) return;
-        float incoming = event.getAmount();
 
         if(damageSource instanceof IDamageSource_IsCritFlagMixin && ((IDamageSource_IsCritFlagMixin) damageSource).eagleMixins$isCrit()) {
             WeaponDamageConfig.CritEntry crit = ForgeConfigHandler.weapondamage.critMultipliers.get(stack.getItem().getRegistryName());
@@ -77,11 +77,9 @@ public class WeaponDamageHandler {
         if (range != null) {
             float distance = attacker.getDistance(victim);
             float multi = range.calcDmgMultiplier(distance);
-            float before = event.getAmount();
-            event.setAmount(before * multi);
-            // TODO: remove debug logging
-            EagleMixins.LOGGER.info("[RangeDebug] item={} victim={} dist={} multi={} incoming={} (pre-crit={}) final={}",
-                    stack.getItem().getRegistryName(), victim.getName(), distance, multi, before, incoming, event.getAmount());
+            event.setAmount(event.getAmount() * multi);
+            if (range.hitParticles && distance >= range.minDistance && multi > 1.0F)
+                PacketHandler.sendToAllTracking(new PacketRedCrit(victim), victim);
         }
     }
 }

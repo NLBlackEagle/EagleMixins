@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "eaglemixins.mixin.iceandfire",
+  "refmap": "mixins.eaglemixins.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "mixins": [
+    "SpawnerBaseLogicMixin_FirstSpawn"
+  ],
+  "injectors": {
+    "defaultRequire": 1,
+    "maxShiftBy": 10
+  }
+}

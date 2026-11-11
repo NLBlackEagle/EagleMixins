@@ -39,6 +39,22 @@ public final class PacketHandler {
                 messageId++,
                 Side.CLIENT
         );
+        NETWORK.registerMessage(
+                PacketMaulSlam.Handler.class,
+                PacketMaulSlam.class,
+                messageId++,
+                Side.CLIENT
+        );
+        NETWORK.registerMessage(
+                PacketRedCrit.Handler.class,
+                PacketRedCrit.class,
+                messageId++,
+                Side.CLIENT
+        );
+    }
+
+    public static void sendToAllAround(IMessage message, int dimension, double x, double y, double z, double range){
+        NETWORK.sendToAllAround(message, new NetworkRegistry.TargetPoint(dimension, x, y, z, range));
     }
 
     public static void sendTo(IMessage message, EntityPlayerMP player){

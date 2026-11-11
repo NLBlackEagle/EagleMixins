@@ -3,6 +3,7 @@ package eaglemixins;
 import eaglemixins.client.AmbientLightningHandler;
 import eaglemixins.client.gui.TeleportOverlayHandler;
 import eaglemixins.client.particles.ParticlesClientRunner;
+import eaglemixins.client.slam.ClientEffects;
 import eaglemixins.compat.ForgottenItemsUtil;
 import eaglemixins.compat.ModLoadedUtil;
 import eaglemixins.config.ForgeConfigHandler;
@@ -101,6 +102,8 @@ public class EagleMixins {
         if(ForgeConfigHandler.mixintoggles.enableSpartanTwoHandedBuff) registerIfModsPresent(new String[]{"spartanweaponry"}, SpartanTwoHandedBuffHandler.class);
         registerIfModsPresent(new String[]{"srparasites", "biomesoplenty"}, SRParasitesHandler.class);
         if(ForgeConfigHandler.srparasites.carapace.enabled) registerIfModsPresent(new String[]{"srparasites"}, ParasiteCarapaceHandler.class);
+        MinecraftForge.EVENT_BUS.register(MaulSlamHandler.class);
+        if(event.getSide() == Side.CLIENT) MinecraftForge.EVENT_BUS.register(ClientEffects.class);
 
         MinecraftForge.EVENT_BUS.register(PotionRadiationFatigueHandler.class);
         MinecraftForge.EVENT_BUS.register(RadiationPotionBlockHandler.class);

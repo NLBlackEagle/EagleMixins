@@ -4,7 +4,11 @@ import com.dhanantry.scapeandrunparasites.entity.ai.misc.EntityParasiteBase;
 import com.lothrazar.playerbosses.EntityPlayerBoss;
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.util.Ref;
+import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.item.EntityItem;
@@ -59,6 +63,13 @@ public class AbyssalRiftHandler {
         //Only in Abyssal Rift
         if (!Ref.entityIsInAbyssalRift(entity)) return;
 
+        //Only mobs with a DeathLootTable (or on the always-drop list) drop anything
+        if (ForgeConfigHandler.abyssal.onlyDeathLootTableDrops && !(entity instanceof EntityPlayer) && !hasDeathLootTable(entity)
+                && !ForgeConfigHandler.abyssal.isAlwaysDropping(EntityList.getKey(entity))) {
+            event.setCanceled(true);
+            return;
+        }
+
         //Not for Infernal Mobs
         if (entity.getEntityData().hasKey("InfernalMobsMod")) return;
 
@@ -69,5 +80,11 @@ public class AbyssalRiftHandler {
                 if (entity.getRNG().nextFloat() < ForgeConfigHandler.abyssal.chanceEnchants)
                     itemsToRemove.add(drop);
         event.getDrops().removeAll(itemsToRemove);
+    }
+
+    /** DeathLootTable is a private field of EntityLiving, it only ever exists in NBT (spawners, structures, /summon) */
+    private static boolean hasDeathLootTable(EntityLivingBase entity) {
+        if (!(entity instanceof EntityLiving)) return false;
+        return !entity.writeToNBT(new NBTTagCompound()).getString("DeathLootTable").isEmpty();
     }
 }

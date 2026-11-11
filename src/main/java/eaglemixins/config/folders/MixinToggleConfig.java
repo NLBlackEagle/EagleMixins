@@ -86,6 +86,16 @@ public class MixinToggleConfig {
     @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.spawner.json", defaultValue = true)
     public boolean playerBossSpawnerCount = true;
 
+    @Config.Comment({
+            "Ice and Fire spawners (monster_spawner, dread_spawner) always spawn their SpawnData (the boss) first,",
+            "ignoring MaxNearbyEntities until it has spawned once. Without it, a full room makes the spawner roll SpawnPotentials instead and the boss never appears."
+    })
+    @Config.Name("Ice and Fire Spawner Boss First Spawn (Ice and Fire)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.iceandfire.bossfirstspawn.json", defaultValue = true)
+    @MixinConfig.CompatHandling(modid = "iceandfire", desired = true, reason = "Requires mod to properly function")
+    public boolean iceAndFireSpawnerFirstSpawn = true;
+
     @Config.Comment("Allows to change between loading screens with a modifiable waiting time between screens.")
     @Config.Name("Cycle Screens (Loading Screens)")
     @Config.RequiresMcRestart

@@ -5,11 +5,75 @@ import meldexun.betterconfig.api.Order;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Config;
+
+import javax.annotation.Nullable;
 
 import java.util.*;
 
 public class SRParasiteConfig {
+
+    @Config.Comment("Ground slam visuals when the Sentient Maul's kill ability triggers (a kill with the maul).")
+    @Config.Name("Sentient Maul Slam")
+    public MaulSlamConfig maulSlam = new MaulSlamConfig();
+
+    public static class MaulSlamConfig {
+        @Config.Comment({
+                "Server: a kill with one of the \"Slam Weapons\" sends the ground slam effect to nearby players.",
+                "It's purely visual, no blocks are changed."
+        })
+        @Config.Name("Enabled")
+        @Order(0)
+        public boolean enabled = true;
+
+        @Config.Comment("Server: items that slam the ground when they kill something")
+        @Config.Name("Slam Weapons")
+        @Order(1)
+        public String[] weapons = {"srparasites:weapon_maul_sentient"};
+
+        @Config.Comment("Server: radius of the earthquake wave in blocks, should roughly match the ability's area")
+        @Config.Name("Radius")
+        @Config.RangeDouble(min = 1, max = 24)
+        @Order(2)
+        public float radius = 8;
+
+        @Config.Comment("Server: ticks before the same player can trigger another slam, so kills from the ability itself don't slam again")
+        @Config.Name("Cooldown")
+        @Config.RangeInt(min = 0, max = 200)
+        @Order(3)
+        public int cooldown = 10;
+
+        @Config.Comment("Client: show the ground slam effect")
+        @Config.Name("Show Effect")
+        @Order(4)
+        public boolean showEffect = true;
+
+        @Config.Comment("Client: how fast the wave travels outward, in blocks per tick")
+        @Config.Name("Wave Speed")
+        @Config.RangeDouble(min = 0.1, max = 5)
+        @Order(5)
+        public float waveSpeed = 0.7F;
+
+        @Config.Comment("Client: how high blocks are pushed up at the center of the wave, it gets lower towards the edge")
+        @Config.Name("Wave Height")
+        @Config.RangeDouble(min = 0.05, max = 2)
+        @Order(6)
+        public float waveHeight = 0.6F;
+
+        @Config.Comment("Client: chance per pushed block to leave lingering dust in the block's color")
+        @Config.Name("Lingering Dust Chance")
+        @Config.RangeDouble(min = 0, max = 1)
+        @Order(7)
+        public float dustChance = 0.4F;
+
+        public boolean isSlamWeapon(@Nullable ResourceLocation id) {
+            if (id == null) return false;
+            String s = id.toString();
+            for (String weapon : weapons) if (weapon.trim().equals(s)) return true;
+            return false;
+        }
+    }
 
     @Config.Comment("Gives parasites a hardened carapace that absorbs part of heavy hits until it is worn down.")
     @Config.Name("Carapace")

@@ -1,7 +1,10 @@
 package eaglemixins.config.folders;
 
 import eaglemixins.handlers.RandomTpCancelHandler;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Config;
+
+import javax.annotation.Nullable;
 
 public class AbyssalConfig {
     @Config.Comment("All Nexus (Dispatcher/Beckon) parasites in Abyssal Rift will automatically be killed")
@@ -11,6 +14,28 @@ public class AbyssalConfig {
     @Config.Comment("Enchanted book drops in Abyssal Rift have only this chance to actually drop (reduced due to increased champion amounts)")
     @Config.Name("Abyssal Enchant Drop Chance")
     public float chanceEnchants = 0.3f;
+
+    @Config.Comment({
+            "In Abyssal Rift, only mobs with a DeathLootTable NBT tag (set by spawners, structures or /summon) drop items on death.",
+            "Every other mob drops nothing. Players and mobs on \"Abyssal Rift Always Dropping Mobs\" are not affected."
+    })
+    @Config.Name("Abyssal Rift Only DeathLootTable Drops")
+    public boolean onlyDeathLootTableDrops = true;
+
+    @Config.Comment("Mobs that keep their normal drops in Abyssal Rift even without a DeathLootTable, e.g. bosses with their own loot")
+    @Config.Name("Abyssal Rift Always Dropping Mobs")
+    public String[] alwaysDroppingMobs = {
+            "eaglemixins:player_boss"
+    };
+
+    public boolean isAlwaysDropping(@Nullable ResourceLocation id) {
+        if (id == null) return false;
+        for (String entry : alwaysDroppingMobs) {
+            entry = entry.trim();
+            if (entry.endsWith(":*") ? id.getNamespace().equals(entry.substring(0, entry.length() - 2)) : id.toString().equals(entry)) return true;
+        }
+        return false;
+    }
 
     @Config.Comment("List of mobs that players will not get dismounted from in Abyssal Rift")
     @Config.Name("Allowed Mounts in Abyssal Rift")

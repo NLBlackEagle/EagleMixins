@@ -42,7 +42,8 @@ public class WeaponDamageConfig {
             " - true: the bonus scales with the distance between attacker and target.",
             " - false: a flat bonus using \"Multiplier Base\" as the amount.",
             "Multiplier Base: The dmg multiplier applying at minimum distance (or anywhere beyond min distance if \"Scales With Distance\" is off)",
-            "Multiplier per Block: Increases the base dmg multiplier by this amount for each additional block of distance beyond \"Min Distance\"."
+            "Multiplier per Block: Increases the base dmg multiplier by this amount for each additional block of distance beyond \"Min Distance\".",
+            "Red Hit Particles: the target bursts with red crit particles whenever the range bonus applies."
     })
     @Config.Name("Range Multipliers")
     public Map<ResourceLocation, RangeEntry> rangeMultipliers = new LinkedHashMap<>();
@@ -58,6 +59,8 @@ public class WeaponDamageConfig {
         public float perBlock;
         @Config.Name("Multiplier Base")
         public float baseMulti;
+        @Config.Name("Red Hit Particles")
+        public boolean hitParticles = true;
 
         public RangeEntry(){} //needed for betterconfig
         public RangeEntry(boolean scaleWithDistance, float minDistance, float perBlock, float baseMulti) {
