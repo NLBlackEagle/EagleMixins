@@ -96,6 +96,13 @@ public class MixinToggleConfig {
     @MixinConfig.CompatHandling(modid = "iceandfire", desired = true, reason = "Requires mod to properly function")
     public boolean iceAndFireSpawnerFirstSpawn = true;
 
+    @Config.Comment("Moves the Infernal Mobs health HUD below the boss bars and the Champions health HUD, instead of drawing over them. Client-side.")
+    @Config.Name("Infernal HUD Below Boss Bars (Infernal Mobs)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.infernalmobs.hudoffset.json", defaultValue = true)
+    @MixinConfig.CompatHandling(modid = "infernalmobs", desired = true, reason = "Requires mod to properly function")
+    public boolean infernalHudOffset = true;
+
     @Config.Comment("Allows to change between loading screens with a modifiable waiting time between screens.")
     @Config.Name("Cycle Screens (Loading Screens)")
     @Config.RequiresMcRestart

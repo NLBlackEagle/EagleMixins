@@ -12,22 +12,26 @@ import net.minecraft.nbt.NBTTagString;
  * both using the same keys. Range keys take "1.2", "0.9~1.4", or keyMin / keyMax separately.
  */
 public class LeapSettings {
-    public double minRange = 4;
+    public double minRange = 3;
     public double maxRange = 10;
     public double minHeightAbove = -64;
     public RandomRange distanceMultiplier = RandomRange.of(1);
     public RandomRange leapDistance = RandomRange.of(0);
+    public double maxLeapLength = 0;
     public boolean arc = true;
     public RandomRange arcHeight = RandomRange.of(0.25, 0.3);
     public RandomRange arcSpeed = RandomRange.of(0.5, 0.6);
     public RandomRange verticalPower = RandomRange.of(0.5);
     public RandomRange inaccuracy = RandomRange.of(0);
     public double maxHorizontalSpeed = 2;
-    public RandomRange cooldown = RandomRange.of(60);
+    public RandomRange cooldown = RandomRange.of(40, 80);
     public float chance = 0.3F;
     public boolean lineOfSight = true;
     public boolean preventFallDamage = true;
     public boolean removeVanillaLeap = false;
+    public boolean homerun = true;
+    public double homerunPower = 2.0;
+    public double homerunMax = 30;
     public int aiPriority = 3;
 
     public LeapSettings copy() {
@@ -37,6 +41,7 @@ public class LeapSettings {
         s.minHeightAbove = minHeightAbove;
         s.distanceMultiplier = distanceMultiplier;
         s.leapDistance = leapDistance;
+        s.maxLeapLength = maxLeapLength;
         s.arc = arc;
         s.arcHeight = arcHeight;
         s.arcSpeed = arcSpeed;
@@ -48,6 +53,9 @@ public class LeapSettings {
         s.lineOfSight = lineOfSight;
         s.preventFallDamage = preventFallDamage;
         s.removeVanillaLeap = removeVanillaLeap;
+        s.homerun = homerun;
+        s.homerunPower = homerunPower;
+        s.homerunMax = homerunMax;
         s.aiPriority = aiPriority;
         return s;
     }
@@ -85,12 +93,16 @@ public class LeapSettings {
                 case "maxRange": maxRange = Double.parseDouble(value); return true;
                 case "minHeight": minHeightAbove = Double.parseDouble(value); return true;
                 case "maxSpeed": maxHorizontalSpeed = Double.parseDouble(value); return true;
+                case "maxLeap": maxLeapLength = Double.parseDouble(value); return true;
                 case "chance": chance = (float) Double.parseDouble(value); return true;
                 case "priority": aiPriority = (int) Double.parseDouble(value); return true;
                 case "lineOfSight": lineOfSight = parseBoolean(value); return true;
                 case "noFall": preventFallDamage = parseBoolean(value); return true;
                 case "removeVanilla": removeVanillaLeap = parseBoolean(value); return true;
                 case "arc": arc = parseBoolean(value); return true;
+                case "homerun": homerun = parseBoolean(value); return true;
+                case "homerunPower": homerunPower = Double.parseDouble(value); return true;
+                case "homerunMax": homerunMax = Double.parseDouble(value); return true;
             }
             if (getRange(key) != null) {
                 RandomRange range = RandomRange.parse(value);

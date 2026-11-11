@@ -3,6 +3,7 @@ package eaglemixins.compat;
 import net.minecraftforge.fml.common.Loader;
 
 public class ModLoadedUtil {
+    public static final LoadedContainer champions = new LoadedContainer("champions");
     public static final LoadedContainer forgottenitems = new LoadedContainer("forgottenitems");
     public static final LoadedContainer nuclearcraft = new LoadedContainer("nuclearcraft");
     public static final LoadedContainer rlcombat = new LoadedContainer("bettercombatmod");

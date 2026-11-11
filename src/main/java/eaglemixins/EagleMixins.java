@@ -1,6 +1,7 @@
 package eaglemixins;
 
 import eaglemixins.client.AmbientLightningHandler;
+import eaglemixins.client.gui.InfernalHudOffset;
 import eaglemixins.client.gui.TeleportOverlayHandler;
 import eaglemixins.client.particles.ParticlesClientRunner;
 import eaglemixins.client.slam.ClientEffects;
@@ -104,6 +105,7 @@ public class EagleMixins {
         if(ForgeConfigHandler.srparasites.carapace.enabled) registerIfModsPresent(new String[]{"srparasites"}, ParasiteCarapaceHandler.class);
         MinecraftForge.EVENT_BUS.register(MaulSlamHandler.class);
         if(event.getSide() == Side.CLIENT) MinecraftForge.EVENT_BUS.register(ClientEffects.class);
+        if(event.getSide() == Side.CLIENT && ForgeConfigHandler.mixintoggles.infernalHudOffset) registerIfModsPresent(new String[]{"InfernalMobs"}, InfernalHudOffset.class);
 
         MinecraftForge.EVENT_BUS.register(PotionRadiationFatigueHandler.class);
         MinecraftForge.EVENT_BUS.register(RadiationPotionBlockHandler.class);
