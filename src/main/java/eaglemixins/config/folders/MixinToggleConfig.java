@@ -472,8 +472,9 @@ public class MixinToggleConfig {
     public boolean limitOTGStrongholdGen = true;
 
     @Config.Comment({
-            "Generates strongholds at the end of OTG's chunk population instead of before it,",
-            "so OTG ores, lakes, liquids, boulders, BO3s and ReplacedBlocks no longer carve into them."
+            "Generates strongholds at the end of OTG's chunk population instead of before it, and keeps OTG out of them:",
+            "OTG populates 2x2 chunks at a time, so neighbouring chunks populated later skip every block inside a stronghold piece.",
+            "OTG ores, lakes, liquids, boulders, BO3s, BO4s and ReplacedBlocks no longer carve into strongholds."
     })
     @Config.Name("Generate Strongholds After OTG Population (OTG)")
     @Config.RequiresMcRestart

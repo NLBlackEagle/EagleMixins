@@ -104,6 +104,7 @@ public class EagleMixins {
         registerIfModsPresent(new String[]{"srparasites", "biomesoplenty"}, SRParasitesHandler.class);
         if(ForgeConfigHandler.srparasites.carapace.enabled) registerIfModsPresent(new String[]{"srparasites"}, ParasiteCarapaceHandler.class);
         MinecraftForge.EVENT_BUS.register(MaulSlamHandler.class);
+        MinecraftForge.EVENT_BUS.register(StrongholdLootHandler.class);
         if(event.getSide() == Side.CLIENT) MinecraftForge.EVENT_BUS.register(ClientEffects.class);
         if(event.getSide() == Side.CLIENT && ForgeConfigHandler.mixintoggles.infernalHudOffset) registerIfModsPresent(new String[]{"InfernalMobs"}, InfernalHudOffset.class);
 

@@ -61,6 +61,20 @@ public class BetterStrongholdConfig {
     public String libraryLootTable = "minecraft:chests/stronghold_library";
 
     @Config.Comment({
+            "Loot tables rolled on top of the stronghold chest tables above (corridor, crossing, library), so stronghold chests",
+            "also get e.g. a full simple dungeon roll. The table is looked up when the chest is opened, so modded items that other",
+            "mods inject into it come along. Applies to every chest using those tables, also vanilla/OTG strongholds. Empty = off.",
+            "Takes effect when the world loads its loot tables (world (re)load)."
+    })
+    @Config.Name("Extra Chest Loot Tables")
+    public String[] extraLootTables = {"minecraft:chests/simple_dungeon"};
+
+    @Config.Comment("How often each extra loot table is rolled per stronghold chest")
+    @Config.Name("Extra Chest Loot Rolls")
+    @Config.RangeInt(min = 0, max = 10)
+    public int extraLootRolls = 1;
+
+    @Config.Comment({
             "Entities the stronghold spawners can get, format: <entity id>, <weight>",
             "Each spawner that generates picks one entity from this list by weight. Unknown entity ids are skipped with a warning.",
             "Empty list = keep the mod's own spawners (zombie, skeleton, cave spider).",
