@@ -3,6 +3,7 @@ package eaglemixins.client.slam;
 import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.config.folders.SRParasiteConfig;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockSlab;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
@@ -10,6 +11,7 @@ import net.minecraft.client.particle.ParticleCrit;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -71,7 +73,7 @@ public class ClientEffects {
         IBlockState state = world.getBlockState(ground);
         int stateId = Block.getStateId(state);
         int color = ParticleLingeringDust.colorOf(world, ground, state);
-        double top = ground.getY() + 1.05D;
+        double top = ground.getY() + topOf(world, ground, state) + 0.05D;
         boolean minimal = mc.gameSettings.particleSetting == 2;
         int burst = minimal ? 20 : 60;
         for (int i = 0; i < burst; i++) {
@@ -104,7 +106,7 @@ public class ClientEffects {
         }
     }
 
-    /** Topmost full block of the column near y, with a non-full block above it (what the wave pushes up) */
+    /** Topmost full block or slab of the column near y, with a non-full block above it (what the wave pushes up) */
     static BlockPos findSurface(World world, int x, int y, int z) {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(x, y + 3, z);
         if (!world.isBlockLoaded(pos)) return null;
@@ -112,14 +114,28 @@ public class ClientEffects {
         for (int dy = 2; dy >= -6; dy--) {
             pos.setY(y + dy);
             IBlockState state = world.getBlockState(pos);
-            if (isPushable(state) && !above.isFullCube()) return pos.toImmutable();
+            if (isPushable(world, pos, state) && !above.isFullCube()) return pos.toImmutable();
             above = state;
         }
         return null;
     }
 
-    private static boolean isPushable(IBlockState state) {
-        return state.isFullCube() && state.getRenderType() == EnumBlockRenderType.MODEL && state.getMaterial().isSolid();
+    static boolean isPushable(World world, BlockPos pos, IBlockState state) {
+        if (state.getRenderType() != EnumBlockRenderType.MODEL || !state.getMaterial().isSolid()) return false;
+        return state.isFullCube() || isSlab(world, pos, state);
+    }
+
+    /** Vanilla/modded slabs: a BlockSlab, or anything whose box is a full-width bottom or top half */
+    private static boolean isSlab(World world, BlockPos pos, IBlockState state) {
+        if (state.getBlock() instanceof BlockSlab) return true;
+        AxisAlignedBB box = state.getBoundingBox(world, pos);
+        if (box.minX > 0.0D || box.minZ > 0.0D || box.maxX < 1.0D || box.maxZ < 1.0D) return false;
+        return (box.minY == 0.0D && box.maxY == 0.5D) || (box.minY == 0.5D && box.maxY == 1.0D);
+    }
+
+    /** Height of the top face inside its block space (1 for full blocks, 0.5 for bottom slabs) */
+    static double topOf(World world, BlockPos pos, IBlockState state) {
+        return state.isFullCube() ? 1.0D : state.getBoundingBox(world, pos).maxY;
     }
 
     private static class Wave {
@@ -155,13 +171,13 @@ public class ClientEffects {
             while (next < columns.size() && columns.get(next).dist <= front) {
                 Column column = columns.get(next++);
                 IBlockState state = world.getBlockState(column.pos);
-                if (!isPushable(state)) continue;
+                if (!isPushable(world, column.pos, state)) continue;
 
                 float falloff = 1.0F - 0.65F * column.dist / radius;
                 float height = config.waveHeight * falloff * (0.8F + rand.nextFloat() * 0.4F);
                 mc.effectRenderer.addEffect(new ParticleQuakeBlock(world, column.pos, state, height, 8 + rand.nextInt(3)));
 
-                double px = column.pos.getX() + 0.5D, py = column.pos.getY() + 1.05D, pz = column.pos.getZ() + 0.5D;
+                double px = column.pos.getX() + 0.5D, py = column.pos.getY() + topOf(world, column.pos, state) + 0.05D, pz = column.pos.getZ() + 0.5D;
                 int stateId = Block.getStateId(state);
                 for (int i = minimal ? 1 : 3; i > 0; i--) {
                     world.spawnParticle(EnumParticleTypes.BLOCK_DUST,

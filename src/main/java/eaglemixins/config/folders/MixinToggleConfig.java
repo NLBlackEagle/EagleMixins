@@ -285,6 +285,25 @@ public class MixinToggleConfig {
     @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.slowairrefill.json", defaultValue = true)
     public boolean slowAirRefill = true;
 
+    @Config.Comment({
+            "Performance: entities following a path only look a limited number of nodes ahead for shortcuts each tick,",
+            "instead of raytracing back from the end of the whole path. Paths themselves are not changed.",
+            "Window size is set in Server Options > Path Follow Lookahead."
+    })
+    @Config.Name("Path Follow Lookahead (Vanilla)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.pathfollowlookahead.json", defaultValue = true)
+    public boolean pathFollowLookahead = true;
+
+    @Config.Comment({
+            "Performance: cache block path-node types during a single path search / path follow step.",
+            "Vanilla re-reads the same blocks many times per search. The world cannot change mid-search, so paths are identical."
+    })
+    @Config.Name("Pathfinding Node Type Cache (Vanilla)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.pathnodecache.json", defaultValue = true)
+    public boolean pathNodeTypeCache = true;
+
     @Config.Comment("Allow NBT (loot tables etc) using vanillas RandomValueRange to have min > max. Swap those in that case so the given min value will be interpreted as max and vice versa.")
     @Config.Name("Fix Eagle Math (Vanilla)")
     @Config.RequiresMcRestart

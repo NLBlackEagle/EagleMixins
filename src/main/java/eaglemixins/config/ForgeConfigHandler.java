@@ -167,6 +167,16 @@ public class ForgeConfigHandler {
 		@Config.RangeDouble(min = 0.1D, max = 1.0D)
 		public double tallRaceCrouchHeight = 0.75D;
 
+		@Config.Comment({
+				"How many path nodes ahead an entity checks for a straight-line shortcut each tick.",
+				"Vanilla checks up to the whole path, which is expensive for long paths. The window slides every tick,",
+				"so mobs still end up taking the same shortcuts. 0 = vanilla behavior.",
+				"Requires the \"Path Follow Lookahead (Vanilla)\" mixin toggle."
+		})
+		@Config.Name("Path Follow Lookahead")
+		@Config.RangeInt(min = 0, max = 256)
+		public int pathFollowLookahead = 16;
+
 		@Config.Comment("Add Blocks you can drink from, will be treated like water blocks")
 		@Config.Name("Additional Water Blocks:")
 		public Set<String> waterblockListdrinkables = new LinkedHashSet<>(Arrays.asList(

@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "eaglemixins.mixin.vanilla",
+  "refmap": "mixins.eaglemixins.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "mixins": [
+    "pathnodecache.WalkNodeProcessorMixin_NodeTypeCache",
+    "pathnodecache.PathFinderMixin_NodeTypeCache",
+    "pathnodecache.PathNavigateMixin_NodeTypeCache"
+  ],
+  "injectors": {
+    "defaultRequire": 1,
+    "maxShiftBy": 10
+  }
+}

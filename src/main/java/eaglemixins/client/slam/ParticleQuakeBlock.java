@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -29,6 +30,7 @@ public class ParticleQuakeBlock extends Particle {
 
     private final BlockPos pos;
     private final float height;
+    private final double minY, maxY; // vertical extent inside the block space (0..1 for full blocks, half for slabs)
     private final TextureAtlasSprite[] sprites = new TextureAtlasSprite[6];
     private final int[] tints = new int[6];
 
@@ -39,6 +41,14 @@ public class ParticleQuakeBlock extends Particle {
         this.particleMaxAge = life;
         this.motionX = this.motionY = this.motionZ = 0;
         this.canCollide = false;
+        if (state.isFullCube()) {
+            this.minY = 0.0D;
+            this.maxY = 1.0D;
+        } else {
+            AxisAlignedBB box = state.getBoundingBox(world, pos);
+            this.minY = MathHelper.clamp(box.minY, 0.0D, 1.0D);
+            this.maxY = MathHelper.clamp(box.maxY, this.minY, 1.0D);
+        }
         setupFaces(world, pos, state);
     }
 
@@ -99,7 +109,7 @@ public class ParticleQuakeBlock extends Particle {
         if (lift < 0.02D) return;
 
         double x0 = pos.getX() - interpPosX - GROW, x1 = pos.getX() + 1 - interpPosX + GROW;
-        double y0 = pos.getY() + lift - interpPosY - GROW, y1 = pos.getY() + 1 + lift - interpPosY + GROW;
+        double y0 = pos.getY() + minY + lift - interpPosY - GROW, y1 = pos.getY() + maxY + lift - interpPosY + GROW;
         double z0 = pos.getZ() - interpPosZ - GROW, z1 = pos.getZ() + 1 - interpPosZ + GROW;
         int light = getBrightnessForRender(partialTicks);
         int sky = light >> 16 & 65535, block = light & 65535;
@@ -125,6 +135,11 @@ public class ParticleQuakeBlock extends Particle {
             b *= (tint & 255) / 255.0F;
         }
         float u0 = sprite.getMinU(), u1 = sprite.getMaxU(), v0 = sprite.getMinV(), v1 = sprite.getMaxV();
+        if (face != EnumFacing.UP) {
+            // side faces only show the part of the texture the block covers, like vanilla slabs (bottom slab = lower half)
+            v0 = sprite.getInterpolatedV((1.0D - maxY) * 16.0D);
+            v1 = sprite.getInterpolatedV((1.0D - minY) * 16.0D);
+        }
         buffer.pos(ax, ay, az).tex(u0, v0).color(r, g, b, 1.0F).lightmap(sky, block).endVertex();
         buffer.pos(bx, by, bz).tex(u0, v1).color(r, g, b, 1.0F).lightmap(sky, block).endVertex();
         buffer.pos(cx, cy, cz).tex(u1, v1).color(r, g, b, 1.0F).lightmap(sky, block).endVertex();
