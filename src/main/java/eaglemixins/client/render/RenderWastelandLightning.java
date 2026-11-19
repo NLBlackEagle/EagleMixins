@@ -14,6 +14,7 @@ import java.util.WeakHashMap;
 /** Real lightning striking in a wasteland biome is drawn as a wasteland bolt instead of the white vanilla one */
 public class RenderWastelandLightning extends RenderLightningBolt {
     private static final Set<EntityLightningBolt> REPLACED = Collections.newSetFromMap(new WeakHashMap<>());
+    private static final Set<EntityLightningBolt> KEPT_VANILLA = Collections.newSetFromMap(new WeakHashMap<>());
 
     public RenderWastelandLightning(RenderManager renderManager) {
         super(renderManager);
@@ -22,12 +23,15 @@ public class RenderWastelandLightning extends RenderLightningBolt {
     @Override
     public void doRender(EntityLightningBolt entity, double x, double y, double z, float entityYaw, float partialTicks) {
         if (REPLACED.contains(entity)) return;
-        if (ForgeConfigHandler.lightning.wastelandReplaceVanilla
+        if (!KEPT_VANILLA.contains(entity) && ForgeConfigHandler.lightning.wastelandReplaceVanilla
                 && ForgeConfigHandler.lightning.isWastelandBiome(entity.world.getBiome(entity.getPosition()).getRegistryName())) {
             // the bolt entity plays its own thunder, so the replacement stays silent
-            AmbientLightningHandler.skyBoltAt(entity.world, new Vec3d(entity.posX, entity.posY, entity.posZ), 1.0F, 0);
-            REPLACED.add(entity);
-            return;
+            // the replacement fails when it would start inside terrain: keep the vanilla bolt then, not nothing
+            if (AmbientLightningHandler.skyBoltAt(entity.world, new Vec3d(entity.posX, entity.posY, entity.posZ), 1.0F, 0)) {
+                REPLACED.add(entity);
+                return;
+            }
+            KEPT_VANILLA.add(entity);
         }
         super.doRender(entity, x, y, z, entityYaw, partialTicks);
     }
