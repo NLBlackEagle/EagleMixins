@@ -39,7 +39,6 @@ public class PotionLevelCaps {
 
         PotionEffect capped = new PotionEffect(effect.getPotion(), effect.getDuration(), maxAmplifier, effect.getIsAmbient(), effect.doesShowParticles());
         capped.setCurativeItems(effect.getCurativeItems());
-        capped.setPotionDurationMax(effect.getIsPotionDurationMax());
         return capped;
     }
 

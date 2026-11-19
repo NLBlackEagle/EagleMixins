@@ -4,13 +4,10 @@ import eaglemixins.config.ForgeConfigHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Spawns the Eye of Ender portal trail particle colored by the distance to the stronghold.
  */
-@SideOnly(Side.CLIENT)
 public class EnderEyeTrail {
 
     public static void spawnPortalParticle(double x, double y, double z, double vx, double vy, double vz, float distance) {
