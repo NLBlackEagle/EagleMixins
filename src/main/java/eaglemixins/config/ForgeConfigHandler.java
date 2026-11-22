@@ -8,7 +8,6 @@ import eaglemixins.client.particles.ParticlesClientRunner;
 import eaglemixins.client.particles.ParticlesRuleParser;
 import eaglemixins.config.folders.*;
 import eaglemixins.handlers.BaublePotionImmunityHandler;
-import eaglemixins.util.PotionLevelCaps;
 import meldexun.betterconfig.api.BetterConfig;
 import meldexun.betterconfig.api.BetterConfigManager;
 import meldexun.betterconfig.api.Order;
@@ -325,22 +324,6 @@ public class ForgeConfigHandler {
 		public Map<ResourceLocation, ResourceLocation> forgottenItemsRecipeCoreItems = new LinkedHashMap<>();
 
 		@Config.Comment({
-				"Caps the level of potion effects. Any effect applied above its cap is lowered to the cap.",
-				"Levels are as displayed in game (1 = level I, 3 = level III).",
-				"Requires the \"Potion Level Caps (Vanilla)\" mixin toggle.",
-				"Format: <potion_id>=<max level>",
-				"Example: minecraft:resistance=3"
-		})
-		@Config.Name("Potion Level Caps")
-		public Map<ResourceLocation, Integer> potionLevelCaps = new LinkedHashMap<>();
-		private void initPotionLevelCaps(){
-			potionLevelCaps.put(new ResourceLocation("minecraft:resistance"), 3);
-			potionLevelCaps.put(new ResourceLocation("bountifulbaubles:sinful"), 4);
-			potionLevelCaps.put(new ResourceLocation("minecraft:strength"), 4);
-			potionLevelCaps.put(new ResourceLocation("potioncore:magic_focus"), 2);
-		}
-
-		@Config.Comment({
 				"Baubles that make the wearer immune to the listed potion effects.",
 				"Blocked effects are never applied: they are denied before being added, so they never tick, not even once.",
 				"Instant applications (drinking, splash, lingering) don't fire PotionApplicableEvent, so they aren't blocked.",
@@ -359,7 +342,6 @@ public class ForgeConfigHandler {
 
 		public ServerConfig(){
 			initBiomeDictTagList();
-			initPotionLevelCaps();
 		}
 	}
 
@@ -423,7 +405,6 @@ public class ForgeConfigHandler {
 				leap.reset();
 				betterstronghold.reset();
 				strongholds.reset();
-				PotionLevelCaps.refreshConfig();
 				BaublePotionImmunityHandler.refreshConfig();
 				loadParticleRulesFromConfig();
 			}
