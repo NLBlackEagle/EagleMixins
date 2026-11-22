@@ -34,7 +34,7 @@ public abstract class SpawnerBaseLogicMixin_FirstSpawn {
     /** Delay -1: don't reroll SpawnData before the first spawn, spawn right away instead */
     @WrapOperation(
             method = "updateSpawner",
-            at = @At(value = "INVOKE", target = "Lcom/github/alexthe666/iceandfire/entity/tile/SpawnerBaseLogic;resetTimer()V", ordinal = 0, remap = false)
+            at = @At(value = "INVOKE", target = "Lcom/github/alexthe666/iceandfire/entity/tile/SpawnerBaseLogic;resetTimer()V", ordinal = 0)
     )
     private void eaglemixins$keepFirstSpawnData(SpawnerBaseLogic logic, Operation<Void> original) {
         if (eaglemixins$firstSpawnDone) original.call(logic);
