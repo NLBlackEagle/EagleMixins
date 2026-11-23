@@ -575,6 +575,17 @@ public class MixinToggleConfig {
     @MixinConfig.CompatHandling(modid = "setbonus", desired = true, reason = "Tweak for SetBonus requires SetBonus to apply.")
     public boolean removeSetBonusEffectsCorrectly = true;
 
+    @Config.Comment({
+            "Fixes SetBonus' JEI tooltip reloading crashing with a NoSuchMethodError (PrefixedSearchTree.getMode) on newer JEI versions (4.24+).",
+            "Without this, SetBonus \"Dynamic Tooltip Searching (JEI/HEI)\" needs to be set to 0 to avoid log spam."
+    })
+    @Config.Name("JEI Tooltip Reload Fix (SetBonus/JEI)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.setbonus.jeitooltipfix.json", defaultValue = true)
+    @MixinConfig.CompatHandling(modid = "setbonus", desired = true, reason = "Fix for SetBonus requires SetBonus to apply.")
+    @MixinConfig.CompatHandling(modid = "jei", desired = true, reason = "Fix for SetBonus JEI compat requires JEI to apply.", warnIngame = false)
+    public boolean setBonusJeiTooltipFix = true;
+
     @Config.Comment("Shows the remaining carapace of parasites as a small bar below the Neat health bar.")
     @Config.Name("Carapace Bar (Neat/SRParasites)")
     @Config.RequiresMcRestart
