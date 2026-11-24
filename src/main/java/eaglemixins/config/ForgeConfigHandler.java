@@ -157,6 +157,14 @@ public class ForgeConfigHandler {
 		public boolean enableDamageFalloff = false;
 
 		@Config.Comment({
+				"Sneak + right click an Inspirations cauldron with a SimpleDifficulty canteen to pour one dose into it, a normal right click takes one out.",
+				"Purified doses become purified water, other doses become water. Doses only go into an empty cauldron or one with the same fluid."
+		})
+		@Config.Name("Pour Canteen Into Cauldron (SimpleDifficulty/Inspirations)")
+		@Config.RequiresMcRestart
+		public boolean canteenCauldronDump = true;
+
+		@Config.Comment({
 				"Height multiplier while crouching for Trinkets and Baubles races taller than a normal player (e.g. the Dragon Ring).",
 				"Trinkets and Baubles uses 0.92, which keeps a dragon (2.16 blocks) too tall for 2 high gaps with a trapdoor.",
 				"0.75 makes a crouching dragon 1.62 blocks tall. Races of normal size or smaller keep 0.92.",

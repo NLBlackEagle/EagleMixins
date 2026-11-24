@@ -131,7 +131,7 @@ public class MixinToggleConfig {
     @MixinConfig.CompatHandling(modid = "simpledifficulty", desired = true, reason = "Requires mod to properly function")
     public boolean extendDrinkableBlocks = true;
 
-    @Config.Comment("Canteens can also be filled from an Inspirations cauldron filled with purified water, not only from (boiling) water.")
+    @Config.Comment("Canteens can also be filled from an Inspirations cauldron filled with purified water, not only from (boiling) water. Every cauldron level gives exactly one dose (SimpleDifficulty filled the whole canteen from one level of normal water), and canteens holding the other kind of water are refused.")
     @Config.Name("Fill Canteen From Purified Water Cauldron (SimpleDifficulty/Inspirations)")
     @Config.RequiresMcRestart
     @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.simpledifficulty.purifiedcauldroncanteen.json", defaultValue = true)

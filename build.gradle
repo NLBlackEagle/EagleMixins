@@ -106,6 +106,8 @@ dependencies {
     compileOnly fg.deobf("curse.maven:forgotten-items-${forgottenitems_version}")
     compileOnly fg.deobf("curse.maven:neat-${neat_version}")
     compileOnly fg.deobf("curse.maven:betterstronghold-${betterstronghold_version}")
+    // Only Inspirations' own classes are used, no deobf needed
+    compileOnly files('libs/Inspirations-1.12.2-0.2.9.jar')
 
     compileOnly fg.deobf("CraftTweaker2:CraftTweaker2-${crafttweaker_version}")
     compileOnly fg.deobf("CraftTweaker2:ZenScript:${zs_version}")
