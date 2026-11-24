@@ -180,6 +180,17 @@ public class MixinToggleConfig {
     public boolean stageIVBeckonSpread = true;
 
     @Config.Comment({
+            "Parasites ignore player invisibility when looking for targets.",
+            "Without this, SRP multiplies the detection range of invisible players by \"Invisible Penalty\" * armor visibility (worn armor slots / 4, min 0.1),",
+            "so a player without armor is only detected at 10% range even with the penalty set to 1.0. With this enabled, the \"Invisible Penalty\" configs do nothing."
+    })
+    @Config.Name("Parasites Ignore Invisibility (SRP)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.srparasites.ignoreinvisibility.json", defaultValue = true)
+    @MixinConfig.CompatHandling(modid = "srparasites", desired = true, reason = "Requires mod to properly function")
+    public boolean srpIgnoreInvisibility = true;
+
+    @Config.Comment({
             "Enables the per-weapon critical-hit and range damage multipliers configured under \"Weapon Damage Modifiers\".",
             "This Mixin Toggle makes RLCombat flag the damage source as a critical hit in order to modify damage that is modified by other mods."
     })
