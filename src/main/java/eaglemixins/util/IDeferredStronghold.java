@@ -7,5 +7,5 @@ import java.util.Random;
  * and only placed once OTG finished populating that chunk.
  */
 public interface IDeferredStronghold {
-    void eaglemixins$placeDeferredStronghold(Random rand);
+    void eaglemixins$placeDeferredStronghold(Random rand, int chunkX, int chunkZ);
 }

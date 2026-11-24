@@ -546,6 +546,15 @@ public class MixinToggleConfig {
     public boolean stopFallingBlocks = true;
 
     @Config.Comment({
+            "Fixes a ConcurrentModificationException crash in structure generation (seen with Better Mineshafts).",
+            "When placing a structure piece makes a neighbouring chunk generate, that chunk generates the same structure again and changes its piece list mid-loop."
+    })
+    @Config.Name("Fix Nested Structure Generation Crash (Vanilla)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.reentrantstructurestart.json", defaultValue = true)
+    public boolean reentrantStructureStart = true;
+
+    @Config.Comment({
             "Allows to set qualities to only generate if the stack was created by one of a set of given loottables.",
             "Use \"loottables: [...]\" in QT cfg item matchers to denote for which loottable(s) the given quality should generate"
     })

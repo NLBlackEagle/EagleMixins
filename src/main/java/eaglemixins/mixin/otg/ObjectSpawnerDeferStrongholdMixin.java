@@ -27,6 +27,6 @@ public abstract class ObjectSpawnerDeferStrongholdMixin {
             at = @At(value = "INVOKE", target = "Lcom/pg85/otg/OTG;firePopulationEndEvent(Lcom/pg85/otg/common/LocalWorld;Ljava/util/Random;ZLcom/pg85/otg/util/ChunkCoordinate;)V")
     )
     private void eaglemixins$placeDeferredStronghold(ChunkCoordinate chunkCoord, CallbackInfo ci) {
-        if (this.world instanceof IDeferredStronghold) ((IDeferredStronghold) this.world).eaglemixins$placeDeferredStronghold(this.rand);
+        if (this.world instanceof IDeferredStronghold) ((IDeferredStronghold) this.world).eaglemixins$placeDeferredStronghold(this.rand, chunkCoord.getChunkX(), chunkCoord.getChunkZ());
     }
 }

@@ -11,6 +11,7 @@ import eaglemixins.util.IDeferredStronghold;
 import eaglemixins.util.StructureStarts;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.MapGenStructure;
@@ -38,7 +39,12 @@ public abstract class ForgeWorldDeferStrongholdMixin implements IDeferredStrongh
     @Shadow private MapGenStructure strongholdGen;
     @Shadow public World world;
 
-    @Unique private ChunkPos eaglemixins$deferredStronghold;
+    /**
+     * Chunks (ChunkPos.asLong) whose stronghold placement is pending. Keyed per chunk because populations can nest:
+     * a structure piece of chunk A can make neighbour B generate and populate before A finishes, and a single field
+     * would then be overwritten by B, so A's stronghold pieces were never placed.
+     */
+    @Unique private final LongOpenHashSet eaglemixins$deferredStrongholds = new LongOpenHashSet();
 
     @WrapOperation(
             method = "placeDefaultStructures",
@@ -46,18 +52,16 @@ public abstract class ForgeWorldDeferStrongholdMixin implements IDeferredStrongh
     )
     private boolean eaglemixins$deferStronghold(MapGenStructure gen, World world, Random rand, ChunkPos pos, Operation<Boolean> original) {
         if (gen != null && gen == this.strongholdGen) {
-            this.eaglemixins$deferredStronghold = pos;
+            this.eaglemixins$deferredStrongholds.add(ChunkPos.asLong(pos.x, pos.z));
             return false;
         }
         return original.call(gen, world, rand, pos);
     }
 
     @Override
-    public void eaglemixins$placeDeferredStronghold(Random rand) {
-        ChunkPos pos = this.eaglemixins$deferredStronghold;
-        if (pos == null) return;
-        this.eaglemixins$deferredStronghold = null;
-        this.strongholdGen.generateStructure(this.world, rand, pos);
+    public void eaglemixins$placeDeferredStronghold(Random rand, int chunkX, int chunkZ) {
+        if (!this.eaglemixins$deferredStrongholds.remove(ChunkPos.asLong(chunkX, chunkZ))) return;
+        this.strongholdGen.generateStructure(this.world, rand, new ChunkPos(chunkX, chunkZ));
     }
 
     // ---- Keeping OTG out of strongholds ----
