@@ -300,6 +300,16 @@ public class SRParasiteConfig {
     @Config.Name("Stage IV Beckon Spread Beckons can grow")
     public boolean beckonSpreadCanGrow = false;
 
+    @Config.Comment({
+            "Fraction of the normal detection range at which parasites still notice an invisible player wearing no armor.",
+            "Each worn armor piece raises it a quarter of the way to the full range: floor + (1 - floor) * armor pieces / 4.",
+            "0 = an invisible player without armor can't be detected at all, 1 = invisibility does nothing. The sneak penalty still stacks.",
+            "Requires the \"Parasite Invisibility Armor Scaling (SRP)\" mixin toggle."
+    })
+    @Config.Name("Invisible Detection Range Floor")
+    @Config.RangeDouble(min = 0.0, max = 1.0)
+    public double invisibleDetectionFloor = 0.25;
+
     @Config.Comment("All SRParasites outside of the allowed biomes in the allowed biome whitelist will automatically be killed")
     @Config.Name("Kill Parasites outside alllowed biomes")
     public boolean killEscapedParasites = true;
