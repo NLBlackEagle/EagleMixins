@@ -619,6 +619,13 @@ public class MixinToggleConfig {
     @MixinConfig.CompatHandling(modid = "srparasites", desired = true, reason = "Optional compat with Neat for SRP carapace", warnIngame = false)
     public boolean neatCarapaceBar = true;
 
+    @Config.Comment("Renders the Granite Guard (Rustic Iron Skin) overlay with a granite texture and lower opacity instead of the opaque white iron block.")
+    @Config.Name("Granite Guard Overlay (Rustic)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.rustic.graniteguard.json", defaultValue = true)
+    @MixinConfig.CompatHandling(modid = "rustic", desired = true, reason = "Requires Rustic to apply", warnIngame = false)
+    public boolean rusticGraniteGuardOverlay = true;
+
     @Config.Comment("Stops Vespids from building hives when they or their Vespid Queen were spawned by a mob event (e.g. The Swarm).")
     @Config.Name("No Event Hive Building (LycanitesMobs)")
     @Config.RequiresMcRestart
