@@ -131,6 +131,14 @@ public class MixinToggleConfig {
     @MixinConfig.CompatHandling(modid = "simpledifficulty", desired = true, reason = "Requires mod to properly function")
     public boolean extendDrinkableBlocks = true;
 
+    @Config.Comment("Canteens can also be filled from an Inspirations cauldron filled with purified water, not only from (boiling) water.")
+    @Config.Name("Fill Canteen From Purified Water Cauldron (SimpleDifficulty/Inspirations)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.simpledifficulty.purifiedcauldroncanteen.json", defaultValue = true)
+    @MixinConfig.CompatHandling(modid = "simpledifficulty", desired = true, reason = "Requires mod to properly function")
+    @MixinConfig.CompatHandling(modid = "inspirations", desired = true, reason = "Requires mod to properly function")
+    public boolean purifiedCauldronCanteen = true;
+
     @Config.Comment("If players use teleportation methods in Abyssal Rift, they will get potion effects applied to prevent them to cheese brutal towers.")
     @Config.Name("Prevent Abyssal Teleportation (Vanilla/Trinkets)")
     @Config.RequiresMcRestart
