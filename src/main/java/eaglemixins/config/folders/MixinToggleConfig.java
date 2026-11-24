@@ -554,6 +554,13 @@ public class MixinToggleConfig {
     @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.reentrantstructurestart.json", defaultValue = true)
     public boolean reentrantStructureStart = true;
 
+    @Config.Comment("Stops Mo' Bends from logging \"Received Mo' Bends server configuration.\" with all its settings on every world join.")
+    @Config.Name("Silence Server Configuration Log (Mo' Bends)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.mobends.silenceconfiglog.json", defaultValue = true)
+    @MixinConfig.CompatHandling(modid = "mobends", desired = true, reason = "Requires mod to properly function", warnIngame = false)
+    public boolean silenceMoBendsConfigLog = true;
+
     @Config.Comment({
             "Allows to set qualities to only generate if the stack was created by one of a set of given loottables.",
             "Use \"loottables: [...]\" in QT cfg item matchers to denote for which loottable(s) the given quality should generate"
