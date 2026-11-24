@@ -139,6 +139,13 @@ public class MixinToggleConfig {
     @MixinConfig.CompatHandling(modid = "inspirations", desired = true, reason = "Requires mod to properly function")
     public boolean purifiedCauldronCanteen = true;
 
+    @Config.Comment("If a world's loot database (QuestLoot.json) has no loot groups, the default loot (config/betterquesting/DefaultLoot.json) is loaded instead. Without it such worlds stay empty forever and random loot chests, like the Sacrificial Amulet reward, show \"No Loot Setup\" and give nothing.")
+    @Config.Name("Fall Back To Default Loot When Empty (BQ Standard Expansion)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.bqstandard.defaultlootfallback.json", defaultValue = true)
+    @MixinConfig.CompatHandling(modid = "bq_standard", desired = true, reason = "Requires mod to properly function")
+    public boolean bqDefaultLootFallback = true;
+
     @Config.Comment("If players use teleportation methods in Abyssal Rift, they will get potion effects applied to prevent them to cheese brutal towers.")
     @Config.Name("Prevent Abyssal Teleportation (Vanilla/Trinkets)")
     @Config.RequiresMcRestart
