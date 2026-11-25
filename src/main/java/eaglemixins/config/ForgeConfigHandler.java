@@ -151,6 +151,16 @@ public class ForgeConfigHandler {
 	@Order(23)
 	public static BetterStrongholdConfig betterstronghold = new BetterStrongholdConfig();
 
+	@Config.Comment("Passive mobs (animals, villagers, ...) that fight back when hit, and join in when one of their kind is killed nearby")
+	@Config.Name("Retaliation")
+	@Order(24)
+	public static RetaliationConfig retaliation = new RetaliationConfig();
+
+	@Config.Comment("Wolf packs with a fixed alpha wolf, that hunt players when it's cold and deal less damage to players")
+	@Config.Name("Wolf Packs")
+	@Order(25)
+	public static WolfPackConfig wolfpack = new WolfPackConfig();
+
 	public static class ServerConfig {
 		@Config.Comment("Reduces damage done by players by a factor of 1 to 1/3, with the falloff multiplier that scales linearly in the span between. No reduction for damages below 20. Caps out at 300 dmg before falloff.")
 		@Config.Name("Enable Damage Falloff")
@@ -413,6 +423,7 @@ public class ForgeConfigHandler {
 				leap.reset();
 				betterstronghold.reset();
 				strongholds.reset();
+				retaliation.reset();
 				BaublePotionImmunityHandler.refreshConfig();
 				loadParticleRulesFromConfig();
 			}

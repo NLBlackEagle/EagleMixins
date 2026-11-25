@@ -7,6 +7,7 @@ public class ModLoadedUtil {
     public static final LoadedContainer forgottenitems = new LoadedContainer("forgottenitems");
     public static final LoadedContainer nuclearcraft = new LoadedContainer("nuclearcraft");
     public static final LoadedContainer rlcombat = new LoadedContainer("bettercombatmod");
+    public static final LoadedContainer simpledifficulty = new LoadedContainer("simpledifficulty");
     public static final LoadedContainer spartanweaponry = new LoadedContainer("spartanweaponry");
     public static final LoadedContainer xat = new LoadedContainer("xat");
 

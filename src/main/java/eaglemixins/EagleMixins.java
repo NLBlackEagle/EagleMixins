@@ -72,6 +72,9 @@ public class EagleMixins {
         MinecraftForge.EVENT_BUS.register(NuclearCraftInteractions.class);
         registerIfModsPresent(new String[]{"srparasites", "playerbosses"}, AbyssalRiftHandler.class);
         MinecraftForge.EVENT_BUS.register(AngryMobHandler.class);
+        MinecraftForge.EVENT_BUS.register(RetaliationHandler.class);
+        MinecraftForge.EVENT_BUS.register(WolfPackHandler.class);
+        registerIfModsPresent(new String[]{"firstaid"}, WolfFirstAidHandler.class);
         MinecraftForge.EVENT_BUS.register(LeapHandler.class);
         MinecraftForge.EVENT_BUS.register(BarrierBlockHandler.class);
         MinecraftForge.EVENT_BUS.register(BerianHandler.class);

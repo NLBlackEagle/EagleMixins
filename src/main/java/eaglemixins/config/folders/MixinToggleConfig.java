@@ -608,6 +608,18 @@ public class MixinToggleConfig {
     @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.keyoutlinecolor.json", defaultValue = true)
     public boolean keyOutlineColor = true;
 
+    @Config.Comment("Alpha wolves (Wolf Packs) use their own skin: eaglemixins:textures/entity/wolf/alpha_wolf.png and alpha_wolf_angry.png")
+    @Config.Name("Alpha Wolf Skin (Vanilla)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.alphawolfskin.json", defaultValue = true)
+    public boolean alphaWolfSkin = true;
+
+    @Config.Comment("Alpha wolves (Wolf Packs) get their \"Alpha Name\", e.g. \"was slain by Alpha Wolf\" in death messages")
+    @Config.Name("Alpha Wolf Name (Vanilla)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.alphawolfname.json", defaultValue = true)
+    public boolean alphaWolfName = true;
+
     @Config.Comment({
             "This restores old set bonus behavior of removing set bonus potion effects when losing the bonus (removing armor etc) no matter the duration or amplifier of the current effect on the player.",
             "This counteracts players using wine/wildberry wine to avoid getting the effect removed."
@@ -646,4 +658,11 @@ public class MixinToggleConfig {
     @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.lycanitesmobs.projectilesight.json", defaultValue = true)
     @MixinConfig.CompatHandling(modid = "lycanitesmobs", desired = true, reason = "Requires mod to properly function")
     public boolean lycanitesProjectileLineOfSight = true;
+
+    @Config.Comment("Lycanites mobs on the Retaliation list fight back against players, even when their creature group is \"wary\". Other attackers are still handled by the creature group.")
+    @Config.Name("Retaliation (LycanitesMobs)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.lycanitesmobs.retaliation.json", defaultValue = true)
+    @MixinConfig.CompatHandling(modid = "lycanitesmobs", desired = true, reason = "Requires mod to properly function")
+    public boolean lycanitesRetaliation = true;
 }

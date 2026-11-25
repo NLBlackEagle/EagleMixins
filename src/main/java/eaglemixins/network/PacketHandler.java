@@ -51,6 +51,12 @@ public final class PacketHandler {
                 messageId++,
                 Side.CLIENT
         );
+        NETWORK.registerMessage(
+                PacketSyncAlphaWolf.Handler.class,
+                PacketSyncAlphaWolf.class,
+                messageId++,
+                Side.CLIENT
+        );
     }
 
     public static void sendToAllAround(IMessage message, int dimension, double x, double y, double z, double range){

@@ -13,7 +13,8 @@ public class AngryMobConfig {
             "an angry mob and hunts that player until the player leaves its line of sight, then calms down.",
             "A miss is rolled again the next time a player comes into view.",
             "Note that this only sets the player as an attack target. The angry mob needs to know what to do when targeting a player.",
-            "To add a mob, copy the \"minecraft:wolf\" { ... } block below and rename it to the mob's id, e.g. \"minecraft:polar_bear\"."
+            "To add a mob, copy the \"minecraft:wolf\" { ... } block below and rename it to the mob's id, e.g. \"minecraft:polar_bear\".",
+            "The \"minecraft:wolf\" entry is ignored while \"Wolf Packs\" is enabled."
     })
     @Config.Name("Angry Mob Rules")
     public Map<ResourceLocation, Entry> angryMobs = new LinkedHashMap<>();

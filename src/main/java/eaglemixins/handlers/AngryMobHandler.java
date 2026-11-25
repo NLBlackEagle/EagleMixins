@@ -26,6 +26,7 @@ public class AngryMobHandler {
 
         ResourceLocation loc = EntityList.getKey(entity);
         if(loc == null) return; //players mainly
+        if(ForgeConfigHandler.wolfpack.enabled && WolfPackHandler.isWolf(entity)) return; //wolves use the Wolf Packs config
 
         AngryMobConfig.Entry cfgEntry = ForgeConfigHandler.angrymobs.angryMobs.get(loc);
         if (cfgEntry == null) return;
