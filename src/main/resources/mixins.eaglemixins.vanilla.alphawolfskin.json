@@ -6,6 +6,7 @@
   "target": "@env(CLIENT)",
   "minVersion": "0.8",
   "client": [
+    "EntityWolfMixin_TailRotation",
     "RenderWolfMixin_AlphaSkin"
   ],
   "injectors": {

@@ -31,7 +31,7 @@ public class AlphaWolfClientHandler {
     @Nullable
     public static ResourceLocation getAlphaTexture(EntityWolf wolf) {
         WolfPackConfig cfg = ForgeConfigHandler.wolfpack;
-        if (!cfg.enabled || !cfg.alphaCustomSkin || wolf.isTamed() || !WolfPackHandler.isAlpha(wolf)) return null;
+        if (!cfg.enabled || !cfg.alphaCustomSkin || !WolfPackHandler.isAlpha(wolf)) return null;
         if (wolf.isAngry()) return ALPHA_ANGRY_TEXTURE;
         return wolf.getTags().contains(WolfPackHandler.STALKING_TAG) ? ALPHA_STALKING_TEXTURE : ALPHA_TEXTURE;
     }

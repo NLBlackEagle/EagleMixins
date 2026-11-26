@@ -8,7 +8,9 @@ import eaglemixins.entity.ai.EntityAIPackGate;
 import eaglemixins.entity.ai.EntityAIWolfFlee;
 import eaglemixins.entity.ai.EntityAIWolfFollowAlpha;
 import eaglemixins.entity.ai.EntityAIWolfPack;
+import eaglemixins.entity.ai.EntityAIWolfRetrieve;
 import eaglemixins.entity.ai.EntityAIWolfStalk;
+import eaglemixins.entity.ai.EntityAIWolfWalkAway;
 import eaglemixins.network.PacketHandler;
 import eaglemixins.network.PacketSyncAlphaWolf;
 import net.minecraft.entity.Entity;
@@ -30,10 +32,12 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -42,11 +46,13 @@ import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -54,8 +60,9 @@ import java.util.UUID;
 import java.util.WeakHashMap;
 
 /**
- * Wolf packs: every wild pack gets a fixed alpha (entity tag, saved with the wolf). The alpha is stronger, untamable,
- * has its own skin, and decides when the pack hunts players (see {@link EntityAIWolfPack}).
+ * Wolf packs: every wild pack gets a fixed alpha (entity tag, saved with the wolf). The alpha is stronger, has its own skin,
+ * and decides when the pack hunts players (see {@link EntityAIWolfPack}). It can't be tamed the vanilla way, only through
+ * its tribute; a tamed alpha keeps its skin and health.
  * Wild wolves deal less damage to players.
  */
 public class WolfPackHandler {
@@ -86,6 +93,8 @@ public class WolfPackHandler {
     private static final UUID OLD_ALPHA_SPEED_UUID = UUID.fromString("6f0c2b4e-3d55-4a52-9a43-0a1f5e7d6b12");
     private static final UUID ANGRY_SPEED_UUID = UUID.fromString("6f0c2b4e-3d55-4a52-9a43-0a1f5e7d6b13");
     private static final int ANGRY_SPEED_CHECK_INTERVAL = 5;
+    /** Lang keys eaglemixins.wolfpack.bonding.1 to .N, one picked at random when an item counts towards taming */
+    private static final int BONDING_MESSAGES = 3;
 
     public static boolean isWolf(Entity entity) {
         return entity instanceof EntityWolf && WOLF_ID.equals(EntityList.getKey(entity));
@@ -108,11 +117,13 @@ public class WolfPackHandler {
             if (findNearestAlpha(wolf, cfg.alphaSearchRadius) == null && wolf.getRNG().nextDouble() < cfg.alphaChance) {
                 wolf.addTag(ALPHA_TAG);
                 newAlpha = true;
+                WolfPackDebug.log(wolf, "new wolf became an alpha");
             } else {
-                setPackAlpha(wolf, findJoinableAlpha(wolf, cfg.alphaSearchRadius));
+                EntityWolf joined = findJoinableAlpha(wolf, cfg.alphaSearchRadius);
+                setPackAlpha(wolf, joined);
+                WolfPackDebug.log(wolf, "new wolf joined {}", WolfPackDebug.describe(joined));
             }
         }
-        if (isAlpha(wolf) && wolf.isTamed()) wolf.removeTag(ALPHA_TAG); // tamed by other means (commands)
         if (isAlpha(wolf) || wolf.isTamed()) setPackAlpha(wolf, null);
         wolf.removeTag(STALKING_TAG); // saved mid-stalk
 
@@ -122,6 +133,8 @@ public class WolfPackHandler {
             EntityAIWolfPack pack = new EntityAIWolfPack(wolf);
             wolf.targetTasks.addTask(cfg.aiPriority, pack);
             wolf.tasks.addTask(STALK_PRIORITY, new EntityAIWolfStalk(wolf, pack));
+            wolf.tasks.addTask(STALK_PRIORITY, new EntityAIWolfRetrieve(wolf, pack));
+            wolf.tasks.addTask(STALK_PRIORITY, new EntityAIWolfWalkAway(wolf, pack));
             wolf.tasks.addTask(FLEE_PRIORITY, new EntityAIWolfFlee(wolf, pack));
             wolf.tasks.addTask(FOLLOW_ALPHA_PRIORITY, new EntityAIWolfFollowAlpha(wolf, pack));
             gateOwnTargeting(wolf);
@@ -151,16 +164,27 @@ public class WolfPackHandler {
         }
         boolean inPack = alpha || packAlpha != null;
         if (!isAlpha(wolf)) setFollowRange(wolf, packAlpha != null ? cfg.memberFollowRange : -1.0D);
-        if (inPack && wolf.isAngry() && wolf.getAttackTarget() == null) wolf.setAngry(false); // angry without a target
+        if (inPack && wolf.isAngry() && wolf.getAttackTarget() == null) {
+            WolfPackDebug.log(wolf, "angry without a target: calmed down");
+            wolf.setAngry(false);
+        }
         if (packAlpha != null) copyAlpha(wolf, packAlpha);
         else if (alpha) dropOutOfRangeTarget(wolf);
+        else if (cfg.enabled && !wolf.isTamed()) dropDeadTarget(wolf); // loners stay vanilla, but don't stay angry at a dead player
+        if (WolfPackDebug.on() && wolf.ticksExisted % WolfPackDebug.DUMP_INTERVAL == 0
+                && (wolf.isAngry() || wolf.getAttackTarget() != null || wolf.getTags().contains(STALKING_TAG))) {
+            WolfPackDebug.dump(wolf);
+        }
         if (cfg.enabled && isAlpha(wolf) && !wolf.isTamed()) {
             EntityAIWolfPack pack = EntityAIWolfPack.of(wolf);
+            // saved while sitting for a tribute: a wild wolf has nothing else that makes it stand up
+            if (wolf.isSitting() && (pack == null || (pack.getRetrieveTarget() == null && pack.getWaitTarget() == null))) wolf.setSitting(false);
             if (pack != null) {
                 if (wolf.getAttackTarget() instanceof EntityPlayer && cfg.rememberTargetSeconds > 0) {
                     pack.rememberTarget((EntityPlayer) wolf.getAttackTarget(), wolf.world.getTotalWorldTime() + cfg.rememberTargetSeconds * 20L);
                 }
                 if (pack.lostPlayerAggro(wolf.getAttackTarget() instanceof EntityPlayer)) {
+                    WolfPackDebug.log(wolf, "alpha stopped attacking players: calming the pack");
                     pack.resetSightings(); // back to stalking once it sees the player again
                     calmPack(wolf);
                 }
@@ -193,6 +217,9 @@ public class WolfPackHandler {
     public static void onSetAttackTarget(LivingSetAttackTargetEvent event) {
         EntityLivingBase target = event.getTarget();
         EntityLivingBase entity = event.getEntityLiving();
+        if (WolfPackDebug.on() && entity instanceof EntityWolf && !entity.world.isRemote && !((EntityWolf) entity).isTamed()) {
+            WolfPackDebug.log((EntityWolf) entity, "attack target -> {} by {}", WolfPackDebug.describe(target), WolfPackDebug.caller());
+        }
         if (!(target instanceof EntityWolf) || !(entity instanceof EntityWolf) || entity.world.isRemote) return;
         if (((EntityWolf) entity).isTamed()) return;
         // can't clear it from inside setAttackTarget (the wolf would stay angry), so on its next update
@@ -208,28 +235,90 @@ public class WolfPackHandler {
         if (isProtectedFrom((EntityWolf) victim, (EntityWolf) attacker)) event.setCanceled(true);
     }
 
-    /** Hunting wild wolves can't be fed into love mode (Wolf Armor and Storage lets wild wolves breed), and alphas can't be tamed */
+    /**
+     * Hunting wild wolves can't be fed into love mode (Wolf Armor and Storage lets wild wolves breed). Calming items given to
+     * an alpha are its tribute (see {@link EntityAIWolfPack#giveTribute}), never the vanilla bone taming
+     */
     @SubscribeEvent
     public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        if (!ForgeConfigHandler.wolfpack.enabled) return;
+        WolfPackConfig cfg = ForgeConfigHandler.wolfpack;
+        if (!cfg.enabled) return;
         Entity target = event.getTarget();
         if (!isWolf(target)) return;
         EntityWolf wolf = (EntityWolf) target;
         if (wolf.isTamed()) return;
+        ItemStack stack = event.getItemStack();
 
-        if (wolf.isBreedingItem(event.getItemStack()) && isHunting(wolf)) {
+        if (wolf.isBreedingItem(stack) && isHunting(wolf)) {
             event.setCanceled(true);
             event.setCancellationResult(EnumActionResult.FAIL);
             return;
         }
 
-        if (!isAlpha(wolf) || event.getItemStack().getItem() != Items.BONE) return;
-
+        if (!isAlpha(wolf) || !(isCalmingItem(stack) || stack.getItem() == Items.BONE)) return;
         event.setCanceled(true);
         event.setCancellationResult(EnumActionResult.SUCCESS);
-        if (!wolf.world.isRemote && event.getHand() == EnumHand.MAIN_HAND) {
-            wolf.world.setEntityState(wolf, (byte) 6); // failed taming smoke
+        if (wolf.world.isRemote) return;
+
+        EntityPlayer player = event.getEntityPlayer();
+        EntityAIWolfPack pack = EntityAIWolfPack.of(wolf);
+        String item = getItemId(stack);
+        EntityAIWolfPack.Tribute result = pack == null || item == null || !isCalmingItem(stack) ? EntityAIWolfPack.Tribute.REFUSED
+                : pack.giveTribute(player, item, getAmount(item, 1), getAmount(item, 2), getTameItems());
+        WolfPackDebug.log(wolf, "{} gave {}: {} (taming items {})", WolfPackDebug.describe(player), item, result, pack != null ? pack.getTameProgress() : 0);
+        if (result == EntityAIWolfPack.Tribute.REFUSED || result == EntityAIWolfPack.Tribute.UNINTERESTED) {
+            wolf.world.setEntityState(wolf, (byte) 6); // smoke: doesn't want it, the item isn't used up
+            if (result == EntityAIWolfPack.Tribute.UNINTERESTED) sendMessage(player, "eaglemixins.wolfpack.uninterested");
+            return;
         }
+
+        if (!player.capabilities.isCreativeMode) stack.shrink(1);
+        switch (result) {
+            case WANTS_MORE:
+                sendMessage(player, "eaglemixins.wolfpack.unsatisfied");
+                break;
+            case SATISFIED:
+                sendMessage(player, "eaglemixins.wolfpack.satisfied");
+                break;
+            case BONDING:
+                spawnHearts(wolf, pack.getTameProgress());
+                sendMessage(player, "eaglemixins.wolfpack.bonding." + (1 + wolf.getRNG().nextInt(BONDING_MESSAGES)));
+                break;
+            case TAMED:
+                spawnHearts(wolf, pack.getTameProgress());
+                tameAlpha(wolf, player);
+                break;
+            default:
+                break;
+        }
+    }
+
+    /** Tames the alpha like a vanilla bone would (sits down), but it keeps its alpha health and skin */
+    private static void tameAlpha(EntityWolf wolf, EntityPlayer player) {
+        if (ForgeEventFactory.onAnimalTame(wolf, player)) {
+            WolfPackDebug.log(wolf, "taming by {} cancelled by another mod", WolfPackDebug.describe(player));
+            return;
+        }
+        sendMessage(player, "eaglemixins.wolfpack.tamed");
+        WolfPackDebug.log(wolf, "tamed by {}", WolfPackDebug.describe(player));
+        setStalking(wolf, false);
+        wolf.setTamedBy(player);
+        wolf.getNavigator().clearPath();
+        wolf.setAttackTarget(null);
+        wolf.getAISit().setSitting(true);
+        wolf.setBegging(false);
+        for (EntityWolf member : getPackMembers(wolf)) setPackAlpha(member, null); // its pack goes on without it
+    }
+
+    private static void spawnHearts(EntityWolf wolf, int count) {
+        if (count <= 0 || !(wolf.world instanceof WorldServer)) return;
+        ((WorldServer) wolf.world).spawnParticle(EnumParticleTypes.HEART, wolf.posX, wolf.posY + wolf.height + 0.3D, wolf.posZ,
+                count, wolf.width * 0.6D, 0.3D, wolf.width * 0.6D, 0.0D);
+    }
+
+    /** Shows a lang message (key from assets/eaglemixins/lang) above the player's hotbar */
+    private static void sendMessage(EntityPlayer player, String langKey) {
+        player.sendStatusMessage(new TextComponentTranslation(langKey), true);
     }
 
     @SubscribeEvent
@@ -288,7 +377,18 @@ public class WolfPackHandler {
         IAttributeInstance followRange = wolf.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE);
         double range = followRange != null ? followRange.getAttributeValue() : 16.0D;
         boolean lost = !target.isEntityAlive() || target.world != wolf.world || wolf.getDistanceSq(target) > range * range;
-        if (lost) clearTarget(wolf);
+        if (!lost) return;
+        WolfPackDebug.log(wolf, "drops target {}: alive {}, same world {}, dist {} > range {}", WolfPackDebug.describe(target),
+                target.isEntityAlive(), target.world == wolf.world, (int) wolf.getDistance(target), (int) range);
+        clearTarget(wolf);
+    }
+
+    /** Dead target or one in another dimension: drop it (vanilla keeps it when another wolf alerted it, and stays angry) */
+    private static void dropDeadTarget(EntityWolf wolf) {
+        EntityLivingBase target = wolf.getAttackTarget();
+        if (target == null || (target.isEntityAlive() && target.world == wolf.world)) return;
+        WolfPackDebug.log(wolf, "drops dead/gone target {}", WolfPackDebug.describe(target));
+        clearTarget(wolf);
     }
 
     /** Drops the attack target for good (a running target AI would set it again) and calms the wolf down */
@@ -312,6 +412,7 @@ public class WolfPackHandler {
                 && wolf.ticksExisted - wolf.getRevengeTimer() <= ANGRY_SPEED_CHECK_INTERVAL * 2) {
             EntityAIWolfPack alphaPack = EntityAIWolfPack.of(alpha);
             if (alpha.getAttackTarget() == null && (alphaPack == null || (alphaPack.getRival() == null && !alphaPack.isFleeing()))) {
+                WolfPackDebug.log(wolf, "got hit by {}: hands the fight to its alpha {}", WolfPackDebug.describe(revenge), WolfPackDebug.describe(alpha));
                 alpha.setAttackTarget(revenge);
                 alphaTarget = revenge;
             }
@@ -322,8 +423,12 @@ public class WolfPackHandler {
         double range = followRange != null ? followRange.getAttributeValue() : 16.0D;
         if (alphaTarget != null && alphaTarget.isEntityAlive() && alphaTarget.world == wolf.world
                 && wolf.getDistanceSq(alphaTarget) <= range * range) {
-            if (current != alphaTarget) wolf.setAttackTarget(alphaTarget);
+            if (current != alphaTarget) {
+                WolfPackDebug.log(wolf, "copies alpha {} target {}", WolfPackDebug.describe(alpha), WolfPackDebug.describe(alphaTarget));
+                wolf.setAttackTarget(alphaTarget);
+            }
         } else if (current != null) {
+            WolfPackDebug.log(wolf, "alpha {} target is {}, drops own target {}", WolfPackDebug.describe(alpha), WolfPackDebug.describe(alpha.getAttackTarget()), WolfPackDebug.describe(current));
             clearTarget(wolf);
         }
     }
@@ -346,6 +451,7 @@ public class WolfPackHandler {
         for (EntityWolf member : getPackMembers(alpha)) {
             EntityLivingBase target = member.getAttackTarget();
             if (!(target instanceof EntityPlayer)) continue;
+            WolfPackDebug.log(member, "calmed by its alpha, drops {}", WolfPackDebug.describe(target));
             restartTargetTasks(member, action -> true);
             if (member.getRevengeTarget() == target) member.setRevengeTarget(null);
             member.setAttackTarget(null); // also calms it down
@@ -391,6 +497,7 @@ public class WolfPackHandler {
         EntityAIWolfPack otherPack = EntityAIWolfPack.of(other);
         if (otherPack == null) return;
 
+        WolfPackDebug.log(wolf, "duel starts against {}", WolfPackDebug.describe(other));
         pack.startDuel(other, now + MAX_DUEL_TICKS);
         otherPack.startDuel(wolf, now + MAX_DUEL_TICKS);
         wolf.setAttackTarget(other);
@@ -408,6 +515,7 @@ public class WolfPackHandler {
             else valid = false; // something else (a player) took over, call the fight off
         }
         if (!valid) {
+            WolfPackDebug.log(wolf, "duel against {} called off (target now {})", WolfPackDebug.describe(rival), WolfPackDebug.describe(wolf.getAttackTarget()));
             endDuel(wolf, pack, rival, cfg, now);
             if (rivalPack != null && rivalPack.getRival() == wolf) endDuel(rival, rivalPack, wolf, cfg, now);
             return;
@@ -417,6 +525,7 @@ public class WolfPackHandler {
         // lost: flee from the winner, the pack goes over to the winner
         endDuel(rival, rivalPack, wolf, cfg, now);
         endDuel(wolf, pack, rival, cfg, now);
+        WolfPackDebug.log(wolf, "lost the duel against {}: flees, pack goes over", WolfPackDebug.describe(rival));
         pack.startFleeing(rival, now + cfg.rivalryFleeSeconds * 20L);
         transferPack(wolf, rival, cfg);
     }
@@ -494,10 +603,14 @@ public class WolfPackHandler {
         if (id != null) {
             Entity entity = ((WorldServer) wolf.world).getEntityFromUuid(id);
             if (entity instanceof EntityWolf && isValidAlpha((EntityWolf) entity, wolf)) return (EntityWolf) entity;
+            WolfPackDebug.log(wolf, "leaves its pack: alpha {} gone ({})", id.toString().substring(0, 8), WolfPackDebug.describe(entity));
             setPackAlpha(wolf, null);
         }
         EntityWolf alpha = findJoinableAlpha(wolf, ForgeConfigHandler.wolfpack.packRadius);
-        if (alpha != null) setPackAlpha(wolf, alpha);
+        if (alpha != null) {
+            WolfPackDebug.log(wolf, "joins pack of {}", WolfPackDebug.describe(alpha));
+            setPackAlpha(wolf, alpha);
+        }
         return alpha;
     }
 
@@ -533,7 +646,7 @@ public class WolfPackHandler {
     @Nullable
     public static String getAlphaName(EntityWolf wolf) {
         WolfPackConfig cfg = ForgeConfigHandler.wolfpack;
-        if (!cfg.enabled || cfg.alphaName.isEmpty() || wolf.isTamed() || wolf.hasCustomName() || !isAlpha(wolf)) return null;
+        if (!cfg.enabled || cfg.alphaName.isEmpty() || wolf.hasCustomName() || !isAlpha(wolf)) return null;
         return cfg.alphaName;
     }
 
@@ -542,7 +655,7 @@ public class WolfPackHandler {
         if (wolf.isAngry() || wolf.getAttackTarget() != null) return true;
         if (wolf.world.isRemote) return false;
         EntityAIWolfPack pack = EntityAIWolfPack.of(wolf);
-        return pack != null && pack.getStalkTarget() != null;
+        return pack != null && (pack.getStalkTarget() != null || pack.getRetrieveTarget() != null);
     }
 
     @Nullable
@@ -584,14 +697,49 @@ public class WolfPackHandler {
     }
 
     private static boolean isCalmingItem(ItemStack stack) {
-        if (stack.isEmpty()) return false;
-        ResourceLocation id = stack.getItem().getRegistryName();
-        if (id == null) return false;
-        String idString = id.toString();
-        for (String calming : ForgeConfigHandler.wolfpack.calmingItems) {
-            if (idString.equals(calming.trim())) return true;
+        String id = getItemId(stack);
+        return id != null && findCalmingEntry(id) != null;
+    }
+
+    /** "Calming Items" entry (itemid,min,max) of this item, split and trimmed, or null */
+    @Nullable
+    private static String[] findCalmingEntry(String id) {
+        for (String entry : ForgeConfigHandler.wolfpack.calmingItems) {
+            String[] parts = entry.split(",");
+            for (int i = 0; i < parts.length; i++) parts[i] = parts[i].trim();
+            if (parts[0].equals(id)) return parts;
         }
-        return false;
+        return null;
+    }
+
+    /** Min (part 1) or max (part 2) amount of a calming item, 1 when not set or invalid */
+    private static int getAmount(String id, int part) {
+        String[] entry = findCalmingEntry(id);
+        if (entry == null) return 1;
+        String value = entry.length > part ? entry[part] : entry.length > 1 ? entry[1] : null; // only a min = exactly that many
+        if (value == null) return 1;
+        try {
+            return Math.max(1, Integer.parseInt(value));
+        } catch (NumberFormatException e) {
+            return 1;
+        }
+    }
+
+    @Nullable
+    private static String getItemId(ItemStack stack) {
+        if (stack.isEmpty()) return null;
+        ResourceLocation id = stack.getItem().getRegistryName();
+        return id != null ? id.toString() : null;
+    }
+
+    /** The calming items that exist in this game (mods that aren't installed are skipped): giving all of them tames an alpha */
+    private static Set<String> getTameItems() {
+        Set<String> items = new HashSet<>();
+        for (String entry : ForgeConfigHandler.wolfpack.calmingItems) {
+            String id = entry.split(",")[0].trim();
+            if (!id.isEmpty() && ForgeRegistries.ITEMS.containsKey(new ResourceLocation(id))) items.add(id);
+        }
+        return items;
     }
 
     /** (Re)applies the health modifier so config changes reach existing alphas, and removes them from non-alphas */

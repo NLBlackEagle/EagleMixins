@@ -608,7 +608,7 @@ public class MixinToggleConfig {
     @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.keyoutlinecolor.json", defaultValue = true)
     public boolean keyOutlineColor = true;
 
-    @Config.Comment("Alpha wolves (Wolf Packs) use their own skin: eaglemixins:textures/entity/wolf/alpha_wolf.png and alpha_wolf_angry.png")
+    @Config.Comment("Alpha wolves (Wolf Packs) use their own skin: eaglemixins:textures/entity/wolf/alpha_wolf.png and alpha_wolf_angry.png. Also keeps the tail of tamed wolves with more than 20 max health (tamed alphas) out of their body when hurt")
     @Config.Name("Alpha Wolf Skin (Vanilla)")
     @Config.RequiresMcRestart
     @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.alphawolfskin.json", defaultValue = true)

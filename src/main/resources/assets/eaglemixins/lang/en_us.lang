@@ -114,3 +114,12 @@ subtitles.eaglemixins.developer.target=Something screeches
 subtitles.eaglemixins.developer.respond=Screeches answer
 subtitles.eaglemixins.developer.pain=Developer hurts
 subtitles.eaglemixins.developer.death=Developer dies
+
+# Wolf packs: alpha tribute
+eaglemixins.wolfpack.unsatisfied=The alpha wolf seems unsatisfied. Perhaps another, or a few bones would do?
+eaglemixins.wolfpack.satisfied=The alpha wolf is satisfied, for now.
+eaglemixins.wolfpack.uninterested=The alpha wolf seems interested, though it does not accept your offering. Perhaps something else would do?
+eaglemixins.wolfpack.bonding.1=The alpha wolf wags its tail.
+eaglemixins.wolfpack.bonding.2=The alpha wolf nudges your hand approvingly.
+eaglemixins.wolfpack.bonding.3=The alpha wolf looks at you with growing trust.
+eaglemixins.wolfpack.tamed=The alpha wolf accepts you as its leader.

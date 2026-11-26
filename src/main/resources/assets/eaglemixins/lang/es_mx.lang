@@ -34,3 +34,12 @@ subtitles.eaglemixins.developer.target=Algo chilla
 subtitles.eaglemixins.developer.respond=Chillidos responden
 subtitles.eaglemixins.developer.pain=Desarrollador herido
 subtitles.eaglemixins.developer.death=Desarrollador muere
+
+# Wolf packs: alpha tribute
+eaglemixins.wolfpack.unsatisfied=El lobo alfa no parece satisfecho. ¿Quizás otro hueso, o unos cuantos más?
+eaglemixins.wolfpack.satisfied=El lobo alfa está satisfecho, por ahora.
+eaglemixins.wolfpack.uninterested=El lobo alfa parece interesado, aunque no acepta tu ofrenda. ¿Quizás otra cosa serviría?
+eaglemixins.wolfpack.bonding.1=El lobo alfa mueve la cola.
+eaglemixins.wolfpack.bonding.2=El lobo alfa empuja tu mano con aprobación.
+eaglemixins.wolfpack.bonding.3=El lobo alfa te mira con creciente confianza.
+eaglemixins.wolfpack.tamed=El lobo alfa te acepta como su líder.

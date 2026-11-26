@@ -12,6 +12,13 @@ public class WolfPackConfig {
     @Config.Name("Enabled")
     public boolean enabled = true;
 
+    @Config.Comment({
+            "Logs what wolf packs do to the game log (lines start with [WolfPack]): hunt rolls, stalking, tributes, every attack",
+            "target change and who set it, and every 5 seconds the full state of each angry / hunting wolf. Spammy, for testing"
+    })
+    @Config.Name("Debug Logging")
+    public boolean debugLogging = false;
+
     // ---------- Alpha ----------
 
     @Config.Comment({
@@ -42,16 +49,16 @@ public class WolfPackConfig {
 
     @Config.Comment({
             "Extra movement speed of angry wild wolves (alphas included) while their player target is further away than",
-            "\"Angry Speed Min Distance\". 0.15 = 15% faster. Not angry, or closer than that = normal speed"
+            "\"Angry Speed Min Distance\". 0.25 = 25% faster. Not angry, or closer than that = normal speed"
     })
     @Config.Name("Angry Speed Bonus")
     @Config.RangeDouble(min = 0)
-    public double angrySpeedBonus = 0.15D;
+    public double angrySpeedBonus = 0.25D;
 
     @Config.Comment("Angry wolves only get \"Angry Speed Bonus\" while their player target is further away than this many blocks")
     @Config.Name("Angry Speed Min Distance")
     @Config.RangeDouble(min = 0)
-    public double angrySpeedMinDistance = 5.0D;
+    public double angrySpeedMinDistance = 8.0D;
 
     @Config.Comment({
             "Name of alpha wolves, e.g. in death messages (\"was slain by Alpha Wolf\") and health bars. Empty = plain \"Wolf\".",
@@ -167,7 +174,8 @@ public class WolfPackConfig {
 
     @Config.Comment({
             "Seconds an alpha remembers the player it attacked, counted from when it stopped attacking.",
-            "Seeing that player again within that time skips the stalking (and the hunt roll): the pack attacks right away. 0 = off"
+            "Seeing that player again within that time skips the stalking (and the hunt roll): the pack attacks right away,",
+            "unless the player holds a calming item, then the alpha comes for its tribute right away. 0 = off"
     })
     @Config.Name("Remember Target Seconds")
     @Config.RangeInt(min = 0)
@@ -188,9 +196,54 @@ public class WolfPackConfig {
     @Config.RangeDouble(min = 1)
     public double stalkGiveUpDistance = 32.0D;
 
-    @Config.Comment("Players holding one of these items (either hand) are not hunted, and a hunting wolf calms down when the player pulls one out")
+    // ---------- Bone tribute ----------
+
+    @Config.Comment({
+            "Items the alpha accepts as tribute. A player holding one (either hand) when the hunt starts or during the stalking",
+            "makes the alpha come over for its tribute instead of attacking (see \"Retrieval Seconds\").",
+            "Giving it every item of this list (each one at least once, the tribute counts too) tames it, as long as it remembers the player",
+            "(\"Remember Target Seconds\" after the last item). Attacking the player makes it forget.",
+            "Items of mods that aren't installed are skipped. Once a wolf attacks, these items don't stop it.",
+            "Format: itemid,min,max = the alpha is satisfied by a random amount between min and max of that item (picked per tribute).",
+            "Items can be mixed: each one fills its own share, e.g. 1 of 4 bones + 1 of 2 others = 3/4 satisfied. Just itemid = 1"
+    })
     @Config.Name("Calming Items")
-    public String[] calmingItems = {"minecraft:bone"};
+    public String[] calmingItems = {
+            "minecraft:bone,2,6",
+            "iceandfire:dragonbone,1,1",
+            "iceandfire:witherbone,1,1",
+            "srparasites:ada_yelloweye_drop,1,1",
+            "srparasites:bone,1,1"
+    };
+
+    @Config.Comment({
+            "Seconds the alpha waits for its tribute: it walks up to the player and sits down next to them.",
+            "Every item given restarts the wait. If it isn't satisfied in time, the pack attacks. 0 = off (holding a calming item doesn't help)"
+    })
+    @Config.Name("Retrieval Seconds")
+    @Config.RangeInt(min = 0)
+    public int retrievalSeconds = 10;
+
+    @Config.Comment("The alpha sits down once it's this many blocks from the player")
+    @Config.Name("Retrieval Sit Distance")
+    @Config.RangeDouble(min = 1)
+    public double retrievalSitDistance = 2.0D;
+
+    @Config.Comment({
+            "Seconds a satisfied alpha (and its pack) walks off in a random direction and leaves that player alone.",
+            "Items given to it in that time count towards taming it, it stops for them (see \"Tribute Wait Seconds\")"
+    })
+    @Config.Name("Satisfied Seconds")
+    @Config.RangeInt(min = 1)
+    public int satisfiedSeconds = 15;
+
+    @Config.Comment({
+            "Seconds a satisfied alpha sits facing the player after getting a taming item, waiting for the next one.",
+            "Every new item restarts the wait, after it the alpha walks on"
+    })
+    @Config.Name("Tribute Wait Seconds")
+    @Config.RangeInt(min = 1)
+    public int tributeWaitSeconds = 5;
 
     @Config.Comment("Ticks a wolf keeps hunting after losing line of sight of its target before it calms down (20 ticks = 1 second)")
     @Config.Name("Lose Sight Grace Ticks")
