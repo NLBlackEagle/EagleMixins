@@ -411,6 +411,13 @@ public class MixinToggleConfig {
     @MixinConfig.CompatHandling(modid = "openterraingenerator", desired = true, reason = "Requires mod to properly function")
     public boolean otgFixMissingBiomeCrash = true;
 
+    @Config.Comment("When new biomes are added to an existing OTG world, gives them a saved biome id on top of the ids already stored in biomeids.txt instead of reusing one. Prevents existing biomes (e.g. in other dimensions, or removed biomes) from turning into the new biome in already generated chunks.")
+    @Config.Name("Stable Biome IDs (OTG)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(lateMixin = "mixins.eaglemixins.otg.stablebiomeids.json", defaultValue = true)
+    @MixinConfig.CompatHandling(modid = "openterraingenerator", desired = true, reason = "Requires mod to properly function")
+    public boolean otgStableBiomeIds = true;
+
     @Config.Comment("Prevents Fish's Undead Rising Undertaker, Avaton and Skeleton King summons from dropping loot or XP.")
     @Config.Name("Cancel Summon Loot & XP (FUR)")
     @Config.RequiresMcRestart
