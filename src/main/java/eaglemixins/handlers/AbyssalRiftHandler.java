@@ -6,6 +6,7 @@ import eaglemixins.config.ForgeConfigHandler;
 import eaglemixins.handlers.util.ExplicitDeathLoot;
 import eaglemixins.util.Ref;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -81,7 +82,14 @@ public class AbyssalRiftHandler {
         event.getDrops().removeAll(itemsToRemove);
     }
 
+    /**
+     * DeathLootTable (set by spawners, structures, /summon) is cleared by vanilla in dropLoot, before LivingDropsEvent,
+     * so EntityLivingMixin_ExplicitDeathLoot remembers it. With "Track Death Loot Table" off there's no way to tell,
+     * so every mob counts as having one: the option then does nothing instead of wiping every drop.
+     */
     private static boolean hasDeathLootTable(EntityLivingBase entity) {
-        return entity instanceof ExplicitDeathLoot && ((ExplicitDeathLoot) entity).eaglemixins$hasExplicitDeathLoot();
+        if (!(entity instanceof EntityLiving)) return false;
+        if (!(entity instanceof ExplicitDeathLoot)) return true;
+        return ((ExplicitDeathLoot) entity).eaglemixins$hasExplicitDeathLoot();
     }
 }

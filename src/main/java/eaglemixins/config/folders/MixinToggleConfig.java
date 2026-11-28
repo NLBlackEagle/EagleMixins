@@ -87,6 +87,15 @@ public class MixinToggleConfig {
     public boolean playerBossSpawnerCount = true;
 
     @Config.Comment({
+            "Remembers whether a mob had a DeathLootTable when it died. Vanilla clears it while dropping loot, before drop events run.",
+            "Required for \"Abyssal Rift Only DeathLootTable Drops\". Without it that option does nothing."
+    })
+    @Config.Name("Track Death Loot Table (Vanilla)")
+    @Config.RequiresMcRestart
+    @MixinConfig.MixinToggle(earlyMixin = "mixins.eaglemixins.vanilla.explicitdeathloot.json", defaultValue = true)
+    public boolean trackDeathLootTable = true;
+
+    @Config.Comment({
             "Ice and Fire spawners (monster_spawner, dread_spawner) always spawn their SpawnData (the boss) first,",
             "ignoring MaxNearbyEntities until it has spawned once. Without it, a full room makes the spawner roll SpawnPotentials instead and the boss never appears."
     })
