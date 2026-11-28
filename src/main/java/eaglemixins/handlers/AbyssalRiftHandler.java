@@ -3,12 +3,11 @@ package eaglemixins.handlers;
 import com.dhanantry.scapeandrunparasites.entity.ai.misc.EntityParasiteBase;
 import com.lothrazar.playerbosses.EntityPlayerBoss;
 import eaglemixins.config.ForgeConfigHandler;
+import eaglemixins.handlers.util.ExplicitDeathLoot;
 import eaglemixins.util.Ref;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.item.EntityItem;
@@ -82,9 +81,7 @@ public class AbyssalRiftHandler {
         event.getDrops().removeAll(itemsToRemove);
     }
 
-    /** DeathLootTable is a private field of EntityLiving, it only ever exists in NBT (spawners, structures, /summon) */
     private static boolean hasDeathLootTable(EntityLivingBase entity) {
-        if (!(entity instanceof EntityLiving)) return false;
-        return !entity.writeToNBT(new NBTTagCompound()).getString("DeathLootTable").isEmpty();
+        return entity instanceof ExplicitDeathLoot && ((ExplicitDeathLoot) entity).eaglemixins$hasExplicitDeathLoot();
     }
 }
