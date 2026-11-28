@@ -27,7 +27,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import srpmixins.capability.adaptation.CapabilityAdaptationHandler;
 import srpmixins.capability.adaptation.ICapabilityAdaptation;
-import srpmixins.config.SRPMixinsConfigHandler;
+import srpmixins.config.ConfigHandler;
 import svenhjol.charm.world.entity.EntityChargedEmerald;
 
 import java.util.List;
@@ -106,7 +106,7 @@ public class SentientWeaponEvolutionHandler {
                     newStack.setTagCompound(savedTags);
 
                     //Keep adaptation in SRPMixins overhauled system
-                    if(isArmor && SRPMixinsConfigHandler.adaptation.overhaulAdaptation) {
+                    if(isArmor && ConfigHandler.tweaks.adaptation.overhaulAdaptation) {
                         ICapabilityAdaptation adaCap = stack.getCapability(CapabilityAdaptationHandler.CAP_ADAPTATION, null);
                         ICapabilityAdaptation adaCapNew = newStack.getCapability(CapabilityAdaptationHandler.CAP_ADAPTATION, null);
                         if (adaCap != null && adaCapNew != null) adaCapNew.copyAdaptationsFrom(adaCap);
